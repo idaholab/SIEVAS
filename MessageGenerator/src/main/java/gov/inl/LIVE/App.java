@@ -36,30 +36,28 @@ public class App
 		broker.start();
 		
 		
-    	System.out.println( "Hello World!" );
+    	System.out.println( "Starting Message Generator..." );
         
         ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory("tcp://localhost:61616");
         Connection connection = factory.createConnection();
         Session session = connection.createSession(false,  Session.AUTO_ACKNOWLEDGE);
         Destination destination = session.createTopic("control");
         
-        thread(new TestProducer(session, destination), false);
+        thread(new TestProducer(connection, session, destination), true);
         connection.start();
-        
-        
-//        session.close();
-//        connection.close();
         
     }
     
     public static class TestProducer implements Runnable, MessageListener
     {
+    	private Connection connection;
     	private Session session;
     	private Destination destination;
     	private boolean running = false;
     	
-    	public TestProducer(Session session, Destination destination)
+    	public TestProducer(Connection connection, Session session, Destination destination)
     	{
+    		this.connection = connection;
     		this.session = session;
     		this.destination = destination;
     	}
@@ -125,6 +123,15 @@ public class App
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+			}
+			try
+			{
+				session.close();
+				connection.close();
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
 			}
 			System.exit(0);
 			

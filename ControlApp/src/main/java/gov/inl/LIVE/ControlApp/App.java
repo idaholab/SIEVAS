@@ -1,7 +1,5 @@
 package gov.inl.LIVE.ControlApp;
 
-import java.util.Date;
-
 import javax.jms.Connection;
 import javax.jms.Destination;
 import javax.jms.JMSException;
@@ -18,7 +16,7 @@ import org.apache.activemq.ActiveMQConnectionFactory;
  */
 public class App 
 {
-    public static void main( String[] args ) throws JMSException//, InterruptedException
+    public static void main( String[] args ) throws JMSException
     {
     	System.out.print( "Control Application - Sending Terminate..." );
         ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory("tcp://localhost:61616");
@@ -33,7 +31,6 @@ public class App
 		message.setBooleanProperty("terminate", true);
 		producer.send(message);
         
-        //Thread.sleep(10000);
         session.close();
         connection.close();
         System.out.println("Done.");
