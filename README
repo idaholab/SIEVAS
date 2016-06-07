@@ -1,2 +1,14 @@
 This is the Live Integrated Visualization Environment (LIVE), which is a software suite that simplifies real time data ingestion for desktop and immersive environments.
 
+
+Software needed:
+----
+-Java 8 or later
+-Maven 3.3.9 or later
+-ActiveMQ 5.13.2 or later (for standalone broker)
+-PostgreSQL 9.5.3 or later
+-Apache.NMS.ActiveMQ 1.7.2 or later (for Unity ActiveMQ support)
+-DotNetZipLib-DevKit 1.9 or later (for Unity/ActiveMQ NMS support, needs Ionic.Zlib)
+-Eclipse Mars.2 or later for IDE support in git repository
+
+
