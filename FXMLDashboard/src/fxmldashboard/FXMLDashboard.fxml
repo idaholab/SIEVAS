@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import java.net.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<TabPane fx:controller="fxmldashboard.FXMLDashboardController" xmlns:fx="http://javafx.com/fxml"> 
+    <stylesheets>
+        <URL value="@dashboardStyle.css"/>
+    </stylesheets>
+    <Tab fx:id="tabLidar" closable="false" text="LiDAR">
+        <VBox spacing="0" alignment="TOP_CENTER" GridPane.columnIndex="1" GridPane.rowIndex="0" > 
+            <children>
+                <Button fx:id="btnDevilsWash" text="Devil's Wash" onAction="#handleButtonAction" maxWidth="Infinity"/>
+                <Button fx:id="btnEV" text="EV" onAction="#handleEVButtonAction" maxWidth="Infinity"/>
+            </children>
+        </VBox>
+    </Tab>
+    <Tab fx:id="ATR" closable="false" text="ATR">
+        <VBox spacing="0" alignment="TOP_CENTER" GridPane.columnIndex="1" GridPane.rowIndex="0" > 
+            <children>
+                <Button text="ATR-Vessel" onAction="#handleButtonAction" maxWidth="Infinity" fx:id="btnAtrVessel"/>
+            </children>
+        </VBox>
+    </Tab>
+</TabPane>
+
