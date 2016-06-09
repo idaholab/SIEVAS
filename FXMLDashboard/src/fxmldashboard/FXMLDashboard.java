@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package fxmldashboard;
 
 import javafx.application.Application;
@@ -19,13 +14,11 @@ public class FXMLDashboard extends Application {
     
     @Override
     public void start(Stage stage) throws Exception {
-//        ScriptButton testButton = new ScriptButton();
-//        testButton.setScript("/home/stermj/evScript.");
         Parent root = FXMLLoader.load(getClass().getResource("FXMLDashboard.fxml"));
         
-        Scene scene = new Scene(root, 1300, 1000);
+        Scene scene = new Scene(root, 1000, 800);
         
-        stage.setTitle("VRMenu");
+        stage.setTitle("VR Dashboard");
         stage.setScene(scene);
         stage.show();
     }
