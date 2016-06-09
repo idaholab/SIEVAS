@@ -12,23 +12,466 @@
     <stylesheets>
         <URL value="@dashboardStyle.css"/>
     </stylesheets>
-    <Tab fx:id="tabLidar" closable="false" text="LiDAR">
+    <Tab fx:id="tabVolume" closable="false" text="Volume"> 
         <VBox spacing="0" alignment="TOP_CENTER" GridPane.columnIndex="1" GridPane.rowIndex="0" > 
             <children>
-                <Button fx:id="btnDevilsWash" text="Devil's Wash" onAction="#handleButtonAction" maxWidth="Infinity">
-                    <properties script="/home/stermj/devilswashScript.sh"/>
+                <Button fx:id="btnNeghip" text="Neghip" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
                 </Button>
-                <Button fx:id="btnEV" text="EV" onAction="#handleButtonAction" maxWidth="Infinity">
-                    <properties script="/home/stermj/evScript.sh"/>
+                <Button fx:id="btnTunicate" text="Tunicate" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnVisibleMale" text="Visible Male" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnStaghornBeetle" text="Staghorn Beetle" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnFoot" text="Foot" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnAneurism" text="Aneurism" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnBluntfin" text="Bluntfin" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnHydrogen" text="Hydrogen" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnKidney" text="Kidney" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnShockwave" text="Shockwave" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnMcnp" text="mcnp" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
                 </Button>
             </children>
         </VBox>
     </Tab>
-    <Tab fx:id="ATR" closable="false" text="ATR">
+    
+    <Tab fx:id="tabVisualizer" closable="false" text="Visualizer"> 
         <VBox spacing="0" alignment="TOP_CENTER" GridPane.columnIndex="1" GridPane.rowIndex="0" > 
             <children>
-                <Button text="ATR-Vessel" onAction="#handleButtonAction" maxWidth="Infinity" fx:id="btnAtrVessel">
-                    <properties script="/home/stermj/devilswashScript.sh"/>
+                <Button fx:id="btnAlaska" text="Alaska" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnMCNP" text="MCNP" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnMaterials" text="materials" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+            </children>
+        </VBox>
+    </Tab>
+    
+    <Tab fx:id="tabChemistry" closable="false" text="Chemistry"> 
+        <VBox spacing="0" alignment="TOP_CENTER" GridPane.columnIndex="1" GridPane.rowIndex="0" > 
+            <children>
+                <Button fx:id="btn1IN0" text="1IN0" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btn1pgx" text="1pgx" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btn1SSN_2" text="1SSN_2" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btn1SSN" text="1SSN" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btn2KQ3" text="2KQ3" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnigg1All" text="igg1-all" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+            </children>
+        </VBox>
+    </Tab>
+    
+    <Tab fx:id="tabGroundLidar" closable="false" text="Ground Lidar"> 
+        <VBox spacing="0" alignment="TOP_CENTER" GridPane.columnIndex="1" GridPane.rowIndex="0" > 
+            <children>
+                <Button fx:id="btnCAESInterior" text="CAES Interior" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnCAESExterior" text="CAES Exterior" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnCAESExteriorBundler" text="CAES Exterior bundler" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnCAESFluidsLab" text="CAES Fluids Lab" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnCAESKitchen" text="CAES Kitchen" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnCFA" text="CFA" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnDevilsWash" text="Devil's Wash" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnCrystalCaves" text="Crystal Caves" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnRailroad" text="Railroad" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnDataCenterRobotics" text="Data Center Robotics" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnDataCenter" text="Data Center" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnBorah" text="Borah" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnINLHypo" text="INL HyPo" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnEBR1" text="EBR1" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnEBR1WithFaro" text="EBR1 with Faro" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnEBR1Outside" text="EBR1 Outside" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnESLPDU" text="ESL PDU" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnStAnthonyBridge" text="ST Anthony Bridge" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnIdahoStateCapitolBuilding" text="Idaho State Capitol Building" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnBSUStadium" text="BSU Stadium" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnHssl" text="hssl" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnEILBasement" text="EIL Basement" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnIFPGemState" text="IFP Gem State" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnUnivPlace" text="Univ_Place" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+            </children>
+        </VBox>
+    </Tab>
+    
+    <Tab fx:id="tabAirborneLidar" closable="false" text="Airborne Lidar"> 
+        <VBox spacing="0" alignment="TOP_CENTER" GridPane.columnIndex="1" GridPane.rowIndex="0" > 
+            <children>
+                <Button fx:id="btnIFPowerPoles" text="IF Power Poles" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnJennyLake" text="Jenny Lake" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnSanAndreas" text="San Andreas" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnHooperSpringsBothWLine" text="Hooper Springs both w/line" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnHooperSpringsColor2010" text="Hooper Springs color 2010" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnHooperSpringsColor2011" text="Hooper Springs color 2011" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnRKYKMPLVWEncr" text="RKYK-MPLV w/encr" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnRKYKMPLVColorWEncr" text="RKYK-MPLV color w/encr" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnSalmonFalls" text="Salmon Falls" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnSalmonFalls2005" text="SalmonFalls2010" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnWeiserALS" text="Weiser ALS" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnMiddleton" text="Middleton" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnIdahoFalls" text="Idaho Falls" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnGoldenGate" text="Golden Gate" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnBoulder" text="Boulder" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnTahoe" text="Tahoe" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnCamas" text="Camas" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnMarketLake" text="Market Lake" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnUAV" text="UAV" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+            </children>
+        </VBox>
+    </Tab>
+    
+    <Tab fx:id="tabHybridLidar" closable="false" text="Hybrid Lidar"> 
+        <VBox spacing="0" alignment="TOP_CENTER" GridPane.columnIndex="1" GridPane.rowIndex="0" > 
+            <children>
+                <Button fx:id="btnStanley" text="Stanley" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnINLRunway" text="INL Runway" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnWeiserRSVP" text="Weiser RSVP" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnWeiserTLS" text="Weiser TLS" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+            </children>
+        </VBox>
+    </Tab>
+    
+    <Tab fx:id="tabATR" closable="false" text="ATR"> 
+        <VBox spacing="0" alignment="TOP_CENTER" GridPane.columnIndex="1" GridPane.rowIndex="0" > 
+            <children>
+                <Button fx:id="btnATRCoreFreeVR" text="ATR Core FreeVR" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnATRCoreVrui" text="ATR Core Vrui" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnVirtualATR" text="VirtualATR" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnATRVessel" text="ATR Vessel" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnATRTrainingVessel" text="ATR Training Vessel" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+            </children>
+        </VBox>
+    </Tab>
+    
+    <Tab fx:id="tabModels" closable="false" text="Models"> 
+        <VBox spacing="0" alignment="TOP_CENTER" GridPane.columnIndex="1" GridPane.rowIndex="0" > 
+            <children>
+                <Button fx:id="btnRocket" text="Rocket" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnFenwayPark" text="FenwayPark" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnSealSkull" text="Seal Skull" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnBlackBearSkull" text="Black Bear Skull" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnQueenAnne" text="QueenAnne" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnHotelBuilding" text="Hotel Building" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnDarfBuilding" text="Darf Building" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnDomeTechBuilding" text="Dome Tech Building" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnMcCainFoods" text="McCain Foods" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnC3" text="C3" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnPVNGSCR0323" text="PVNGS CR 0323" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnPVNGSCR0232NewLayout" text="PVNGS CR 0323 New Layout" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+            </children>
+        </VBox>
+    </Tab>
+    
+    <Tab fx:id="tabGEO" closable="false" text="GEO"> 
+        <VBox spacing="0" alignment="TOP_CENTER" GridPane.columnIndex="1" GridPane.rowIndex="0" > 
+            <children>
+                <Button fx:id="btnShowEarth" text="ShowEarth" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnTravisM" text="Travis M" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnEarlM" text="Earl M" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnEV" text="EV" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnEVI5" text="EV I5" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+            </children>
+        </VBox>
+    </Tab>
+    
+    <Tab fx:id="tabNetVR" closable="false" text="NetVR"> 
+        <VBox spacing="0" alignment="TOP_CENTER" GridPane.columnIndex="1" GridPane.rowIndex="0" > 
+            <children>
+                <Button fx:id="btnExample" text="Example" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+            </children>
+        </VBox>
+    </Tab>
+    
+    <Tab fx:id="tabMisc" closable="false" text="Misc"> 
+        <VBox spacing="0" alignment="TOP_CENTER" GridPane.columnIndex="1" GridPane.rowIndex="0" > 
+            <children>
+                <Button fx:id="btnCAVE5DChesapeakeBay" text="CAVE5D: Chesapeake Bay" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnSandboxWeather" text="SandboxWeather" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnSimplePaint" text="Simple Paint" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnCrayoland" text="Crayoland" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+            </children>
+        </VBox>
+    </Tab>
+    
+    <Tab fx:id="tabUniversity" closable="false" text="University"> 
+        <VBox spacing="0" alignment="TOP_CENTER" GridPane.columnIndex="1" GridPane.rowIndex="0" > 
+            <children>
+                <Button fx:id="btnMHRGWindSom" text="MHRG Wind Som" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+            </children>
+        </VBox>
+    </Tab>
+    
+    <Tab fx:id="tabCWI" closable="false" text="CWI"> 
+        <VBox spacing="0" alignment="TOP_CENTER" GridPane.columnIndex="1" GridPane.rowIndex="0" > 
+            <children>
+                <Button fx:id="btnBinSet5" text="Bin Set 5" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnBinSet5WithRetrieval" text="Bin Set 5 with Retrieval" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnIWTUWithoutRoof" text="IWTU without roof" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+            </children>
+        </VBox>
+    </Tab>
+    
+    <Tab fx:id="tabEnsight" closable="false" text="Ensight"> 
+        <VBox spacing="0" alignment="TOP_CENTER" GridPane.columnIndex="1" GridPane.rowIndex="0" > 
+            <children>
+                <Button fx:id="btnGetEnsightLicense" text="Get Ensight License" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnStartEnsight" text="Start Ensight" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnStopTrackd" text="Stop Trackd" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+            </children>
+        </VBox>
+    </Tab>
+    
+    <Tab fx:id="tabUtility" closable="false" text="Utility"> 
+        <VBox spacing="0" alignment="TOP_CENTER" GridPane.columnIndex="1" GridPane.rowIndex="0" > 
+            <children>
+                <Button fx:id="btnStartDeviceDaemon" text="Start Device Daemon" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnStopDeviceDaemon" text="Stop Device Daemon" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnStartVrpnServer" text="Start vrpn server" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnStopVrpnServer" text="Stop vrpn server" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnStartDTrack" text="Start DTrack" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnStopDTrack" text="Stop DTrack" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnARTTrackingCAVEClosedInStereo" text="ART Tracking - CAVE Closed in Stereo" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnARTTrackingCAVEOpenedInStereo" text="ART Tracking - CAVE Opened in Stereo" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnARTTrackingCAVEClosedInMono" text="ART Tracking - CAVE Closed in mono" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnARTTrackingCAVEOpenedInMono" text="ART Tracking - CAVE Opened in mono" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnARTTrackingCAVEClosedTVDisabled" text="ART Tracking - CAVE Closed + TV disabled" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnARTTrackingCAVEOpenedTVDisabled" text="ART Tracking - CAVE Opened + TV disabled" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnIntersenseCAVEClosedInStereo" text="Intersense - CAVE Closed in Stereo" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnIntersenseCAVEOpenedInStereo" text="Intersense - CAVE Opened in Stereo" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnIntersenseCAVEClosedInMono" text="Intersense - CAVE Closed in mono" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnIntersenseCAVEOpenedInMono" text="Intersense - CAVE Opened in mono" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnIntersenseCAVEClosedTVDisabled" text="Intersense - CAVE Closed + TV disabled" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnIntersenseCAVEOpenedTVDisabled" text="Intersense - CAVE Opened + TV disabled" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
+                </Button>
+                <Button fx:id="btnSyncStereo" text="Sync Stereo" onAction="#handleButtonAction" maxWidth="Infinity">
+                    <properties script=""/>
                 </Button>
             </children>
         </VBox>

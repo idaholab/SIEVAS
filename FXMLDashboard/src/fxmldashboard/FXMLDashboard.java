@@ -16,7 +16,7 @@ public class FXMLDashboard extends Application {
     public void start(Stage stage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("FXMLDashboard.fxml"));
         
-        Scene scene = new Scene(root, 1000, 800);
+        Scene scene = new Scene(root, 1150, 800);
         
         stage.setTitle("VR Dashboard");
         stage.setScene(scene);
