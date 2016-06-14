@@ -13,6 +13,8 @@ import javafx.scene.control.Button;
  */
 public class FXMLDashboardController implements Initializable {
     
+    //JMSProducer producer;
+    
     @FXML
     private void handleButtonAction(ActionEvent event) {
         try {
@@ -28,9 +30,27 @@ public class FXMLDashboardController implements Initializable {
         }
     }
     
+    @FXML
+    private void handleTerminateAction(ActionEvent event) {
+        System.out.println("This will terminate any programs being run from the dashboard.");
+        // Create a message and send it using the JMS Producer
+        JMSProducer newProducer = new JMSProducer();
+        newProducer.setMessage("TERMINATE THE PROGRAM.");
+        thread(newProducer, false);
+        thread(new JMSConsumer(), false);
+    }
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
+//        producer = new JMSProducer();
+//        thread(producer, false);
     }    
+    
+    public static void thread(Runnable runnable, boolean daemon) {
+        Thread brokerThread = new Thread(runnable);
+        brokerThread.setDaemon(daemon);
+        brokerThread.start();
+    }
     
 }
