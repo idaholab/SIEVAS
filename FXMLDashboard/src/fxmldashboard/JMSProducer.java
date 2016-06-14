@@ -23,7 +23,7 @@ public class JMSProducer implements Runnable{
             Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
             // Create the destination (Topic or Queue)
-            Destination destination = session.createQueue("DASHBOARD");
+            Destination destination = session.createTopic("DASHBOARD");
 
             // Create a MessageProducer from the Session to the Topic or Queue
             MessageProducer producer = session.createProducer(destination);
@@ -35,16 +35,18 @@ public class JMSProducer implements Runnable{
 //
 //            // Tell the producer to send the message
 //            System.out.println("Sent message: "+ message.hashCode() + " : " + Thread.currentThread().getName());
+            System.out.println("SENT: " + this.message);
             producer.send(session.createTextMessage(this.message));
 
             // Clean up
             session.close();
             connection.close();
+            producer.close();
         }
         catch (Exception e) {
             System.out.println("Caught: " + e);
             e.printStackTrace();
-        }
+        } 
     }
     
     public String getMessage() {
