@@ -2,43 +2,61 @@ package fxmldashboard;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import javax.jms.*;
 /**
- * Original class can be found at http://activemq.apache.org/version-5-hello-world.html
+ * Used to handle messages sent by the Dashboard.
  * @author stermj
  */
-public class JMSProducer implements Runnable{
+public class JMSProducer {
 
-    private String message = "";
+    private Connection connection;
+    private Session session;
+    private Destination destination;
+    private MessageProducer producer;
     
-    @Override
-    public void run() {
+    public JMSProducer() {
         try {
             // Create a ConnectionFactory
             ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost");          // NEEDS TO BE CHANGED TO TCP CONNECTION WHEN NOT RUNNING ON THE SAME PROCESS
 
             // Create a Connection
-            Connection connection = connectionFactory.createConnection();
+            connection = connectionFactory.createConnection();
             connection.start();
 
             // Create a Session
-            Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+            session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
             // Create the destination (Topic or Queue)
-            Destination destination = session.createTopic("DASHBOARD");
+            destination = session.createTopic("DASHBOARD");
 
             // Create a MessageProducer from the Session to the Topic or Queue
-            MessageProducer producer = session.createProducer(destination);
-            producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
-
-            // Create a messages
-//            String text = "Hello world! From: " + Thread.currentThread().getName() + " : " + this.hashCode();
-//            TextMessage message = session.createTextMessage(text);
-//
-//            // Tell the producer to send the message
-//            System.out.println("Sent message: "+ message.hashCode() + " : " + Thread.currentThread().getName());
-            System.out.println("SENT: " + this.message);
-            producer.send(session.createTextMessage(this.message));
-
-            // Clean up
+            producer = session.createProducer(destination);
+            producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);           
+        } 
+        catch (Exception e) {
+            System.out.println("Caught: " + e);
+            e.printStackTrace();
+        }
+    }
+    
+    /**
+     * Sends a given string to the broker where it is distributed to all listening consumers.
+     * @param message 
+     */
+    public void sendMessage(String message) {
+        try {
+            System.out.println("SENT: " + message);
+            producer.send(session.createTextMessage(message));                       
+        }
+        catch (Exception e) {
+            System.out.println("Caught: " + e);
+            e.printStackTrace();
+        }   
+    }
+    
+    /**
+     * Cleans up the necessary items for a safe closing of this object.
+     */
+    public void close() {
+        try { 
             session.close();
             connection.close();
             producer.close();
@@ -46,15 +64,6 @@ public class JMSProducer implements Runnable{
         catch (Exception e) {
             System.out.println("Caught: " + e);
             e.printStackTrace();
-        } 
-    }
-    
-    public String getMessage() {
-        return message;
-    }
-    
-    public void setMessage(String message) {
-        this.message = message;
-    }
-    
+        }
+    }  
 }

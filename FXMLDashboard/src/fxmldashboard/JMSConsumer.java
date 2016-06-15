@@ -29,7 +29,7 @@ public class JMSConsumer implements Runnable, ExceptionListener{
             MessageConsumer consumer = session.createConsumer(destination);
 
             // Wait for a message
-            Message message = consumer.receive(000);
+            Message message = consumer.receive();
 
             if (message instanceof TextMessage) {
                 TextMessage textMessage = (TextMessage) message;
@@ -38,7 +38,7 @@ public class JMSConsumer implements Runnable, ExceptionListener{
             } else {
                 System.out.println("Received: " + message);
             }
-
+            
             consumer.close();
             session.close();
             connection.close();
