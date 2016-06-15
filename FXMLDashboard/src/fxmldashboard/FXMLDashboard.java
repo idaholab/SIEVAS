@@ -1,5 +1,6 @@
 package fxmldashboard;
 
+// JavaFX Imports
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -7,27 +8,36 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 /**
- *
+ * 
  * @author stermj
  */
 public class FXMLDashboard extends Application {
     
+    private FXMLDashboardController controller;
+    
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("FXMLDashboard.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("FXMLDashboard.fxml"));
+        Parent root = fxmlLoader.load();
+        controller = (FXMLDashboardController) fxmlLoader.getController();
         
-        Scene scene = new Scene(root, 1000, 800);
+        Scene scene = new Scene(root);
         
         stage.setTitle("VR Dashboard");
         stage.setScene(scene);
-        stage.show();
+        stage.show();     
     }
 
+    @Override
+    public void stop() throws Exception {    
+        super.stop();
+        controller.destroy();
+    }
+    
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
         launch(args);
-    }
-    
+    }      
 }
