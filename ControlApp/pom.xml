@@ -12,6 +12,8 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <mainClass>gov.inl.LIVE.ControlApp.App</mainClass>
+    <activemq-version>5.13.3</activemq-version>
   </properties>
 
   <dependencies>
@@ -24,7 +26,7 @@
     <dependency>
     	<groupId>org.apache.activemq</groupId>
     	<artifactId>activemq-all</artifactId>
-    	<version>5.13.3</version>
+    	<version>${activemq-version}</version>
     </dependency>
   </dependencies>
   
@@ -37,7 +39,7 @@
 	   <version>1.5.0</version>
 	   <executions>
 	    <execution>
-	    <phase>test</phase>
+	    <phase>verify</phase>
 	     <goals>
 	      <goal>java</goal>
 	     </goals>
@@ -46,7 +48,7 @@
 	   </executions>
 	   <configuration>
 	      <includeProjectDependencies>true</includeProjectDependencies>
-	      <mainClass>gov.inl.LIVE.ControlApp.App</mainClass>
+	      <mainClass>${mainClass}</mainClass>
 	   </configuration>
 	   
 	  </plugin>
