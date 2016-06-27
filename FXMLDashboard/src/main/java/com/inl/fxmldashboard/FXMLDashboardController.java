@@ -40,9 +40,7 @@ public class FXMLDashboardController implements Initializable {
      */
     @FXML
     private void handleTerminateAction(ActionEvent event) throws InterruptedException {
-        thread(new JMSConsumer(), false);
-        Thread.sleep(100);                                                           // RACE CONDITION HERE WHEN USING A JMS TOPIC. THE SLEEP (>10ms) IS A POOR WAY TO FIX THIS.
-        producer.sendMessage("TERMINATE THE PROGRAM.");
+        producer.sendMessage("TERMINATE.");
     }
     
     /**
