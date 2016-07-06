@@ -21,4 +21,10 @@ public class HomeController
     {
         return "home";
     }
+    
+    @RequestMapping(value = "/menu", method = RequestMethod.GET)
+    public String getMenu()
+    {
+        return "home";
+    }
 }
