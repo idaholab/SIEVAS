@@ -1,13 +1,20 @@
 package gov.inl.LIVE;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import javax.inject.Inject;
 import javax.persistence.EntityManagerFactory;
+import org.apache.catalina.connector.Connector;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration;
+import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
+import org.springframework.boot.context.embedded.tomcat.TomcatConnectorCustomizer;
+import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
 import org.springframework.context.annotation.AdviceMode;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -17,6 +24,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.hibernate4.HibernateTransactionManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.util.ResourceUtils;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -35,30 +43,11 @@ public class Application extends WebMvcAutoConfiguration
         SpringApplication.run(Application.class, args);
     }
     
-//    @Autowired
-//    private EntityManagerFactory entityManagerFactory;
-//
-//    @Bean
-//    public SessionFactory getSessionFactory() {
-//        if (entityManagerFactory.unwrap(SessionFactory.class) == null)
-//            throw new NullPointerException("factory is not a hibernate factory");
-//        else
-//            return entityManagerFactory.unwrap(SessionFactory.class);
-//    }
-    
     @Bean
     public BCryptPasswordEncoder getPasswordEncoder()
     {
         return new BCryptPasswordEncoder();
     }
     
-//    @Override
-//    public void addResourceHandlers(ResourceHandlerRegistry registry)
-//    {
-//        if (!registry.hasMappingForPattern("/resources/**"))
-//            registry.addResourceHandler("/resources/**").addResourceLocations("classpath:/resources/");
-//        if (!registry.hasMappingForPattern("/resources/angular2/**"))
-//            registry.addResourceHandler("/resources/angular2/**").addResourceLocations("classpath:/resources/angular2/");
-//    }
 }
 
