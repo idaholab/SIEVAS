@@ -7,7 +7,6 @@ import { LazyLoadEvent } from 'primeng/primeng';
 import { Message, Growl } from 'primeng/primeng';
 
 import { Permission } from './permission';
-import { JsonError } from '../jsonerror';
 import { PermissionService } from './permission.service';
 
 

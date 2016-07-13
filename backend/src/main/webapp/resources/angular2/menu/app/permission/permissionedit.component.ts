@@ -6,8 +6,6 @@ import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { Message, Growl } from 'primeng/primeng';
 
 import 'rxjs/add/operator/do';
-import { ErrorObservable } from 'rxjs/observable/ErrorObservable';
-
 
 import { Permission } from './permission';
 import { PermissionService } from './permission.service';
