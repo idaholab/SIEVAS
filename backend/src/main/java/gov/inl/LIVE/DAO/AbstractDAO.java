@@ -9,176 +9,183 @@ package gov.inl.LIVE.DAO;
  *
  * @author monejh
  */
-
 import gov.inl.LIVE.common.IIdentifier;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Order;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
-
-import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
 import org.hibernate.NonUniqueObjectException;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
+import org.hibernate.PersistentObjectException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
+public class AbstractDAO<T extends IIdentifier<K>, K extends Serializable> implements IDAO<T, K>
+{
 
-public class AbstractDAO<T extends IIdentifier<K>,K extends Serializable> implements IDAO<T, K> {
+    private final Class<T> entityClass;
 
-	private Class<T> entityClass;
-	
-	 //@Autowired
-	 //private SessionFactory sessionFactory;
+    @Autowired
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    public AbstractDAO(Class<T> entityClass)
+    {
+        this.entityClass = entityClass;
+    }
+
+//    public Session getCurrentSession()
+//    {
+//        return entityManager.unwrap(Session.class);
+//    }
+    
+    @Override
+    public EntityManager getEntityManager()
+    {
+        return this.entityManager;
+    }
+    
+    
+
+    @Override
+    public void add(T obj)
+    {
+        getEntityManager().persist(obj);
+    }
+
+    @Override
+    public List<T> getAll(CriteriaBuilderCriteriaQueryRootTriple<T,T> triple, Order[] orders, int start, int maxSize)
+    {
+        if (triple == null)
+            triple = getCriteriaTriple();
         
-        @Autowired
-        @PersistenceContext
-        private EntityManager entityManager;
+        CriteriaQuery<T> criteria = triple.getQuery();
+        Root<T> root = triple.getRoot();
         
-	 public AbstractDAO(Class<T> entityClass) {
-	        this.entityClass = entityClass;
-	    }
-	 
-         
-	 public Session getCurrentSession()
-	 {
-            return entityManager.unwrap(Session.class);
-	 }
-	 
-	 @Override
-	 public void add(T obj) {
-		 
-		 getCurrentSession().save(obj);
-	 }
+        if (orders!=null)
+            criteria.orderBy(orders);
+        
+        Query query = getEntityManager().createQuery(criteria);
+        query.setFirstResult(start);
+        
+        if (maxSize >= 0)
+        {
+            query.setMaxResults(maxSize);
+        }
+        return (List<T>) query.getResultList();
+    }
 
-	 @Override	        
-	 public List<T> getAll(Order[] orders, int start, int maxSize) {
-		 Criteria criteria = getCurrentSession().createCriteria(entityClass);
-		 if (orders!=null)
-		 {
-			 for(Order order: orders)
-			 {
-				 criteria.addOrder(order);
-			 }
-		 }
-		 
-		 criteria = criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-		 criteria.setFirstResult(start);
-		 if (maxSize>=0) criteria.setMaxResults(maxSize);
-		 return (List<T>)criteria.list();
-	 }
-	 
-	 @Override
-	 public int getAllCount()
-	 {
-		 Criteria criteria = getCurrentSession().createCriteria(entityClass);
-		 return ((Long)(criteria.setProjection(Projections.rowCount()).uniqueResult())).intValue();
-	 }
+    @Override
+    public long getAllCount()
+    {
+        CriteriaQuery<Long> criteria = entityManager.getCriteriaBuilder().createQuery(Long.class);
+        criteria.select(entityManager.getCriteriaBuilder().count(criteria.from(entityClass)));
+        //criteria.where(/*your stuff*/);
+        Long result = entityManager.createQuery(criteria).getSingleResult();
+        if (result == null)
+            return 0;
+        else
+            return result;
 
-	 @Override
-	 public T findById(K id) {
-		 return (T) getCurrentSession().get(entityClass, id);
-	 }
+    }
 
-	 @Override
-	 public void remove(T obj) {
-		 getCurrentSession().delete(obj);
+    @Override
+    public T findById(K id)
+    {
+        return (T) getEntityManager().find(entityClass, id);
+    }
 
-	 }
+    @Override
+    public void remove(T obj)
+    {
+        getEntityManager().remove(obj);
 
+    }
 
-	 @Override
-	 public void saveOrUpdate(T obj) {
-		 try{
-			 getCurrentSession().update(obj);
-		 }
-		 catch(NonUniqueObjectException e){ obj = (T) getCurrentSession().merge(obj); getCurrentSession().update(obj);}
+    @Override
+    public void saveOrUpdate(T obj)
+    {
+        obj = (T) getEntityManager().merge(obj);
+        getEntityManager().persist(obj);
+        
 
-	 }
-	 
-	 @Override	 
-	 public List<T> findByCriteria(Criterion criterion,Order[] orders,int start, int maxSize)
-	 {
-		 DetachedCriteria criteria =  DetachedCriteria.forClass(entityClass);
-		 criteria.add(criterion);
-		 return findByCriteria(criteria, orders, start, maxSize);
-	        
-	 }
-	 
-	 private DetachedCriteria copy(DetachedCriteria criteria) {
-	        try {
-	            ByteArrayOutputStream baostream = new ByteArrayOutputStream();
-	            ObjectOutputStream oostream = new ObjectOutputStream(baostream);
-	            oostream.writeObject(criteria);
-	            oostream.flush();
-	            oostream.close();
-	            ByteArrayInputStream baistream = new ByteArrayInputStream(baostream.toByteArray());
-	            ObjectInputStream oistream = new ObjectInputStream(baistream);
-	            DetachedCriteria copy = (DetachedCriteria)oistream.readObject();
-	            oistream.close();           
-	            return copy;
-	        } catch(Throwable t) {
-	            throw new HibernateException(t);
-	        }
-	    }
-	 
-	 @Override	 
-	 public List<T> findByCriteria(DetachedCriteria criteria,Order[] orders,int start, int maxSize)
-	 {
-		 Criteria crit =  copy(criteria).getExecutableCriteria(getCurrentSession());
-		 if (orders!=null)
-		 {
-			 for(Order order: orders)
-			 {
-				 crit.addOrder(order);
-			 }
-		 }
-		 
-		 crit = crit.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-		 crit.setFirstResult(start);
-		 if (maxSize>=0) crit.setMaxResults(maxSize);
-		 List list = (List<T>)crit.list();
-		 return list;
-	 }
-	 
-	 @Override
-	 public int findByCriteriaCount(Criterion criterion)
-	 {
-		 DetachedCriteria criteria = DetachedCriteria.forClass(entityClass);
-		 criteria.add(criterion);
-		 return findByCriteriaCount(criteria);
-	 }
-	 
-	 @Override
-	 public int findByCriteriaCount(DetachedCriteria criteria)
-	 {
-		 
-		 //System.out.println("CRIT");
-		 //System.out.println(criteria);
-		 //System.out.println(criteria.setProjection(Projections.rowCount()).uniqueResult());
-		 //System.out.println(criteria.setProjection(Projections.rowCount()).uniqueResult().getClass().getName());
-		 //System.out.println(((Long)criteria.setProjection(Projections.rowCount()).uniqueResult()).intValue());
-		 Criteria crit =  copy(criteria).getExecutableCriteria(getCurrentSession());
-		 int count = ((Long)(crit.setProjection(Projections.rowCount()).uniqueResult())).intValue();
-		 //criteria.setProjection(null);
-		 //criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
-		 return count;
-	 }
-	 
-	 @Override
-	 public void refresh(T obj)
-	 {
-	     getCurrentSession().refresh(obj);
-	 }
+    }
+    
+    /**
+     *
+     * @return
+     */
+    public CriteriaBuilderCriteriaQueryRootTriple<T,T> getCriteriaTriple()
+    {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<T> query = cb.createQuery(entityClass);
+        Root<T> root = query.from(entityClass);
+        return new CriteriaBuilderCriteriaQueryRootTriple<T,T>(cb,query,root);
+    }
+    
+    public CriteriaBuilderCriteriaQueryRootTriple<T,Long> getCriteriaTripleForCount()
+    {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Long> query = cb.createQuery(Long.class);
+        Root<T> root = query.from(entityClass);
+        query.select(cb.count(root));
+        
+        return new CriteriaBuilderCriteriaQueryRootTriple<T,Long>(cb,query,root);
+    }
+
+    @Override
+    public List<T> findByCriteria(CriteriaBuilderCriteriaQueryRootTriple<T,T> triple, Order[] orders, int start, int maxSize, Predicate... preds)
+    {
+        if (triple == null)
+            triple= getCriteriaTriple();
+        
+        CriteriaQuery<T> criteria = triple.getQuery();
+        Root<T> root = triple.getRoot();
+        if (orders != null)
+            criteria.orderBy(orders);
+        
+        criteria.select(root);
+        if (preds!=null)
+            criteria.where(preds);
+        
+        Query query = getEntityManager().createQuery(criteria);
+        query.setFirstResult(start);
+        if (maxSize >= 0)
+            query.setMaxResults(maxSize);
+        
+        return (List<T>) query.getResultList();
+        
+
+    }
+    
+    
+    @Override
+    public long findByCriteriaCount(CriteriaBuilderCriteriaQueryRootTriple<T,Long> triple, Predicate... preds)
+    {
+        if (triple == null)
+            triple = getCriteriaTripleForCount();
+        CriteriaBuilder cb = triple.getCriteriaBuilder();
+        Root<T> root = triple.getRoot();
+        CriteriaQuery<Long> criteria = triple.getQuery();
+        criteria.where(preds);
+        Long result = entityManager.createQuery(criteria).getSingleResult();
+        if (result == null)
+            return 0;
+        else
+            return result;
+        
+    }
+
+    
+    @Override
+    public void refresh(T obj)
+    {
+        getEntityManager().refresh(obj);
+    }
 
 }

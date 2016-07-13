@@ -27,6 +27,13 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-maven-plugin</artifactId>
             <version>${spring-boot-version}</version>
+            <dependencies>
+                <dependency>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>springloaded</artifactId>
+                    <version>1.2.5.RELEASE</version>
+                </dependency>
+            </dependencies>
             <executions>
                 <execution>
                     <goals>
@@ -153,6 +160,18 @@
                 </execution>
             </executions>
         </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.5.1</version>
+            <configuration>
+              <compilerArgs>
+<!--                <arg>-verbose</arg>
+                <arg>-Xlint:all,-options,-path</arg>-->
+                <arg>-Xlint:deprecation</arg>
+              </compilerArgs>
+            </configuration>
+        </plugin>
         </plugins>
     </build>
     <dependencies>
@@ -229,6 +248,11 @@
             <groupId>javax.servlet</groupId>
             <artifactId>jstl</artifactId>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-jpamodelgen</artifactId>
+            <version>${hibernate.version}</version>
         </dependency>
     </dependencies>
 </project>

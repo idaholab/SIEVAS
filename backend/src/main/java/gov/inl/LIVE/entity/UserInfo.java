@@ -5,6 +5,7 @@
  */
 package gov.inl.LIVE.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import gov.inl.LIVE.common.IIdentifier;
 import java.io.Serializable;
 import java.math.BigInteger;
@@ -30,50 +31,59 @@ import javax.validation.constraints.Size;
 @Table(name = "user_info")
 public class UserInfo implements Serializable, IIdentifier<Long>
 {
-
-    @ManyToMany(mappedBy = "userInfoCollection")
-    private Collection<PermissionGroup> permissionGroupCollection;
-
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
     private Long id;
+    
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 128)
     @Column(name = "username")
     private String username;
+    
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 512)
     @Column(name = "password")
     private String password;
+    
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 64)
     @Column(name = "first_name")
     private String firstName;
+    
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 64)
     @Column(name = "last_name")
     private String lastName;
+    
     @Column(name = "edipi")
     private Long edipi;
+    
     @Basic(optional = false)
     @NotNull
     @Column(name = "expired")
     private boolean expired;
+    
     @Basic(optional = false)
     @NotNull
     @Column(name = "locked")
     private boolean locked;
+    
     @Basic(optional = false)
     @NotNull
     @Column(name = "enabled")
     private boolean enabled;
+    
+    @JsonIgnore
+    @ManyToMany(mappedBy = "userInfoCollection")
+    private Collection<PermissionGroup> permissionGroupCollection;
+
 
     public UserInfo()
     {

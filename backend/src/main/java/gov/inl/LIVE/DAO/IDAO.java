@@ -11,25 +11,26 @@ package gov.inl.LIVE.DAO;
  */
 import java.io.Serializable;
 import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.criteria.Order;
+import javax.persistence.criteria.Predicate;
 
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Order;
 
 public interface IDAO<T,K extends Serializable>
 {
 	
 	public void add(T obj);
-	public List<T> getAll(Order[] orders,int start, int maxSize);
-	public int getAllCount();
+	public List<T> getAll(CriteriaBuilderCriteriaQueryRootTriple<T,T> triple,Order[] orders,int start, int maxSize);
+	public long getAllCount();
 	public T findById(K id);
-	public List<T> findByCriteria(Criterion criterion,Order[] orders,int start, int maxSize);
-	public int findByCriteriaCount(Criterion criterion);
-	public List<T> findByCriteria(DetachedCriteria criteria,Order[] orders,int start, int maxSize);
-	public int findByCriteriaCount(DetachedCriteria criteria);
+	public List<T> findByCriteria(CriteriaBuilderCriteriaQueryRootTriple<T,T> triple, Order[] orders, int start, int maxSize, Predicate... preds);
+	public long findByCriteriaCount(CriteriaBuilderCriteriaQueryRootTriple<T,Long> triple, Predicate... preds);
 	public void remove(T obj);
 	public void saveOrUpdate(T obj);
 	public void refresh(T obj);
+        public EntityManager getEntityManager();
 
 }
 

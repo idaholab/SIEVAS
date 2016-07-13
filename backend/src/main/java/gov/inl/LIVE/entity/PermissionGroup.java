@@ -5,6 +5,7 @@
  */
 package gov.inl.LIVE.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.Collection;
 import javax.persistence.Basic;
@@ -39,19 +40,23 @@ public class PermissionGroup implements Serializable
 {
 
     private static final long serialVersionUID = 1L;
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
     private Long id;
+    
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 128)
     @Column(name = "group_name")
     private String groupName;
+    
     @Size(max = 2147483647)
     @Column(name = "description")
     private String description;
+    
     @JoinTable(name = "permission_group_permission", joinColumns =
     {
         @JoinColumn(name = "permission_group_id", referencedColumnName = "id")
@@ -61,6 +66,8 @@ public class PermissionGroup implements Serializable
     })
     @ManyToMany
     private Collection<Permission> permissionCollection;
+    
+    @JsonIgnore
     @JoinTable(name = "user_info_permission_group", joinColumns =
     {
         @JoinColumn(name = "permission_group_id", referencedColumnName = "id")

@@ -5,6 +5,8 @@
  */
 package gov.inl.LIVE.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import gov.inl.LIVE.common.IIdentifier;
 import java.io.Serializable;
 import java.util.Collection;
 import javax.persistence.Basic;
@@ -34,7 +36,7 @@ import org.springframework.security.core.GrantedAuthority;
     @NamedQuery(name = "Permission.findByPermissionName", query = "SELECT p FROM Permission p WHERE p.permissionName = :permissionName"),
     @NamedQuery(name = "Permission.findByDescription", query = "SELECT p FROM Permission p WHERE p.description = :description")
 })
-public class Permission implements Serializable, GrantedAuthority
+public class Permission implements Serializable, GrantedAuthority, IIdentifier<Long>
 {
 
     private static final long serialVersionUID = 1L;
@@ -43,14 +45,18 @@ public class Permission implements Serializable, GrantedAuthority
     @Basic(optional = false)
     @Column(name = "id")
     private Long id;
+    
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 128)
     @Column(name = "permission_name")
     private String permissionName;
+    
     @Size(max = 2147483647)
     @Column(name = "description")
     private String description;
+    
+    @JsonIgnore
     @ManyToMany(mappedBy = "permissionCollection")
     private Collection<PermissionGroup> permissionGroupCollection;
 
@@ -136,9 +142,10 @@ public class Permission implements Serializable, GrantedAuthority
     @Override
     public String toString()
     {
-        return "gov.inl.LIVE.entity.Permission[ id=" + id + " ]";
+        return "Permission{id=" + id + ", name=" + permissionName + ", description=" + description + "}";
     }
 
+    @JsonIgnore
     @Override
     public String getAuthority()
     {
