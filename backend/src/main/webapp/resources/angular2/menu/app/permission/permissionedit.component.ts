@@ -11,6 +11,7 @@ import { ErrorObservable } from 'rxjs/observable/ErrorObservable';
 
 import { Permission } from './permission';
 import { PermissionService } from './permission.service';
+import { JsonError } from '../JsonError';
 
 @Component({
   selector: 'permission-detail',
@@ -50,7 +51,8 @@ export class PermissionEditComponent implements OnInit, OnDestroy
         if (params['id'] !== undefined)
         {
             let id = +params['id'];
-            this.permissionService.getPermissionById(id).then(perm => this.permission = perm);
+            this.permissionService.getObjectById(id).then(perm => this.permission = perm)
+                .catch(error => this.msgs.push({severity:'error', summary:'Error Message', detail:error}));
         }
         else
         {
@@ -72,21 +74,12 @@ export class PermissionEditComponent implements OnInit, OnDestroy
   onSave()
   {
       this.permissionService.save(this.permission)
-          .then((perm: any) => {
-              console.log('onSave',perm);
-              
-              if (perm.typeName && perm.typeName == "JsonError")
-                this.msgs.push({severity:'error', summary:'Error Saving', detail:perm.error});
-              else if (perm.constructor && perm.constructor.name === 'ErrorObservable')
-                this.msgs.push({severity:'error', summary:'Error Saving', detail:perm.error});
-              else
-              {
+          .then((perm: Permission) => {
                 this.permission = perm;
                 this.close.emit(perm);
                 this.router.navigate(['/permissions']);
-              }
           })
-          .catch(error => alert(error));
+          .catch((error: JsonError) => this.msgs.push({severity:'error', summary:'Error Saving', detail:error.error})); 
           
   }
   
@@ -95,18 +88,7 @@ export class PermissionEditComponent implements OnInit, OnDestroy
       return this.form.valid;
       
   }
-//  onKeyDown(event: KeyboardEvent)
-//  {
-//      console.log(event);
-//      if(event.keyCode == 13)
-//      {
-//          event.stopPropagation();
-//          if (this.form.valid)
-//            this.onSave();
-//          else
-//            alert("error");
-//      }
-//  }
+
   
   
 }
