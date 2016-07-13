@@ -59,24 +59,13 @@ export class PermissionComponent implements OnInit
       event.stopPropagation();
       this.permissionService
           .delete(perm)
-          .then((result: any) => {
-              if (result.typeName && result.typeName == 'JsonError')
-              {
-                if (result.error)
-                  this.msgs.push({severity:'error', summary:'Error Message', detail:result.error});
-                else
-                  this.msgs.push({severity:'error', summary:'Error Message', detail:"Unknown Error"});
-              }
-              else
-              {
+          .then((result: {}) => {
                 this.permissions = this.permissions.filter(p => p !== perm);
                 if (this.selectedPermission === perm)
                   this.selectedPermission = null;
                 if (this.lastLazyLoadEvent)
                     this.loadData(this.lastLazyLoadEvent);
-              }
-              
-          }).catch(error => this.msgs.push({severity:'error', summary:'Error Message', detail:error}));
+          }).catch(error => this.msgs.push({severity:'error', summary:'Error Message', detail:error.error}));
     }
     
     
@@ -89,7 +78,9 @@ export class PermissionComponent implements OnInit
         //multiSortMeta: An array of SortMeta objects used in multiple columns sorting. Each SortMeta has field and order properties.
         //filters: Filters object having field as key and filter value, filter matchMode as value
         this.lastLazyLoadEvent = event;
-        this.permissionService.getPermissions(event.first, event.rows, event.sortField, event.sortOrder, event.filters).subscribe(result => {this.permissions = result.data; this.totalRecords = result.total;});
+        this.permissionService.getObjects(event.first, event.rows, event.sortField, event.sortOrder, event.filters)
+            .subscribe(result => {this.permissions = result.data; this.totalRecords = result.total;},
+                       error => this.msgs.push({severity:'error', summary:'Error Message', detail:error}));
     }
     
 }
