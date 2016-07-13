@@ -18,6 +18,7 @@
     <script src="<c:url value='/resources/angular2/menu/node_modules/systemjs/dist/system.src.js'></c:url>"></script>
     <link rel="stylesheet" type="text/css" href="<c:url value='/resources/angular2/menu/node_modules/primeui/themes/omega/theme.css'></c:url>" />
     <link rel="stylesheet" type="text/css" href="<c:url value='/resources/angular2/menu/node_modules/primeui/primeui-ng-all.min.css'></c:url>" />
+    <link rel="stylesheet" type="text/css" href="<c:url value='/resources/fontawesome/css/font-awesome.min.css'></c:url>" />
     <!-- 2. Configure SystemJS -->
     <script src="<c:url value='/resources/angular2/menu/systemjs.config.js'></c:url>"></script>
     <script>
@@ -31,6 +32,7 @@
         .ng-invalid {
           border-left: 5px solid #a94442; /* red */
     }
+        .ui-growl-message p { word-break:break-all;}
     </style>
     <!--<script>document.write('<base href="' + document.location + '" />');</script>-->
     <base href="/"/>

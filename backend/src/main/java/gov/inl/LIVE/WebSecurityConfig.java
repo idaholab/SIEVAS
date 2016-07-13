@@ -13,7 +13,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
-import gov.inl.LIVE.common.LIVEUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -40,7 +39,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
     @Override
     protected void configure(HttpSecurity http) throws Exception
     {
-        http
+        http.httpBasic().disable()
             .authorizeRequests()
                 .antMatchers("/resources/angular2/login/**")
                 .permitAll()
@@ -51,11 +50,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
                 .and()
             .logout()
                 .permitAll()
+                .invalidateHttpSession(true).clearAuthentication(true).deleteCookies()
                 .and()
             .authorizeRequests()
-                .antMatchers("/", "/menu", "/resources/**", "/api/**", "/logout")
+                .antMatchers("/", "/menu", 
+                        "/permissions","/permissions/**",
+                        "/resources/**", "/api/**", "/logout")
                 .authenticated()
                 .and()
+            
             .csrf()
                 .csrfTokenRepository(csrfTokenRepository())
                 .and()

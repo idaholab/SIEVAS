@@ -36,26 +36,7 @@ export class MenuComponent implements OnInit
     
     ngOnInit()
     {
-        this.items = [
-            {
-                label: 'File',
-                items: [{
-                        label: 'New User', 
-                        icon: 'fa-plus'
-                    },
-                    {label: 'Open'},
-                    {label: 'Quit', command: this.onMenuQuit}
-                ]
-            },
-            {
-                label: 'Edit',
-                icon: 'fa-edit',
-                items: [
-                    {label: 'Undo', icon: 'fa-mail-forward'},
-                    {label: 'Redo', icon: 'fa-mail-reply'}
-                ]
-            }
-        ];
+        
     }
     
 }
