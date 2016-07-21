@@ -55,6 +55,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
             .authorizeRequests()
                 .antMatchers("/", "/menu", 
                         "/permissions","/permissions/**",
+                        "/groups","/groups/**",
+                        "/users","/users/**",
                         "/resources/**", "/api/**", "/logout")
                 .authenticated()
                 .and()

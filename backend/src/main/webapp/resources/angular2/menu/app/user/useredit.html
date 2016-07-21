@@ -1,0 +1,75 @@
+<p-growl [value]="msgs"></p-growl>
+
+<div *ngIf="user" class="container" style="width: 400px;">
+    <form #frmEdit="ngForm" (submit)="onSubmit()">
+        <div class="form-group">
+            <label>ID</label>
+            <input [(ngModel)]="user.id" name="id" class="form-control" disabled>
+        </div>
+        <div class="form-group">
+            <label>Username</label>
+            {{user.username}}
+            <input [(ngModel)]="user.username" name="username" class="form-control" [class]="(username.valid) ? 'form-control' : 'form-control ng-invalid'" placeholder="Enter username" required #username="ngModel">
+            <div [hidden]="username.valid || username.pristine" class="alert alert-danger">
+               Username is required
+            </div>
+            <div formGroupName="passwordGroup">
+                <label>Password</label>
+                <input [(ngModel)]="user.password" type="password" name="password" class="form-control" [class]="(password.valid) ? 'form-control' : 'form-control ng-invalid'" 
+                       placeholder="Enter password" minlength="6" #password="ngModel" >
+                <div [hidden]="password.valid || password.pristine" class="alert alert-danger">
+                        Your password must be at least 6 characters.
+                </div>
+                <label>Re-type Password</label>
+                <input [(ngModel)]="user.password2" type="password" name="password2" class="form-control" [class]="(password2.valid && password.value == password2.value) ? 'form-control' : 'form-control ng-invalid'" 
+                    placeholder="Re-type password" #password2="ngModel" >
+                <div [hidden]="(password2.valid || password2.pristine) && (password2.value == password.value)" class="alert alert-danger">
+                   Passwords must match
+                </div>
+            </div>
+            <label>First Name</label>
+            <input [(ngModel)]="user.firstName" name="firstName"
+                class="form-control" [class]="(firstName.valid) ? 'form-control' : 'form-control ng-invalid'" placeholder="Enter first name" required #firstName="ngModel">
+            <div [hidden]="firstName.valid || firstName.pristine" class="alert alert-danger">
+                First name is required
+            </div>
+            <label>Last Name</label>
+            <input [(ngModel)]="user.lastName" name="lastName"
+                class="form-control" [class]="(lastName.valid) ? 'form-control' : 'form-control ng-invalid'" placeholder="Enter last name" required #lastName="ngModel">
+            <div [hidden]="lastName.valid || lastName.pristine" class="alert alert-danger">
+                Last name is required
+            </div>
+            <label>EDIPI</label>
+            <input type="text" [(ngModel)]="user.edipi" name="edipi"
+                   class="form-control" [class]="(edipi.valid) ? 'form-control' : 'form-control ng-invalid'" placeholder="Enter EDIPI" validLong #edipi="ngModel">
+            <div [hidden]="edipi.valid || edipi.pristine" class="alert alert-danger">
+                Enter a valid EDIPI
+            </div>
+            <fieldset>
+                <legend>Access</legend>
+                <input type="checkbox" [(checked)]="user.enabled" name="enabled" style="float: left; margin-top: 5px;">
+                <div style="margin-left: 25px;">Enabled</div>
+                
+                <input type="checkbox" [(checked)]="user.locked" name="enabled" style="float: left; margin-top: 5px;">
+                <div style="margin-left: 25px;">Locked</div>
+                
+                <input type="checkbox" [(checked)]="user.expired" name="enabled" style="float: left; margin-top: 5px;">
+                <div style="margin-left: 25px;">Expired</div>
+                
+            </fieldset>
+            
+            <fieldset>
+                <legend>Groups</legend>
+                <div style="overflow: auto; max-height: 400px;">
+                    <ul class="checkbox-grid">
+                        <div *ngFor="let group of groups" >
+                            <li><input type="checkbox" name="group" [value]="group.id" [checked]="groupExists(group.id)" (click)="toggleGroup(group.id)"/><label style="font-weight: normal;">{{group.groupName}}</label></li>
+                        </div>
+                    </ul>
+                </div>
+            </fieldset>
+        </div>
+        <button type="button" class="btn btn-default" (click)="onCancel()">Cancel</button>
+        <button type="submit" class="btn btn-default" [disabled]="!frmEdit.valid" (click)="onSave()">Save</button>
+    </form>
+</div>

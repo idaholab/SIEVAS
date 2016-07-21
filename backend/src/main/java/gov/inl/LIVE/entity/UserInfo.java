@@ -20,6 +20,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -49,6 +50,9 @@ public class UserInfo implements Serializable, IIdentifier<Long>
     @Size(min = 1, max = 512)
     @Column(name = "password")
     private String password;
+    
+    @Transient
+    private String password2 = "";
     
     @Basic(optional = false)
     @NotNull
@@ -80,7 +84,6 @@ public class UserInfo implements Serializable, IIdentifier<Long>
     @Column(name = "enabled")
     private boolean enabled;
     
-    @JsonIgnore
     @ManyToMany(mappedBy = "userInfoCollection")
     private Collection<PermissionGroup> permissionGroupCollection;
 
@@ -194,6 +197,16 @@ public class UserInfo implements Serializable, IIdentifier<Long>
     public void setEnabled(boolean enabled)
     {
         this.enabled = enabled;
+    }
+
+    public String getPassword2()
+    {
+        return password2;
+    }
+
+    public void setPassword2(String password2)
+    {
+        this.password2 = password2;
     }
 
     

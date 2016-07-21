@@ -10,6 +10,10 @@ import { Menubar, Menu, MenuItem } from 'primeng/primeng';
 import { EmptyComponent } from './empty.component';
 import { PermissionComponent } from './permission/permission.component';
 import { PermissionEditComponent } from './permission/permissionedit.component';
+import { GroupComponent } from './group/group.component';
+import { GroupEditComponent } from './group/groupedit.component';
+import { UserComponent } from './user/user.component';
+import { UserEditComponent } from './user/useredit.component';
 
 
 @Component({
@@ -17,7 +21,7 @@ import { PermissionEditComponent } from './permission/permissionedit.component';
     templateUrl: 'resources/angular2/menu/app/mainmenu.html',
     providers: [ HTTP_PROVIDERS ],
     directives: [ ROUTER_DIRECTIVES, Menubar, Menu],
-    precompile: [ EmptyComponent, PermissionComponent, PermissionEditComponent ]
+    precompile: [ EmptyComponent, PermissionComponent, PermissionEditComponent, GroupComponent, GroupEditComponent, UserComponent, UserEditComponent ]
 })
 export class AppComponent implements OnInit
 {
@@ -42,6 +46,18 @@ export class AppComponent implements OnInit
         this.router.navigate(link);
     }
     
+    onMenuGroups(event)
+    {
+        let link = ['/groups'];
+        this.router.navigate(link);
+    }
+    
+    onMenuUsers(event)
+    {
+        let link = ['/users'];
+        this.router.navigate(link);
+    }
+    
     ngOnInit()
     {
         this.items = [
@@ -62,6 +78,14 @@ export class AppComponent implements OnInit
                     {
                         label: 'Permissions',
                         command: (event) => this.onMenuPermissions(event)  
+                    },
+                    {
+                        label: 'Groups',
+                        command: (event) => this.onMenuGroups(event)  
+                    },
+                    {
+                        label: 'Users',
+                        command: (event) => this.onMenuUsers(event)  
                     }
                 ]
             }

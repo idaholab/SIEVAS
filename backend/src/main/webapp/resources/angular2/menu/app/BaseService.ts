@@ -31,7 +31,7 @@ export abstract class BaseService<K, T extends IIdentifier<K> >
     getObjects(first: number, rows: number, sortField: string, sortOrder: number, filters: any) : Observable<ResultSet>
     {
         
-        let url = this.getBaseUrl() + '?start=' + encodeURIComponent(first.toString()) + '&rows=' + encodeURIComponent(rows.toString())
+        let url = this.getBaseUrl() + '?start=' + encodeURIComponent(first.toString()) + '&count=' + encodeURIComponent(rows.toString())
                                     + '&sortField=' + ((sortField) ? encodeURIComponent(sortField)  : '')
                                     + '&sortOrder=' + encodeURIComponent(sortOrder.toString())
                                     + '&filters=' + ((filters) ? encodeURIComponent(JSON.stringify(filters)) : '');
