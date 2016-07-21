@@ -1,0 +1,17 @@
+<h2>{{title}}</h2>
+
+<p-growl [value]="msgs"></p-growl>
+
+<button class="create" (click)="onCreate($event)">New Group</button>
+<p-dataTable [value]="groups" [rows]="10" [paginator]="true" selectionMode="single" 
+            [(selection)]="selectedGroup" [resizableColumns]="true" [lazy]="true"
+            (onLazyLoad)="loadData($event)" [totalRecords]="totalRecords" 
+            [sortMode]="multiple" (onRowDblclick)="onRowClick($event)">
+    <p-column field="id" header="ID" sortable="true" [filter]="true" filterMatchMode="contains"  [style]="{'width':'100px'}"></p-column>
+    <p-column field="groupName" header="Name" sortable="true" [filter]="true" filterMatchMode="contains"></p-column>
+    <p-column>
+        <template let-perm="rowData">
+            <button class="delete" (click)="onDelete(perm, $event)"></button>
+        </template>
+    </p-column>
+</p-dataTable>

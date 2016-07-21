@@ -6,6 +6,7 @@
 package gov.inl.LIVE.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import gov.inl.LIVE.common.IIdentifier;
 import java.io.Serializable;
 import java.util.Collection;
 import javax.persistence.Basic;
@@ -36,7 +37,7 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "PermissionGroup.findByGroupName", query = "SELECT p FROM PermissionGroup p WHERE p.groupName = :groupName"),
     @NamedQuery(name = "PermissionGroup.findByDescription", query = "SELECT p FROM PermissionGroup p WHERE p.description = :description")
 })
-public class PermissionGroup implements Serializable
+public class PermissionGroup implements Serializable,  IIdentifier<Long>
 {
 
     private static final long serialVersionUID = 1L;
