@@ -1,0 +1,51 @@
+
+button:hover {
+  background-color: #cfd8dc;
+}
+
+.delete {
+    background:url(resources/images/delete.png) no-repeat;
+    cursor:pointer;
+    width: 16px;
+    height: 16px;
+    border: none;
+    vertical-align: middle;
+}
+
+
+.create {
+    background:url(resources/images/create.png)  no-repeat;
+    background-position: left center;
+    cursor:pointer;
+    height: 20px;
+    position: relative;
+    line-height: 16px;
+    padding-left: 20px;
+    margin: 5px;
+    border: none;
+}
+
+.checkbox-grid li {
+    display: block;
+    float: left;
+    width: 33%;
+}
+
+fieldset {
+    border:1px solid #c0c0c0;
+    margin: 5px;
+    padding: 5px;
+}
+
+legend {
+  padding: 0.2em 0.5em;
+  border:none;
+  color:black;
+  font-size:medium;
+  text-align:left;
+  margin: 0px;
+  padding: 0px;
+  width: auto;
+}
+  
+  

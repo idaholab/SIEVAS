@@ -14,6 +14,9 @@ import { GroupComponent } from './group/group.component';
 import { GroupEditComponent } from './group/groupedit.component';
 import { UserComponent } from './user/user.component';
 import { UserEditComponent } from './user/useredit.component';
+import { SessionComponent } from './session/session.component';
+import { SessionEditComponent } from './session/sessionedit.component';
+
 
 
 @Component({
@@ -21,7 +24,7 @@ import { UserEditComponent } from './user/useredit.component';
     templateUrl: 'resources/angular2/menu/app/mainmenu.html',
     providers: [ HTTP_PROVIDERS ],
     directives: [ ROUTER_DIRECTIVES, Menubar, Menu],
-    precompile: [ EmptyComponent, PermissionComponent, PermissionEditComponent, GroupComponent, GroupEditComponent, UserComponent, UserEditComponent ]
+    precompile: [ EmptyComponent, PermissionComponent, PermissionEditComponent, GroupComponent, GroupEditComponent, UserComponent, UserEditComponent, SessionComponent, SessionEditComponent ]
 })
 export class AppComponent implements OnInit
 {
@@ -58,6 +61,12 @@ export class AppComponent implements OnInit
         this.router.navigate(link);
     }
     
+    onMenuSessions(event)
+    {
+        let link = ['/sessions'];
+        this.router.navigate(link);
+    }
+    
     ngOnInit()
     {
         this.items = [
@@ -86,6 +95,10 @@ export class AppComponent implements OnInit
                     {
                         label: 'Users',
                         command: (event) => this.onMenuUsers(event)  
+                    },
+                    {
+                        label: 'Sessions',
+                        command: (event) => this.onMenuSessions(event)  
                     }
                 ]
             }
