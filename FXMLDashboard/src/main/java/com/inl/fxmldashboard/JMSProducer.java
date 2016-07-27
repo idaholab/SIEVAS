@@ -15,7 +15,7 @@ public class JMSProducer {
     public JMSProducer() {
         try {
             // Create a ConnectionFactory
-            ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost");          // NEEDS TO BE CHANGED TO TCP CONNECTION WHEN NOT RUNNING ON THE SAME PROCESS
+            ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory("tcp://localhost:61616");//("vm://localhost");
 
             // Create a Connection
             connection = connectionFactory.createConnection();
@@ -44,7 +44,9 @@ public class JMSProducer {
     public void sendMessage(String message) {
         try {
             System.out.println("SENT: " + message);
-            producer.send(session.createTextMessage(message));                       
+            TextMessage tm = session.createTextMessage(message);
+            tm.setJMSType("text");
+            producer.send(tm);
         }
         catch (Exception e) {
             System.out.println("Caught: " + e);
