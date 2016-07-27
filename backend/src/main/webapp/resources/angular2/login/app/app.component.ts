@@ -1,9 +1,8 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Renderer,ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 
 import { HTTP_PROVIDERS } from '@angular/http';
 import { Http } from '@angular/http';
 import { Headers, RequestOptions } from '@angular/http';
-
 
 
 import { LoginInfo } from './logininfo';
@@ -14,8 +13,10 @@ import { LoginInfo } from './logininfo';
     templateUrl: 'resources/angular2/login/app/login-form.html',
     providers: [ HTTP_PROVIDERS ]
 })
-export class AppComponent implements OnInit
+export class AppComponent implements OnInit, AfterViewInit
 {
+    @ViewChild('usernameInput') input: ElementRef;
+    
     title = 'Login';
     userInfo: LoginInfo = new LoginInfo();
     error = null;
@@ -27,9 +28,13 @@ export class AppComponent implements OnInit
         this.logout = this.getParameterByName("logout");
     }
     
-      
+    ngAfterViewInit()
+    {
+        this.renderer.invokeElementMethod(this.input.nativeElement,'focus');   
+    }
     
-    constructor(public http: Http)
+   
+    constructor(public http: Http, public renderer: Renderer, public elementRef: ElementRef)
     {
         
     }

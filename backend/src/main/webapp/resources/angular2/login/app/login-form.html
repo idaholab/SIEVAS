@@ -9,7 +9,7 @@
         </div>
         <div class="form-group">
             <label>Username:</label>
-            <input [(ngModel)]="userInfo.username" name="username" #username="ngModel" class="form-control" placeholder="Enter a username" required>
+            <input [(ngModel)]="userInfo.username" name="username" #username="ngModel" #usernameInput class="form-control" placeholder="Enter a username" required>
             <div [hidden]="username.valid || username.pristine" class="alert alert-danger">
                 Username is required
             </div>

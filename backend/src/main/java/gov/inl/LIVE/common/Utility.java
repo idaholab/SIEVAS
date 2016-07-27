@@ -7,13 +7,24 @@ package gov.inl.LIVE.common;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gov.inl.LIVE.DAO.CriteriaBuilderCriteriaQueryRootTriple;
+import gov.inl.LIVE.DAO.UserInfoDAO;
+import gov.inl.LIVE.entity.UserInfo;
+import gov.inl.LIVE.entity.UserInfo_;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
@@ -44,6 +55,82 @@ public class Utility
             orderList.add(cb.asc(root.get(defaultSortColumn)));
         
         return orderList;
+    }
+    
+    
+    public static class CompareClass<T> implements Comparator<T>
+    {
+        private String fieldName;
+        private int sortOrder;
+        private Method method;
+
+        public CompareClass(Class<T> cls, String fieldName, int sortOrder) throws NoSuchMethodException
+        {
+            this.fieldName = fieldName;
+            this.sortOrder = sortOrder;
+            method = cls.getMethod(NormalizeGetter(this.fieldName));
+            
+        }
+        
+
+        @Override
+        public int compare(T o1, T o2)
+        {
+            try
+            {
+                if (method.getReturnType().isAssignableFrom(Comparable.class))
+                {
+                    Comparable obj1 = (Comparable) method.invoke(o1);
+                    Comparable obj2 = (Comparable) method.invoke(o2);
+                    if (sortOrder>0)
+                        return obj1.compareTo(obj2);
+                    else
+                        return obj2.compareTo(obj1);
+                }
+                else
+                    return -1;
+                
+            }
+            catch (Exception ex)
+            {
+                Logger.getLogger(Utility.class.getName()).log(Level.SEVERE, null, ex);
+                return -1;
+            }
+            
+        }
+        
+    }
+    
+    
+    public static <T> void ProcessOrders(T[] list, Class<T> cls, String sortField, int sortOrder, String defaultSortColumn, ObjectMapper objMapper)
+    {
+        List<Order> orderList = new ArrayList<>();
+        if (!sortField.trim().isEmpty())
+        {
+            CompareClass<T> compareClass = null;
+            try
+            {
+                compareClass = new CompareClass<T>(cls, sortField, sortOrder);
+            }
+            catch(NoSuchMethodException e)
+            {
+            }
+            if (compareClass != null)
+                Arrays.sort(list,compareClass);
+        }
+        else
+        {
+            CompareClass<T> compareClass = null;
+            try
+            {
+                compareClass = new CompareClass<T>(cls, defaultSortColumn, sortOrder);
+            }
+            catch(NoSuchMethodException e)
+            {
+            }
+            if (compareClass != null)
+                Arrays.sort(list,compareClass);
+        }
     }
     
     public static List<Predicate> ProcessFilters(String filters, CriteriaBuilder cb, Root<?> root, Class<?> cls, ObjectMapper objMapper)
@@ -126,5 +213,135 @@ public class Utility
             }
         }
         return predicateList;
+    }
+    
+    public static <T> List<T> ProcessFilters(Collection<T> list, String filters, Class<T> cls, ObjectMapper objMapper)
+    {
+        List<T> returnList = new ArrayList<>();
+        for(T item: list)
+        {
+            if (!filters.isEmpty())
+            {
+                JsonNode node = null;
+                try
+                {
+                     node = objMapper.readTree(filters);
+                }
+                catch (IOException ex)
+                {
+                    Logger.getLogger(Utility.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+
+                if (node != null)
+                {
+                    String fieldName;
+
+                    Iterator<String> iter = node.fieldNames();
+                    while(iter.hasNext() && (fieldName = iter.next()) != null )
+                    {
+                        JsonNode fieldNode = node.get(fieldName);
+                        if (fieldNode==null)
+                            continue;
+                        FilterData filterData = null;
+                        System.out.println("Field:" + fieldName + ", Data:" + fieldNode.toString());
+                        try
+                        {
+                            filterData = objMapper.readValue(fieldNode.toString(), FilterData.class);
+                        }
+                        catch(IOException e)
+                        {
+                            Logger.getLogger(Utility.class.getName()).log(Level.SEVERE, null, e);
+                            continue;
+                        }
+
+                        if ((filterData!=null) && (!filterData.getValue().isEmpty()))
+                        {
+                            try
+                            {
+                                Method method = cls.getMethod(NormalizeGetter(fieldName));
+                                if (method.getReturnType().isAssignableFrom(Double.class))
+                                    if (Objects.equals(method.invoke(item),Double.parseDouble(filterData.getValue())))
+                                        returnList.add(item);
+                                else if (method.getReturnType().isAssignableFrom(Float.class))
+                                    if (Objects.equals(method.invoke(item),Float.parseFloat(filterData.getValue())))
+                                        returnList.add(item);
+                                else if (method.getReturnType().isAssignableFrom(Long.class))
+                                    if (Objects.equals(method.invoke(item),Long.parseLong(filterData.getValue())))
+                                        returnList.add(item);
+                                else if (method.getReturnType().isAssignableFrom(Integer.class))
+                                    if (Objects.equals(method.invoke(item),Integer.parseInt(filterData.getValue())))
+                                        returnList.add(item);
+                                else if (method.getReturnType().isAssignableFrom(Short.class))
+                                    if (Objects.equals(method.invoke(item),Short.parseShort(filterData.getValue())))
+                                        returnList.add(item);
+                                else if (method.getReturnType().isAssignableFrom(Byte.class))
+                                    if (Objects.equals(method.invoke(item),Byte.parseByte(filterData.getValue())))
+                                        returnList.add(item);
+                                else if (method.getReturnType().isAssignableFrom(Boolean.class))
+                                    if (Objects.equals(method.invoke(item),Boolean.parseBoolean(filterData.getValue())))
+                                        returnList.add(item);
+                                else if (method.getReturnType().isAssignableFrom(String.class))
+                                {
+                                    if (filterData.getMatchMode().equals("contains"))
+                                    {
+                                        String value = (String)method.invoke(item);
+                                        if (value.contains(filterData.getValue()))
+                                            returnList.add(item);
+                                        
+                                    }
+                                    else if (filterData.getMatchMode().equals("startsWith"))
+                                    {
+                                        String value = (String)method.invoke(item);
+                                        if (value.startsWith(filterData.getValue()))
+                                            returnList.add(item);
+                                        
+                                    }
+                                    else if (filterData.getMatchMode().equals("endsWith"))
+                                    {
+                                        String value = (String)method.invoke(item);
+                                        if (value.endsWith(filterData.getValue()))
+                                            returnList.add(item);
+                                        
+                                    }
+                                }
+                            }
+                            catch(NumberFormatException e)
+                            {
+                                Logger.getLogger(Utility.class.getName()).log(Level.INFO, null, e);
+                            }
+                            catch (Exception ex)
+                            {
+                                Logger.getLogger(Utility.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+        return returnList;
+    }
+    
+    
+    public static UserInfo getUserByUsername(String username, UserInfoDAO userInfoDAO)
+    {
+        CriteriaBuilderCriteriaQueryRootTriple<UserInfo,UserInfo> triple = userInfoDAO.getCriteriaTriple();
+        CriteriaBuilder cb = triple.getCriteriaBuilder();
+        Root<UserInfo> root = triple.getRoot();
+        
+        Predicate pred = cb.equal(root.get(UserInfo_.username), username);
+        
+        List<UserInfo> list = userInfoDAO.findByCriteria(triple, null, 0, -1, pred);
+        if (list.isEmpty())
+            return null;
+        else
+            return list.get(0);
+    }
+    
+    public static void cleanUserInfo(UserInfo user)
+    {
+        user.setPassword("");
+        user.setPassword2("");
     }
 }

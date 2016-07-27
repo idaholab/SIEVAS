@@ -5,6 +5,7 @@
  */
 package gov.inl.LIVE.common;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -14,9 +15,9 @@ import java.util.List;
 public class JsonListResult<T> extends ITypeName
 {
     private long total;
-    private List<T> data;
+    private Collection<T> data;
 
-    public JsonListResult(long total, List<T> data)
+    public JsonListResult(long total, Collection<T> data)
     {
         this.total = total;
         this.data = data;
@@ -33,12 +34,12 @@ public class JsonListResult<T> extends ITypeName
         this.total = total;
     }
 
-    public List<T> getData()
+    public Collection<T> getData()
     {
         return data;
     }
 
-    public void setData(List<T> data)
+    public void setData(Collection<T> data)
     {
         this.data = data;
     }

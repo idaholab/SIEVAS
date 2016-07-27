@@ -11,11 +11,14 @@ import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Collection;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -84,7 +87,15 @@ public class UserInfo implements Serializable, IIdentifier<Long>
     @Column(name = "enabled")
     private boolean enabled;
     
-    @ManyToMany(mappedBy = "userInfoCollection")
+    //@ManyToMany(mappedBy = "userInfoCollection", cascade = CascadeType.MERGE)
+    @JoinTable(name = "user_info_permission_group", joinColumns =
+    {
+        @JoinColumn(name = "user_info_id", referencedColumnName = "id")
+    }, inverseJoinColumns =
+    {
+        @JoinColumn(name = "permission_group_id", referencedColumnName = "id")
+    })
+    @ManyToMany
     private Collection<PermissionGroup> permissionGroupCollection;
 
 
@@ -238,7 +249,7 @@ public class UserInfo implements Serializable, IIdentifier<Long>
     @Override
     public String toString()
     {
-        return "gov.inl.LIVE.entity.UserInfo[ id=" + id + " ]";
+        return "UserInfo[ id=" + id + ", username=" + username + " ]";
     }
 
     public Collection<PermissionGroup> getPermissionGroupCollection()

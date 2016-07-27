@@ -8,6 +8,8 @@ import { GroupComponent } from './group/group.component';
 import { GroupEditComponent } from './group/groupedit.component';
 import { UserComponent } from './user/user.component';
 import { UserEditComponent } from './user/useredit.component';
+import { SessionComponent } from './session/session.component';
+import { SessionEditComponent } from './session/sessionedit.component';
 
 
 export const routes: RouterConfig = [
@@ -55,6 +57,18 @@ export const routes: RouterConfig = [
     {
         path: 'users/edit/:id',
         component: UserEditComponent
+    },
+    {
+        path: 'sessions',
+        component: SessionComponent
+    },
+    {
+        path: 'sessions/create',
+        component: SessionEditComponent
+    },
+    {
+        path: 'sessions/edit/:id',
+        component: SessionEditComponent
     }
     
 ];

@@ -69,14 +69,7 @@ public class PermissionGroup implements Serializable,  IIdentifier<Long>
     private Collection<Permission> permissionCollection;
     
     @JsonIgnore
-    @JoinTable(name = "user_info_permission_group", joinColumns =
-    {
-        @JoinColumn(name = "permission_group_id", referencedColumnName = "id")
-    }, inverseJoinColumns =
-    {
-        @JoinColumn(name = "user_info_id", referencedColumnName = "id")
-    })
-    @ManyToMany
+    @ManyToMany(mappedBy = "permissionGroupCollection")
     private Collection<UserInfo> userInfoCollection;
 
     public PermissionGroup()
@@ -171,7 +164,8 @@ public class PermissionGroup implements Serializable,  IIdentifier<Long>
     @Override
     public String toString()
     {
-        return "gov.inl.LIVE.entity.PermissionGroup[ id=" + id + " ]";
+        return "PermissionGroup[ id=" + id + ", name=" + groupName 
+                    + ", users: " + userInfoCollection + " ]";
     }
     
 }

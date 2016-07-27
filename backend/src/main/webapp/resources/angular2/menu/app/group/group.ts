@@ -17,7 +17,7 @@ export class Group implements IIdentifier<number>, ITypeName
         if (data)
         {
             this.id = data.id;
-            this.groupName = data.permissionName;
+            this.groupName = data.groupName;
             this.description = data.description;
             this.permissionCollection = data.permissionCollection;
         }

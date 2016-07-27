@@ -57,6 +57,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
                         "/permissions","/permissions/**",
                         "/groups","/groups/**",
                         "/users","/users/**",
+                        "/sessions","/sessions/**",
                         "/resources/**", "/api/**", "/logout")
                 .authenticated()
                 .and()
