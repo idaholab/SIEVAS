@@ -150,9 +150,6 @@ public class LIVESessionController
     
     private boolean allowEdit(LIVESession session, UserInfo user)
     {
-        System.out.println("allowEdit");
-        System.out.println(session);
-        System.out.println(user);
         if (session == null)
             return false;
         if ((session.getOwner() == null) || (user == null))
@@ -169,14 +166,11 @@ public class LIVESessionController
         }
         if (session.getGroups()!=null)
         {
-            System.out.println("Checking groups");
             for(PermissionGroup group: session.getGroups())
             {
-                System.out.println("Checking group:" + group);
                 if (group.getUserInfoCollection()!=null)
                     for(UserInfo user2: group.getUserInfoCollection())
                     {
-                        System.out.println("Checking group user:" + user2.getUsername());
                         if ((user2!=null) && (Objects.equals(user2.getId(), user.getId())))
                             return true;
                     }
@@ -201,8 +195,10 @@ public class LIVESessionController
         List<LIVESession> filteredList = Utility.ProcessFilters(list, filters, LIVESession.class, objMapper);
         int total = filteredList.size();
         Utility.ProcessOrders(filteredList.toArray(new LIVESession [0]),LIVESession.class, sortField, sortOrder, "name", objMapper);
-        for(LIVESession session: filteredList)
+        filteredList.stream().forEach((session) ->
+        {
             cleanSession(session);
+        });
         
         return new ResponseEntity<>(objMapper.writeValueAsString(new JsonListResult<>(total, list)), HttpStatus.OK);
     }
@@ -232,6 +228,13 @@ public class LIVESessionController
         if (session == null)
             return new ResponseEntity<>(objMapper.writeValueAsString(""), HttpStatus.BAD_REQUEST);
         
+        for(PermissionGroup group: session.getGroups())
+        {
+            PermissionGroup group2 = permGroupDAO.findById(group.getId());
+            Hibernate.initialize(group2.getUserInfoCollection());
+            group.setUserInfoCollection(group2.getUserInfoCollection());
+        }
+        
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         if (!allowEdit(session, Utility.getUserByUsername(username, userInfoDAO)))
            return new ResponseEntity<>(objMapper.writeValueAsString(new JsonError("Permission Denied")), HttpStatus.BAD_REQUEST);
@@ -245,12 +248,7 @@ public class LIVESessionController
         if (count>0)
             return new ResponseEntity<>(objMapper.writeValueAsString(new JsonError("Duplicate session name")), HttpStatus.CONFLICT);
         
-        for(PermissionGroup group: session.getGroups())
-        {
-            PermissionGroup group2 = permGroupDAO.findById(group.getId());
-            Hibernate.initialize(group2.getUserInfoCollection());
-            group.setUserInfoCollection(group2.getUserInfoCollection());
-        }
+        
         sessionsMap.put(id, session);
         cleanSession(session);
         
