@@ -62,9 +62,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
                 .authenticated()
                 .and()
             
-            .csrf()
-                .csrfTokenRepository(csrfTokenRepository())
-                .and()
+            .csrf().disable()
+                //.csrfTokenRepository(csrfTokenRepository())
+                //.and()
             .addFilterAfter(new CsrfHeaderFilter(), CsrfFilter.class);
                 
             
