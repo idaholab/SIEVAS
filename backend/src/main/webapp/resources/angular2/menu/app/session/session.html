@@ -10,6 +10,8 @@
     <p-column field="id" header="ID" sortable="true" [filter]="true" filterMatchMode="contains"  [style]="{'width':'100px'}"></p-column>
     <p-column field="name" header="Name" sortable="true" [filter]="true" filterMatchMode="contains"></p-column>
     <p-column field="owner.username" header="Owner" sortable="true" [filter]="true" filterMatchMode="contains"></p-column>
+    <p-column field="controlStreamName" header="Control Topic" sortable="true" [filter]="true" filterMatchMode="contains"></p-column>
+    <p-column field="dataStreamName" header="Data Topic" sortable="true" [filter]="true" filterMatchMode="contains"></p-column>
     <p-column>
         <template let-perm="rowData">
             <button class="delete" (click)="onDelete(perm, $event)"></button>

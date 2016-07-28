@@ -12,6 +12,8 @@ export class LIVESession implements IIdentifier<number>, ITypeName
     users: User[] = [];
     groups: Group[] = [];
     typeName: string;
+    dataStreamName: string;
+    controlStreamName: string;
     
     constructor();
     constructor(data: any);
@@ -27,6 +29,10 @@ export class LIVESession implements IIdentifier<number>, ITypeName
                 this.users = data.users;
             if (data.groups)
                 this.groups = data.groups;
+            if (data.controlStreamName)
+                this.controlStreamName = data.controlStreamName;
+            if (data.dataStreamName)
+                this.dataStreamName = data.dataStreamName;
         }
         else
         {

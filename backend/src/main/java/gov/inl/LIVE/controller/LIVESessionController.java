@@ -15,11 +15,18 @@ import gov.inl.LIVE.common.Utility;
 import gov.inl.LIVE.entity.LIVESession;
 import gov.inl.LIVE.entity.PermissionGroup;
 import gov.inl.LIVE.entity.UserInfo;
+import gov.inl.LIVE.service.AMQSessionInfo;
+import gov.inl.LIVE.service.ActiveMQService;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.jms.JMSException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
@@ -58,9 +65,14 @@ public class LIVESessionController
     @Autowired
     private UserInfoController userInfoController;
     
-    @Autowired PermissionGroupDAO permGroupDAO;
+    @Autowired
+    private PermissionGroupDAO permGroupDAO;
+    
+    @Autowired
+    private ActiveMQService amqService;
     
     private HashMap<Long, LIVESession> sessionsMap = new HashMap<>();
+    
 
     private String getHome(){ return "home"; }
     
@@ -77,13 +89,15 @@ public class LIVESessionController
     public String getPermissionCreate() { return getHome(); }
     
     @PersistenceUnit
-    private EntityManagerFactory entityManagerFactory;
+    private final EntityManagerFactory entityManagerFactory;
     
     @Autowired
-    public LIVESessionController(UserInfoDAO userInfoDAO, EntityManagerFactory emf)
+    public LIVESessionController(UserInfoDAO userInfoDAO, EntityManagerFactory entityManagerFactory, ActiveMQService amqService, ObjectMapper objMapper)
     {
         this.userInfoDAO = userInfoDAO;
-        this.entityManagerFactory = emf;
+        this.entityManagerFactory = entityManagerFactory;
+        this.amqService = amqService;
+        this.objMapper = objMapper;
         setup();
     }
     
@@ -115,7 +129,18 @@ public class LIVESessionController
             Hibernate.initialize(group.getPermissionCollection());
         }
         LIVESession session = new LIVESession(1L, "test", user);
-        sessionsMap.put(session.getId(), session);
+        try
+        {
+            createLIVESession(session);
+        }
+        catch(JsonProcessingException e)
+        {
+            StringWriter sw = new StringWriter();
+                PrintWriter pw = new PrintWriter(sw);
+                e.printStackTrace(pw);
+                Logger.getLogger(LIVESessionController.class.getName()).log(Level.SEVERE, sw.toString());
+        }
+        //sessionsMap.put(session.getId(), session);
         
         unbindSession();
      
@@ -200,7 +225,7 @@ public class LIVESessionController
             cleanSession(session);
         });
         
-        return new ResponseEntity<>(objMapper.writeValueAsString(new JsonListResult<>(total, list)), HttpStatus.OK);
+        return new ResponseEntity<>(objMapper.writeValueAsString(new JsonListResult<>(total, filteredList)), HttpStatus.OK);
     }
     
     @RequestMapping(value = "/api/sessions/{id}", method = RequestMethod.GET, produces = "application/json")
@@ -283,6 +308,9 @@ public class LIVESessionController
         }
         sessionsMap.put(session.getId(), session);
         cleanSession(session);
+        AMQSessionInfo sessionInfo = amqService.addSession(session.getId());
+        session.setControlStreamName(sessionInfo.getControlTopicName());
+        session.setDataStreamName(sessionInfo.getDataTopicName());
         
         return new ResponseEntity<>(objMapper.writeValueAsString(session), HttpStatus.OK);
         
@@ -305,6 +333,7 @@ public class LIVESessionController
         if (!allowEdit(session, Utility.getUserByUsername(username, userInfoDAO)))
            return new ResponseEntity<>(objMapper.writeValueAsString(new JsonError("Permission Denied")), HttpStatus.BAD_REQUEST);
         
+        amqService.removeSession(id);
         sessionsMap.remove(id);
         return new ResponseEntity<>(objMapper.writeValueAsString(""), HttpStatus.OK);
         
