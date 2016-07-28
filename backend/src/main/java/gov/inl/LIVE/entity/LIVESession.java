@@ -20,6 +20,8 @@ public class LIVESession
     private UserInfo owner;
     private List<UserInfo> users = new ArrayList<>();
     private List<PermissionGroup> groups = new ArrayList<>();
+    private String dataStreamName;
+    private String controlStreamName;
 
     public LIVESession()
     {
@@ -130,6 +132,28 @@ public class LIVESession
     {
         this.groups = groups;
     }
+
+    public String getDataStreamName()
+    {
+        return dataStreamName;
+    }
+
+    public void setDataStreamName(String dataStreamName)
+    {
+        this.dataStreamName = dataStreamName;
+    }
+
+    public String getControlStreamName()
+    {
+        return controlStreamName;
+    }
+
+    public void setControlStreamName(String controlStreamName)
+    {
+        this.controlStreamName = controlStreamName;
+    }
+    
+    
     
     
     public String toString()
@@ -137,7 +161,9 @@ public class LIVESession
         return "ID: " + id + ", Name:" + name
                     + ", Owner:" + owner
                     + ", Users:" + users
-                    + ",Groups:" + groups;
+                    + ",Groups:" + groups
+                    + ", Control Stream Name:" + controlStreamName
+                    + ", Data Stream Name:" + dataStreamName;
     }
     
 }

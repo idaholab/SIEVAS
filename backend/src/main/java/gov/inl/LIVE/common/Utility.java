@@ -160,7 +160,6 @@ public class Utility
                     if (fieldNode==null)
                         continue;
                     FilterData filterData = null;
-                    System.out.println("Field:" + fieldName + ", Data:" + fieldNode.toString());
                     try
                     {
                         filterData = objMapper.readValue(fieldNode.toString(), FilterData.class);
@@ -220,6 +219,7 @@ public class Utility
         List<T> returnList = new ArrayList<>();
         for(T item: list)
         {
+            boolean match = true;
             if (!filters.isEmpty())
             {
                 JsonNode node = null;
@@ -244,7 +244,6 @@ public class Utility
                         if (fieldNode==null)
                             continue;
                         FilterData filterData = null;
-                        System.out.println("Field:" + fieldName + ", Data:" + fieldNode.toString());
                         try
                         {
                             filterData = objMapper.readValue(fieldNode.toString(), FilterData.class);
@@ -257,54 +256,57 @@ public class Utility
 
                         if ((filterData!=null) && (!filterData.getValue().isEmpty()))
                         {
+                            match = false;
                             try
                             {
                                 Method method = cls.getMethod(NormalizeGetter(fieldName));
-                                if (method.getReturnType().isAssignableFrom(Double.class))
-                                    if (Objects.equals(method.invoke(item),Double.parseDouble(filterData.getValue())))
-                                        returnList.add(item);
-                                else if (method.getReturnType().isAssignableFrom(Float.class))
-                                    if (Objects.equals(method.invoke(item),Float.parseFloat(filterData.getValue())))
-                                        returnList.add(item);
-                                else if (method.getReturnType().isAssignableFrom(Long.class))
-                                    if (Objects.equals(method.invoke(item),Long.parseLong(filterData.getValue())))
-                                        returnList.add(item);
-                                else if (method.getReturnType().isAssignableFrom(Integer.class))
-                                    if (Objects.equals(method.invoke(item),Integer.parseInt(filterData.getValue())))
-                                        returnList.add(item);
-                                else if (method.getReturnType().isAssignableFrom(Short.class))
-                                    if (Objects.equals(method.invoke(item),Short.parseShort(filterData.getValue())))
-                                        returnList.add(item);
-                                else if (method.getReturnType().isAssignableFrom(Byte.class))
-                                    if (Objects.equals(method.invoke(item),Byte.parseByte(filterData.getValue())))
-                                        returnList.add(item);
-                                else if (method.getReturnType().isAssignableFrom(Boolean.class))
-                                    if (Objects.equals(method.invoke(item),Boolean.parseBoolean(filterData.getValue())))
-                                        returnList.add(item);
-                                else if (method.getReturnType().isAssignableFrom(String.class))
+                                if (method.getReturnType().isAssignableFrom(String.class))
                                 {
                                     if (filterData.getMatchMode().equals("contains"))
-                                    {
+                                    {    
                                         String value = (String)method.invoke(item);
                                         if (value.contains(filterData.getValue()))
-                                            returnList.add(item);
+                                            match = true;
                                         
                                     }
                                     else if (filterData.getMatchMode().equals("startsWith"))
                                     {
                                         String value = (String)method.invoke(item);
                                         if (value.startsWith(filterData.getValue()))
-                                            returnList.add(item);
+                                            match = true;
                                         
                                     }
                                     else if (filterData.getMatchMode().equals("endsWith"))
                                     {
                                         String value = (String)method.invoke(item);
                                         if (value.endsWith(filterData.getValue()))
-                                            returnList.add(item);
+                                            match = true;
                                         
                                     }
                                 }
+                                else if (method.getReturnType().isAssignableFrom(Long.class))
+                                    if (Objects.equals(method.invoke(item),Long.parseLong(filterData.getValue())))
+                                        match = true;
+                                else if (method.getReturnType().isAssignableFrom(Integer.class))
+                                    if (Objects.equals(method.invoke(item),Integer.parseInt(filterData.getValue())))
+                                        match = true;
+                                else if (method.getReturnType().isAssignableFrom(Short.class))
+                                    if (Objects.equals(method.invoke(item),Short.parseShort(filterData.getValue())))
+                                        match = true;
+                                else if (method.getReturnType().isAssignableFrom(Byte.class))
+                                    if (Objects.equals(method.invoke(item),Byte.parseByte(filterData.getValue())))
+                                        match = true;
+                                else if (method.getReturnType().isAssignableFrom(Boolean.class))
+                                    if (Objects.equals(method.invoke(item),Boolean.parseBoolean(filterData.getValue())))
+                                        match = true;
+                                else if (method.getReturnType().isAssignableFrom(Double.class))
+                                    if (Objects.equals(method.invoke(item),Double.parseDouble(filterData.getValue())))
+                                        match = true;
+                                else if (method.getReturnType().isAssignableFrom(Float.class))
+                                    if (Objects.equals(method.invoke(item),Float.parseFloat(filterData.getValue())))
+                                        match = true;
+                                
+                                
                             }
                             catch(NumberFormatException e)
                             {
@@ -315,10 +317,19 @@ public class Utility
                                 Logger.getLogger(Utility.class.getName()).log(Level.SEVERE, null, ex);
                             }
                         }
+                        else
+                            match = true;
+                        
+                        if (!match)
+                            break;
                     }
 
                 }
             }
+            else
+                match = true;
+            if (match)
+                returnList.add(item);
         }
         return returnList;
     }
