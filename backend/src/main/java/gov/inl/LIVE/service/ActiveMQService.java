@@ -82,9 +82,10 @@ public class ActiveMQService implements MessageListener
     {
         
         AMQSessionInfo sessionInfo = new AMQSessionInfo(sessionId);
-        sessionInfo.setControlTopicName(CONTROL_PREFIX + sessionId);
+        
         try
         {
+            sessionInfo.setControlTopicName(CONTROL_PREFIX + sessionId);
             sessionInfo.setControlDestination(session.createTopic(sessionInfo.getControlTopicName()));
             sessionInfo.setControlProducer(session.createProducer(sessionInfo.getControlDestination()));
             sessionInfo.setControlConsumer(session.createConsumer(sessionInfo.getControlDestination()));

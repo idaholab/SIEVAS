@@ -218,6 +218,12 @@ public class LIVESessionController
         Collection<LIVESession> list = sessionsMap.values();
         
         List<LIVESession> filteredList = Utility.ProcessFilters(list, filters, LIVESession.class, objMapper);
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserInfo currentUser = Utility.getUserByUsername(username, userInfoDAO);
+        for(int ii=filteredList.size()-1;ii>-1;ii--)
+            if (!allowEdit(filteredList.get(ii), currentUser))
+                filteredList.remove(ii);
+        
         int total = filteredList.size();
         Utility.ProcessOrders(filteredList.toArray(new LIVESession [0]),LIVESession.class, sortField, sortOrder, "name", objMapper);
         filteredList.stream().forEach((session) ->
@@ -237,6 +243,10 @@ public class LIVESessionController
             return new ResponseEntity<>(objMapper.writeValueAsString(""), HttpStatus.NOT_FOUND);
         else
         {
+            String username = SecurityContextHolder.getContext().getAuthentication().getName();
+            UserInfo currentUser = Utility.getUserByUsername(username, userInfoDAO);
+            if (!allowEdit(session, currentUser))
+                return new ResponseEntity<>(objMapper.writeValueAsString(""), HttpStatus.BAD_REQUEST);
             cleanSession(session);
             return new ResponseEntity<>(objMapper.writeValueAsString(session), HttpStatus.OK);
         }
