@@ -33,7 +33,6 @@ export class AppComponent implements OnInit, AfterViewInit
         this.renderer.invokeElementMethod(this.input.nativeElement,'focus');   
     }
     
-   
     constructor(public http: Http, public renderer: Renderer, public elementRef: ElementRef)
     {
         

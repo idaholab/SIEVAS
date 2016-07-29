@@ -22,10 +22,9 @@ import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 
 /**
- *
+ * Class for security config for spring security
  * @author monejh
  */
-
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter
@@ -35,7 +34,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
     
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
-    
+   
+    /***
+     * Configures the http security options
+     * @param http
+     * @throws Exception 
+     */
     @Override
     protected void configure(HttpSecurity http) throws Exception
     {
@@ -70,6 +74,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
             
     }
     
+    /***
+     * Gets the CsrfTokenRepo. Sets the correct header needed.
+     * @return 
+     */
     private CsrfTokenRepository csrfTokenRepository()
     {
         HttpSessionCsrfTokenRepository repository = new HttpSessionCsrfTokenRepository();
@@ -77,12 +85,21 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
         return repository;
     }
     
+    /***
+     * Sets the global security to use our details service
+     * @param auth The builder for authentication
+     * @throws Exception 
+     */
     @Autowired
     public void configureGlobalSecurity(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService);
         auth.authenticationProvider(authenticationProvider());
     }
     
+    /***
+     * Bean for the authentication provider.
+     * @return The auth provider that uses the BCrypt encoder and the user details service.
+     */
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
@@ -91,9 +108,4 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
         return authenticationProvider;
     }
 
-//    @Autowired
-//    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception
-//    {
-//        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
-//    }
 }

@@ -7,14 +7,13 @@ package gov.inl.live.livetestclient;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 /**
- *
+ * Session info, copied from backend and user/group info removed for ease.
  * @author monejh
  */
+//this ignores the user/group/owner fields
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class LIVESession
 {

@@ -34,7 +34,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 
 /**
- *
+ * REST Controller for permission groups.
  * @author monejh
  */
 @Controller
@@ -46,9 +46,13 @@ public class PermissionGroupController
     @Autowired
     PermissionGroupDAO permissionGroupDAO;
     
+    /***
+     * Gets the home URL.
+     * @return 
+     */
+    private String getHome(){ return Utility.getHomeURL(); }
     
-    private String getHome(){ return "home"; }
-    
+    //next 4 are for angular 2 routes
     @RequestMapping(value = "/groups", method = RequestMethod.GET)
     public String getPermissionGroups() { return getHome(); }
     
@@ -62,7 +66,17 @@ public class PermissionGroupController
     public String getPermissionGroupCreate() { return getHome(); }
     
     
-    
+    /***
+     * Gets the list of permission groups by criteria.
+     * @param start The start row
+     * @param count The number of records to get.
+     * @param sortField The field name to sort on.
+     * @param sortOrder The sort order to use, 1 = ascending, -1 = descending.
+     * @param multiSortMeta The multi sort info, currently not sent by PrimeNG.
+     * @param filters The filter info as a JSON string.
+     * @return The list result or and error as JSON.
+     * @throws JsonProcessingException 
+     */
     @RequestMapping(value = "/api/permissiongroups/", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<String> getPermissionGroups(
             @RequestParam(name = "start", defaultValue = "0") int start,
@@ -80,13 +94,6 @@ public class PermissionGroupController
         Root<PermissionGroup> root = triple.getRoot();
         List<PermissionGroup> list = null;
         long total = 0;
-        
-        System.out.println("Start:" + start);
-        System.out.println("Count:" + count);
-        System.out.println("sortField:" + sortField);
-        System.out.println("sortOrder:" + sortOrder);
-        System.out.println("multiSortMeta:" + multiSortMeta);
-        System.out.println("filters:" + filters);
         
         List<Predicate> predicateList = Utility.ProcessFilters(filters, cb, root, PermissionGroup.class, objMapper);
         
@@ -111,6 +118,12 @@ public class PermissionGroupController
         return new ResponseEntity<>(objMapper.writeValueAsString(new JsonListResult<>(total, list)), HttpStatus.OK);
     }
     
+    /***
+     * Handles getting permission group by id.
+     * @param id The ID to get.
+     * @return The group or the error message.
+     * @throws JsonProcessingException 
+     */
     @RequestMapping(value = "/api/permissiongroups/{id}", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<String> getPermissionGroupById(@PathVariable(value = "id") long id)
             throws JsonProcessingException
@@ -129,6 +142,14 @@ public class PermissionGroupController
         
     }
     
+    /***
+     * Updates the permission group.
+     * @param id The ID of the group
+     * @param group The updated group
+     * @return The saved group or the error message.
+     * @throws JsonProcessingException
+     * @throws IOException 
+     */
     @Transactional(readOnly = false)
     @RequestMapping(value = "/api/permissiongroups/{id}", method = RequestMethod.PUT, produces = "application/json"
             )
@@ -153,6 +174,12 @@ public class PermissionGroupController
         
     }
     
+    /***
+     * Creates a new permission group
+     * @param group The group to create
+     * @return The created group with new ID or the error as JSON.
+     * @throws JsonProcessingException 
+     */
     @Transactional(readOnly = false)
     @RequestMapping(value = "/api/permissiongroups/", method = RequestMethod.POST, produces = "application/json")
     public ResponseEntity<String> createPermissionGroup(@RequestBody PermissionGroup group)
@@ -173,7 +200,13 @@ public class PermissionGroupController
         
     }
     
-    
+    /***
+     * Deletes a given permission group.
+     * @param id The ID of the group to delete.
+     * @return Empty result if success, JsonError if there is any error.
+     * @throws JsonProcessingException
+     * @throws IOException 
+     */
     @Transactional(readOnly = false)
     @RequestMapping(value = "/api/permissiongroups/{id}", method = RequestMethod.DELETE, produces = "application/json"
             )
@@ -191,6 +224,13 @@ public class PermissionGroupController
         
     }
     
+    /***
+     * Handles any exceptions
+     * @param req The request object.
+     * @param exception The exception that occurred.
+     * @return The JsonError as JSON for the user.
+     * @throws JsonProcessingException 
+     */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleError(HttpServletRequest req, Exception exception) throws JsonProcessingException
     {

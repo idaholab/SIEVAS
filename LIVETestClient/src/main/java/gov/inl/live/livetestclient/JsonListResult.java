@@ -6,10 +6,9 @@
 package gov.inl.live.livetestclient;
 
 import java.util.Collection;
-import java.util.List;
 
 /**
- *
+ * Simple list result, copied from backend.
  * @author monejh
  */
 public class JsonListResult<T> extends ITypeName

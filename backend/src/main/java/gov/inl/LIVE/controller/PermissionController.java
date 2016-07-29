@@ -14,10 +14,6 @@ import gov.inl.LIVE.common.JsonListResult;
 import gov.inl.LIVE.common.Utility;
 import gov.inl.LIVE.entity.Permission;
 import java.io.IOException;
-import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Order;
@@ -38,7 +34,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 
 /**
- *
+ * REST Controller for permissions
  * @author monejh
  */
 @Controller
@@ -51,8 +47,13 @@ public class PermissionController
     PermissionDAO permissionDAO;
     
     
-    private String getHome(){ return "home"; }
+    /***
+     * Gets the home URL.
+     * @return The URL of the home page.
+     */
+    private String getHome(){ return Utility.getHomeURL(); }
     
+    //Next four handle the various routes for angular 2.
     @RequestMapping(value = "/permissions", method = RequestMethod.GET)
     public String getPermissions() { return getHome(); }
     
@@ -66,7 +67,17 @@ public class PermissionController
     public String getPermissionCreate() { return getHome(); }
     
     
-    
+    /***
+     * Gets the listing of permissions
+     * @param start The start row.
+     * @param count The number of records to get.
+     * @param sortField The field to sort on.
+     * @param sortOrder The order of the sort. 1 = ascending, -1 = descending
+     * @param multiSortMeta
+     * @param filters
+     * @return
+     * @throws JsonProcessingException 
+     */
     @RequestMapping(value = "/api/permissions/", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<String> getPermissions(
             @RequestParam(name = "start", defaultValue = "0") int start,
@@ -78,12 +89,6 @@ public class PermissionController
             )
             throws JsonProcessingException
     {
-        System.out.println("Start:" + start);
-        System.out.println("Count:" + count);
-        System.out.println("sortField:" + sortField);
-        System.out.println("sortOrder:" + sortOrder);
-        System.out.println("multiSortMeta:" + multiSortMeta);
-        System.out.println("filters:" + filters);
         
         CriteriaBuilderCriteriaQueryRootTriple<Permission,Permission> triple = permissionDAO.getCriteriaTriple();
         CriteriaBuilder cb = triple.getCriteriaBuilder();
@@ -114,6 +119,12 @@ public class PermissionController
         return new ResponseEntity<>(objMapper.writeValueAsString(new JsonListResult<>(total, list)), HttpStatus.OK);
     }
     
+    /***
+     * Gets a permission by id.
+     * @param id The id of the permission to get.
+     * @return The permission has JSON or the error result.
+     * @throws JsonProcessingException 
+     */
     @RequestMapping(value = "/api/permissions/{id}", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<String> getPermissionById(@PathVariable(value = "id") long id)
             throws JsonProcessingException
@@ -132,6 +143,14 @@ public class PermissionController
         
     }
     
+    /***
+     * Updates a permissions values.
+     * @param id The ID of the permission to update.
+     * @param perm The permission's new values.
+     * @return The updated permission object or the error that occurred.
+     * @throws JsonProcessingException
+     * @throws IOException 
+     */
     @Transactional(readOnly = false)
     @RequestMapping(value = "/api/permissions/{id}", method = RequestMethod.PUT, produces = "application/json"
             )
@@ -156,6 +175,13 @@ public class PermissionController
         
     }
     
+    /***
+     * Creates a new permission.
+     * @param perm The permission object to create.
+     * @return The created permission object or the error that occurred in
+     *              processing.
+     * @throws JsonProcessingException 
+     */
     @Transactional(readOnly = false)
     @RequestMapping(value = "/api/permissions/", method = RequestMethod.POST, produces = "application/json")
     public ResponseEntity<String> createPermission(@RequestBody Permission perm)
@@ -176,7 +202,13 @@ public class PermissionController
         
     }
     
-    
+    /***
+     * Deletes a given permission.
+     * @param id The ID of the permission to delete.
+     * @return Nothing if no error, otherwise the error object.
+     * @throws JsonProcessingException
+     * @throws IOException 
+     */
     @Transactional(readOnly = false)
     @RequestMapping(value = "/api/permissions/{id}", method = RequestMethod.DELETE, produces = "application/json"
             )
@@ -194,6 +226,13 @@ public class PermissionController
         
     }
     
+    /***
+     * Handles any exception in processing above.
+     * @param req The request object.
+     * @param exception The exception that occurred.
+     * @return The JsonError message for the user.
+     * @throws JsonProcessingException 
+     */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleError(HttpServletRequest req, Exception exception) throws JsonProcessingException
     {

@@ -35,11 +35,36 @@ import javax.persistence.criteria.Root;
  */
 public class Utility
 {
+    
+    /***
+     * Returns the home url jsp page
+     * @return path to the home page
+     */
+    public static String getHomeURL()
+    {
+        return "home";
+    }
+    
+    /***
+     * Normalizes a getter to be camel case. For example rightName => getRightName
+     * @param field The string to normalize
+     * @return The normalized getter
+     */
     private static String NormalizeGetter(String field)
     {
         return "get"+ field.substring(0,1).toUpperCase() + field.substring(1);
     }
     
+    /***
+     * Handles the setting up of the order for a SQL query
+     * @param sortField The field to sort on.
+     * @param sortOrder The order of the sort. If 1, ascending, or -1 for descending
+     * @param cb The CritierBuilder object to use
+     * @param root The Root object to use
+     * @param defaultSortColumn The default sort column if none is given
+     * @param objMapper The ObjectMapper class to use
+     * @return A list of orders for the query
+     */
     public static List<Order> ProcessOrders(String sortField, int sortOrder,CriteriaBuilder cb, Root<?> root, String defaultSortColumn, ObjectMapper objMapper)
     {
         List<Order> orderList = new ArrayList<>();
@@ -58,12 +83,23 @@ public class Utility
     }
     
     
+    /***
+     * Implements the comparison for sorting a list
+     * @param <T> The type to compare
+     */
     public static class CompareClass<T> implements Comparator<T>
     {
         private String fieldName;
         private int sortOrder;
         private Method method;
 
+        /***
+         * Constructor
+         * @param cls The class to compare
+         * @param fieldName The field name to compare on
+         * @param sortOrder The order to use. 1 = ascending, -1 = descending
+         * @throws NoSuchMethodException 
+         */
         public CompareClass(Class<T> cls, String fieldName, int sortOrder) throws NoSuchMethodException
         {
             this.fieldName = fieldName;
@@ -72,7 +108,12 @@ public class Utility
             
         }
         
-
+        /***
+         * Compares the two objects using the fieldName and sortOrder when initialized
+         * @param o1
+         * @param o2
+         * @return 
+         */
         @Override
         public int compare(T o1, T o2)
         {
@@ -101,7 +142,16 @@ public class Utility
         
     }
     
-    
+    /***
+     * Process a raw list of orders for sorting in memory
+     * @param <T> The generic
+     * @param list THe list of objects to sort
+     * @param cls The class type of the object. Should be type T. 
+     * @param sortField The sort field to use
+     * @param sortOrder The order to use for sorting. 1 = ascending, -1 = descending
+     * @param defaultSortColumn The default column to use for sorting
+     * @param objMapper The ObjectMapper to use
+     */
     public static <T> void ProcessOrders(T[] list, Class<T> cls, String sortField, int sortOrder, String defaultSortColumn, ObjectMapper objMapper)
     {
         List<Order> orderList = new ArrayList<>();
@@ -133,6 +183,16 @@ public class Utility
         }
     }
     
+    
+    /***
+     * Processes the filters based by angular2.
+     * @param filters The filter object as json string
+     * @param cb The CriteriaBuilder to use
+     * @param root The Root to use
+     * @param cls The class to use for the object
+     * @param objMapper The ObjectMapper to use
+     * @return A list of Predicates for running a hibernate query.
+     */
     public static List<Predicate> ProcessFilters(String filters, CriteriaBuilder cb, Root<?> root, Class<?> cls, ObjectMapper objMapper)
     {
         List<Predicate> predicateList = new ArrayList<>();
@@ -214,6 +274,15 @@ public class Utility
         return predicateList;
     }
     
+    /***
+     * Process in memory filters for angular2.
+     * @param <T> Object type to filter
+     * @param list The list of objects to filter
+     * @param filters The filters as a json string
+     * @param cls The class type to filter. Should be type T.
+     * @param objMapper The ObjectMapper to use.
+     * @return A filtered list.
+     */
     public static <T> List<T> ProcessFilters(Collection<T> list, String filters, Class<T> cls, ObjectMapper objMapper)
     {
         List<T> returnList = new ArrayList<>();
@@ -334,7 +403,12 @@ public class Utility
         return returnList;
     }
     
-    
+    /***
+     * Gets the user object by username.
+     * @param username THe username to search for.
+     * @param userInfoDAO The DAO object to use.
+     * @return The user found or null if not found.
+     */
     public static UserInfo getUserByUsername(String username, UserInfoDAO userInfoDAO)
     {
         CriteriaBuilderCriteriaQueryRootTriple<UserInfo,UserInfo> triple = userInfoDAO.getCriteriaTriple();
@@ -350,6 +424,10 @@ public class Utility
             return list.get(0);
     }
     
+    /***
+     * Cleans out sensitive user information from the user object.
+     * @param user The user object to sanitize
+     */
     public static void cleanUserInfo(UserInfo user)
     {
         user.setPassword("");

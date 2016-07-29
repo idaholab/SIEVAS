@@ -19,7 +19,7 @@ import javax.jms.Session;
 import javax.jms.TextMessage;
 
 /**
- *
+ * Class to handle control messages for clients
  * @author monejh
  */
 public class AMQControlMessageConsumer implements MessageListener, Runnable
@@ -30,18 +30,30 @@ public class AMQControlMessageConsumer implements MessageListener, Runnable
     private boolean running = false;
     private ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
     
+    /***
+     * Constructor for consumer
+     * @param producer The producer for the topic.
+     * @param session The session for AMQ.
+     */
     public AMQControlMessageConsumer(MessageProducer producer, Session session)
     {
         this.producer = producer;
         this.session = session;
     }
     
+    /***
+     * Handles a new control message. Does nothing now.
+     * @param msg The message received.
+     */
     @Override
     public void onMessage(Message msg)
     {
 //        Logger.getLogger(AMQControlMessageConsumer.class.getName()).log(Level.INFO, "Client CONTROL Got message " + msg);
     }
 
+    /***
+     * Starts the background thread for running. Sends a ping message.
+     */
     @Override
     public void run()
     {
@@ -85,6 +97,9 @@ public class AMQControlMessageConsumer implements MessageListener, Runnable
         
     }
     
+    /***
+     * Stops the background thread.
+     */
     public void stop()
     {
         Logger.getLogger(AMQControlMessageConsumer.class.getName()).log(Level.INFO, "Stopping Client Control Thread");

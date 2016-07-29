@@ -37,7 +37,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 
 /**
- *
+ * REST Controller for UserInfo objects.
  * @author monejh
  */
 @Controller
@@ -52,9 +52,13 @@ public class UserInfoController
     @Autowired
     BCryptPasswordEncoder encoder;
     
+    /***
+     * Gets the home URL
+     * @return The home URL JSP.
+     */
+    private String getHome(){ return Utility.getHomeURL(); }
     
-    private String getHome(){ return "home"; }
-    
+    //Next 4 handle the routes for angular 2.
     @RequestMapping(value = "/users", method = RequestMethod.GET)
     public String getUsers() { return getHome(); }
     
@@ -68,7 +72,17 @@ public class UserInfoController
     public String getUserCreate() { return getHome(); }
     
     
-    
+    /***
+     * Handles getting a list of users.
+     * @param start The start row.
+     * @param count The count of the records to get.
+     * @param sortField The field name to sort.
+     * @param sortOrder The order of the sort, 1 = ascending, -1 = descending.
+     * @param multiSortMeta The multi sort, not used by PrimeNG now.
+     * @param filters The filter info as a JSON string.
+     * @return The list of objects or error as JSON.
+     * @throws JsonProcessingException 
+     */
     @RequestMapping(value = "/api/users/", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<String> getUsers(
             @RequestParam(name = "start", defaultValue = "0") int start,
@@ -111,6 +125,13 @@ public class UserInfoController
         return new ResponseEntity<>(objMapper.writeValueAsString(new JsonListResult<>(total, list)), HttpStatus.OK);
     }
     
+    
+    /***
+     * Gets a user by id
+     * @param id The ID of the user.
+     * @return THe user found or the error as JSON.
+     * @throws JsonProcessingException 
+     */
     @RequestMapping(value = "/api/users/{id}", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<String> getUserById(@PathVariable(value = "id") long id)
             throws JsonProcessingException
@@ -132,6 +153,16 @@ public class UserInfoController
         
     }
     
+    /***
+     * Updates the given user.
+     * @param id The ID of the user to update.
+     * @param user The values for the user to update to. If password is empty,
+     *              no password is changed. If password is not empty, it is
+     *              validated against password2 and then encrypted.
+     * @return The updated user or the error as JSON.
+     * @throws JsonProcessingException
+     * @throws IOException 
+     */
     @Transactional(readOnly = false)
     @RequestMapping(value = "/api/users/{id}", method = RequestMethod.PUT, produces = "application/json"
             )
@@ -168,6 +199,13 @@ public class UserInfoController
         
     }
     
+    /***
+     * Creates a new user with given values.
+     * @param user The user to create. Validates password and password2 
+     *              and username.
+     * @return The created user with the new ID or an error as JSON.
+     * @throws JsonProcessingException 
+     */
     @Transactional(readOnly = false)
     @RequestMapping(value = "/api/users/", method = RequestMethod.POST, produces = "application/json")
     public ResponseEntity<String> createUser(@RequestBody UserInfo user)
@@ -194,7 +232,14 @@ public class UserInfoController
         
     }
     
-    
+    /***
+     * Deletes the given user.
+     * @param id The ID of the user to delete.
+     * @return Empty result on success or error returned as JSON. Will not 
+     *              allow the current user to delete themselves.
+     * @throws JsonProcessingException
+     * @throws IOException 
+     */
     @Transactional(readOnly = false)
     @RequestMapping(value = "/api/users/{id}", method = RequestMethod.DELETE, produces = "application/json"
             )
@@ -216,6 +261,13 @@ public class UserInfoController
         
     }
     
+    /***
+     * Handles the exceptions from above.
+     * @param req The request object.
+     * @param exception The exception that occurred.
+     * @return The error as JSON object.
+     * @throws JsonProcessingException 
+     */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleError(HttpServletRequest req, Exception exception) throws JsonProcessingException
     {

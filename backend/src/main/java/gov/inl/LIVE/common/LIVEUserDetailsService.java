@@ -29,7 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 /**
- *
+ * Class to handle user authentication for Spring Security.
  * @author monejh
  */
 @Component
@@ -38,6 +38,12 @@ public class LIVEUserDetailsService implements UserDetailsService
     @Autowired
     private UserInfoDAO userInfoDAO;
     
+    /***
+     * Loads a user by username.
+     * @param username The username to search.
+     * @return The user found. Throws UsernameNotFoundException when not found and not null.
+     * @throws UsernameNotFoundException 
+     */
     @Transactional
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException

@@ -6,7 +6,7 @@
 package gov.inl.LIVE.common;
 
 /**
- *
+ * Class that implements the default type name.
  * @author monejh
  */
 public abstract class ITypeName

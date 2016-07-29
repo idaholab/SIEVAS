@@ -6,7 +6,7 @@
 package gov.inl.LIVE.common;
 
 /**
- *
+ * Interface for identifiers
  * @author monejh
  */
 

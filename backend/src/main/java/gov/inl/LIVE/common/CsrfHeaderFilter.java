@@ -16,12 +16,20 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.WebUtils;
 
 /**
- *
+ * Class to handle the CSRF headers
  * @author monejh
  */
 public class CsrfHeaderFilter extends OncePerRequestFilter
 {
 
+    /***
+     * Handles the setting of the cookie for the CSRF token.
+     * @param request The request object
+     * @param response The response object.
+     * @param filterChain The filterChain being used.
+     * @throws ServletException
+     * @throws IOException 
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request,
             HttpServletResponse response, FilterChain filterChain)

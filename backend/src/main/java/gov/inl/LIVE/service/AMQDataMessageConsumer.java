@@ -19,7 +19,7 @@ import javax.jms.Session;
 import javax.jms.TextMessage;
 
 /**
- *
+ * Handles the data messages from clients.
  * @author monejh
  */
 public class AMQDataMessageConsumer implements MessageListener, Runnable
@@ -30,18 +30,30 @@ public class AMQDataMessageConsumer implements MessageListener, Runnable
     private boolean running = false;
     private ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
     
+    /***
+     * The message
+     * @param producer The producer for the topic.
+     * @param session The AMQ session object.
+     */
     public AMQDataMessageConsumer(MessageProducer producer, Session session)
     {
         this.producer = producer;
         this.session = session;
     }
     
+    /***
+     * Handles the data messages from clients
+     * @param msg The message received.
+     */
     @Override
     public void onMessage(Message msg)
     {
         //Logger.getLogger(AMQDataMessageConsumer.class.getName()).log(Level.INFO, "Client DATA Got message" + msg);
     }
 
+    /***
+     * Handles the background thread for the consumer. Sends a ping message.
+     */
     @Override
     public void run()
     {
@@ -84,6 +96,9 @@ public class AMQDataMessageConsumer implements MessageListener, Runnable
         Logger.getLogger(AMQDataMessageConsumer.class.getName()).log(Level.INFO, "Stopped Client Data Thread");
     }
     
+    /***
+     * Stops the background thread for the data consumer.
+     */
     public void stop()
     {
         Logger.getLogger(AMQDataMessageConsumer.class.getName()).log(Level.INFO, "Stopping Client Data Thread");
