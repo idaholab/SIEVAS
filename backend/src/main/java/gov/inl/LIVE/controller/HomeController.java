@@ -5,12 +5,13 @@
  */
 package gov.inl.LIVE.controller;
 
+import gov.inl.LIVE.common.Utility;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
- *
+ * Handles the home page
  * @author monejh
  */
 @Controller
@@ -19,13 +20,13 @@ public class HomeController
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String getHome()
     {
-        return "home";
+        return Utility.getHomeURL();
     }
     
     @RequestMapping(value = "/menu", method = RequestMethod.GET)
     public String getMenu()
     {
-        return "home";
+        return Utility.getHomeURL();
     }
     
     

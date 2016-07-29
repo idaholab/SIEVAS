@@ -11,7 +11,7 @@ import javax.jms.MessageConsumer;
 import javax.jms.MessageProducer;
 
 /**
- *
+ * Basic session info for ActiveMQ.
  * @author monejh
  */
 public class AMQSessionInfo

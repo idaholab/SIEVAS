@@ -54,6 +54,7 @@ public class UserInfo implements Serializable, IIdentifier<Long>
     @Column(name = "password")
     private String password;
     
+    //needed for password validation, not persisted
     @Transient
     private String password2 = "";
     

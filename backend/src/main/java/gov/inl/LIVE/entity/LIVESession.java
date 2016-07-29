@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- *
+ * LIVE2 Session object for connecting.
  * @author monejh
  */
 public class LIVESession
@@ -23,10 +23,19 @@ public class LIVESession
     private String dataStreamName;
     private String controlStreamName;
 
+    /***
+     * Default contructor, does nothing.
+     */
     public LIVESession()
     {
     }
 
+    /***
+     * Creates session with id, name, and owner.
+     * @param id The ID to use. 
+     * @param name The name to use.
+     * @param owner  The owner of the session.
+     */
     public LIVESession(Long id, String name, UserInfo owner)
     {
         this.id = id;
@@ -34,13 +43,18 @@ public class LIVESession
         this.owner = owner;
     }
 
-    
+    /***
+     * Create session with id and name.
+     * @param id The ID of the session.
+     * @param name THe name of the session.
+     */
     public LIVESession(Long id, String name)
     {
         this.id = id;
         this.name = name;
     }
 
+    
     public UserInfo getOwner()
     {
         return owner;
@@ -133,29 +147,44 @@ public class LIVESession
         this.groups = groups;
     }
 
+    /***
+     * Gets the data stream name for ActiveMQ.
+     * @return The name of the data stream.
+     */
     public String getDataStreamName()
     {
         return dataStreamName;
     }
 
+    /***
+     * Sets the data stream name for ActiveMQ.
+     * @param dataStreamName data stream name
+     */
     public void setDataStreamName(String dataStreamName)
     {
         this.dataStreamName = dataStreamName;
     }
 
+    /***
+     * Gets the control stream name for ActiveMQ.
+     * @return The name of the control stream.
+     */
     public String getControlStreamName()
     {
         return controlStreamName;
     }
 
+    /***
+     * Sets the control stream name for ActiveMQ.
+     * @param controlStreamName Control stream name to use.
+     */
     public void setControlStreamName(String controlStreamName)
     {
         this.controlStreamName = controlStreamName;
     }
     
     
-    
-    
+    @Override
     public String toString()
     {
         return "ID: " + id + ", Name:" + name

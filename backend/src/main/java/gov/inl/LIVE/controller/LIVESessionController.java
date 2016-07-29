@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.jms.JMSException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
@@ -50,7 +49,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 
 /**
- *
+ * REST Controller for LIVESession information. In-memory.
  * @author monejh
  */
 @Controller
@@ -63,9 +62,6 @@ public class LIVESessionController
     private UserInfoDAO userInfoDAO;
     
     @Autowired
-    private UserInfoController userInfoController;
-    
-    @Autowired
     private PermissionGroupDAO permGroupDAO;
     
     @Autowired
@@ -74,7 +70,7 @@ public class LIVESessionController
     private HashMap<Long, LIVESession> sessionsMap = new HashMap<>();
     
 
-    private String getHome(){ return "home"; }
+    private String getHome(){ return Utility.getHomeURL(); }
     
     @RequestMapping(value = "/sessions", method = RequestMethod.GET)
     public String getPermissions() { return getHome(); }
@@ -91,6 +87,13 @@ public class LIVESessionController
     @PersistenceUnit
     private final EntityManagerFactory entityManagerFactory;
     
+    /***
+     * Constructor for autowired controller.
+     * @param userInfoDAO The user info DAO
+     * @param entityManagerFactory The entity manager
+     * @param amqService The AMQ Service bean.
+     * @param objMapper The Jackson ObjectMapper bean.
+     */
     @Autowired
     public LIVESessionController(UserInfoDAO userInfoDAO, EntityManagerFactory entityManagerFactory, ActiveMQService amqService, ObjectMapper objMapper)
     {
@@ -102,7 +105,9 @@ public class LIVESessionController
     }
     
     
-
+    /***
+     * Attempts to bind a entity manager for hibernate session.
+     */
     public void bindSession() {
         if (!TransactionSynchronizationManager.hasResource(entityManagerFactory)) {
             EntityManager entityManager = entityManagerFactory.createEntityManager();
@@ -110,15 +115,28 @@ public class LIVESessionController
         }
     }
 
+    /***
+     * Attempts to unbind a entity manager for hibernate session.
+     */
     public void unbindSession() {
         EntityManagerHolder emHolder = (EntityManagerHolder) TransactionSynchronizationManager
                 .unbindResource(entityManagerFactory);
         EntityManagerFactoryUtils.closeEntityManager(emHolder.getEntityManager());
     }
     
+    /***
+     * Sets up the initial session for user "user"
+     */
     @Transactional
     private void setup()
     {
+        //pattern for non-view related queries.
+        /**
+         * bindSession();
+         * DO SOME WORK
+         * unbindSession();
+         */
+        
         bindSession();
         
         UserInfo user = Utility.getUserByUsername("user", userInfoDAO);
@@ -140,12 +158,15 @@ public class LIVESessionController
                 e.printStackTrace(pw);
                 Logger.getLogger(LIVESessionController.class.getName()).log(Level.SEVERE, sw.toString());
         }
-        //sessionsMap.put(session.getId(), session);
         
         unbindSession();
      
     }
     
+    /***
+     * Cleans the session of PII information.
+     * @param session The session to clean
+     */
     private void cleanSession(LIVESession session)
     {
         if (session.getUsers()!=null)
@@ -159,7 +180,11 @@ public class LIVESessionController
             Utility.cleanUserInfo(session.getOwner());
     }
     
-    private long generateNewSessionId()
+    /***
+     * Gets a new session id.
+     * @return The new id of the session.
+     */
+    synchronized private long generateNewSessionId()
     {
         long id = 1L;
         
@@ -173,6 +198,14 @@ public class LIVESessionController
         return id;
     }
     
+    /***
+     * Checks to see if the user has access to edit or join the session. The 
+     *      user has access if the user is the owner, if the user is in the
+     *      user list, or the user is in one of the groups in the group list.
+     * @param session The session to check.
+     * @param user The user to check against.
+     * @return Returns true if the user has access, false if not.
+     */
     private boolean allowEdit(LIVESession session, UserInfo user)
     {
         if (session == null)
@@ -204,6 +237,18 @@ public class LIVESessionController
         return false;
     }
     
+    /***
+     * Gets the listing of sessions that the user has access to.
+     * @param start The starting row.
+     * @param count The number of records to get
+     * @param sortField The field to sort on.
+     * @param sortOrder The order to sort. 1 = ascending, -1 = descending
+     * @param multiSortMeta The multiSortMeta, which is not sent by PrimeNG 
+     *                      currently.
+     * @param filters The filters as a JSON string.
+     * @return The response as a JSON object.
+     * @throws JsonProcessingException 
+     */
     @RequestMapping(value = "/api/sessions/", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<String> getLIVESessions(
             @RequestParam(name = "start", defaultValue = "0") int start,
@@ -234,6 +279,12 @@ public class LIVESessionController
         return new ResponseEntity<>(objMapper.writeValueAsString(new JsonListResult<>(total, filteredList)), HttpStatus.OK);
     }
     
+    /***
+     * Gets a session by id.
+     * @param id The id of the session to retrieve.
+     * @return The session if found, otherwise invalid request.
+     * @throws JsonProcessingException 
+     */
     @RequestMapping(value = "/api/sessions/{id}", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<String> getLIVESessionById(@PathVariable(value = "id") long id)
             throws JsonProcessingException
@@ -253,6 +304,14 @@ public class LIVESessionController
         
     }
     
+    /***
+     * Saves an updated session. Requires all fields.
+     * @param id The id of the session to update.
+     * @param session The session values.
+     * @return The updated record as JSON.
+     * @throws JsonProcessingException
+     * @throws IOException 
+     */
     @Transactional(readOnly = false)
     @RequestMapping(value = "/api/sessions/{id}", method = RequestMethod.PUT, produces = "application/json"
             )
@@ -292,6 +351,12 @@ public class LIVESessionController
         
     }
     
+    /***
+     * Creates a new session. Includes new ID on result.
+     * @param session The session to create.
+     * @return The session with updated ID.
+     * @throws JsonProcessingException 
+     */
     @Transactional(readOnly = false)
     @RequestMapping(value = "/api/sessions/", method = RequestMethod.POST, produces = "application/json")
     public ResponseEntity<String> createLIVESession(@RequestBody LIVESession session)
@@ -326,7 +391,13 @@ public class LIVESessionController
         
     }
     
-    
+    /***
+     * Deletes the given session.
+     * @param id The ID of the session to delete.
+     * @return The result as REST status code. No result unless an error occurs.
+     * @throws JsonProcessingException
+     * @throws IOException 
+     */
     @Transactional(readOnly = false)
     @RequestMapping(value = "/api/sessions/{id}", method = RequestMethod.DELETE, produces = "application/json"
             )
@@ -349,9 +420,18 @@ public class LIVESessionController
         
     }
     
+    /***
+     * Handles any exceptions in processing and returns the error to the user
+     *              for display.
+     * @param req The request object.
+     * @param exception The exception that occurred.
+     * @return The JsonError object as REST/JSON.
+     * @throws JsonProcessingException 
+     */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleError(HttpServletRequest req, Exception exception) throws JsonProcessingException
     {
+        //can print stack track for the user with this.
 //        StringWriter sw = new StringWriter();
 //        PrintWriter pw = new PrintWriter(sw);
 //        exception.printStackTrace(pw);

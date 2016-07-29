@@ -8,7 +8,7 @@ package gov.inl.live.livetestclient;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
- *
+ * Simple type name, copied from backend.
  * @author monejh
  */
 public abstract class ITypeName

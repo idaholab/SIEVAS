@@ -25,7 +25,7 @@ import org.apache.activemq.broker.BrokerService;
 import org.springframework.stereotype.Service;
 
 /**
- *
+ * Spring Service to handle ActiveMQ tasks.
  * @author monejh
  */
 @Service
@@ -47,6 +47,11 @@ public class ActiveMQService implements MessageListener
     private static final String CONNECTOR_URL = "tcp://localhost:61616";
     private static final String CLIENT_URL = "tcp://localhost:61616";
     
+    /***
+     * Constructor to handle startup. Starts the ActiveMQ broker and creates
+     *          the server control topic.
+     * @throws Exception 
+     */
     ActiveMQService() throws Exception
     {
         brokerService = new BrokerService();
@@ -59,8 +64,11 @@ public class ActiveMQService implements MessageListener
         
     }
     
-    
-    public void start() throws JMSException
+    /***
+     * Starts the control topic for the server (not client).
+     * @throws JMSException 
+     */
+    private void start() throws JMSException
     {
         factory = new ActiveMQConnectionFactory(CLIENT_URL);
         connection = factory.createConnection();
@@ -71,13 +79,22 @@ public class ActiveMQService implements MessageListener
         connection.start();
     }
 
+    /***
+     * Handles messages on the server control topic. Prints message currently.
+     * @param msg The message received.
+     */
     @Override
     public void onMessage(Message msg)
     {
         Logger.getLogger(ActiveMQService.class.getName()).log(Level.INFO, "Got message " + msg);
     }
     
-    
+    /***
+     * Adds a session to the list and starts the client data and control topics.
+     * @param sessionId The id of the session.
+     * @return The new session info with topics, producers, and consumers. 
+     *              Background tasks are started.
+     */
     public AMQSessionInfo addSession(long sessionId)
     {
         
@@ -112,6 +129,11 @@ public class ActiveMQService implements MessageListener
         
     }
     
+    /***
+     * Removes the session and stops the background tasks.
+     * @param sessionId The session ID to remove.
+     * @return True if stopped, false if it fails.
+     */
     public boolean removeSession(long sessionId)
     {
         AMQSessionInfo sessionInfo = sessionsInfoMap.get(sessionId);
