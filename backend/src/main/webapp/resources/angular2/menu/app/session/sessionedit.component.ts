@@ -14,7 +14,7 @@ import { User } from '../user/user';
 import { SessionService } from './session.service';
 import { GroupService } from '../group/group.service';
 import { UserService } from '../user/user.service';
-import { JsonError } from '../JsonError';
+import { JsonError } from '../jsonerror';
 
 @Component({
   selector: 'group-detail',

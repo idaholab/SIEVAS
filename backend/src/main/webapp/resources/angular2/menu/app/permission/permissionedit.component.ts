@@ -9,7 +9,7 @@ import 'rxjs/add/operator/do';
 
 import { Permission } from './permission';
 import { PermissionService } from './permission.service';
-import { JsonError } from '../JsonError';
+import { JsonError } from '../jsonerror';
 
 @Component({
   selector: 'permission-detail',

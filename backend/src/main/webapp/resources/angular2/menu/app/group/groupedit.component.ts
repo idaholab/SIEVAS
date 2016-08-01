@@ -12,7 +12,7 @@ import { Group } from './group';
 import { Permission } from '../permission/permission';
 import { GroupService } from './group.service';
 import { PermissionService } from '../permission/permission.service';
-import { JsonError } from '../JsonError';
+import { JsonError } from '../jsonerror';
 
 @Component({
   selector: 'group-detail',
