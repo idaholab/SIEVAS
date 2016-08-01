@@ -100,7 +100,7 @@
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>exec-maven-plugin</artifactId>
             <executions>
-<!--                <execution>
+                <execution>
                     <id>exec-npm-install</id>
                     <phase>generate-sources</phase>
                     <configuration>
@@ -113,7 +113,7 @@
                     <goals>
                         <goal>exec</goal>
                     </goals>
-                </execution>-->
+                </execution>
                 <execution>
                     <id>exec-npm-run-tsc</id>
                     <phase>generate-sources</phase>
@@ -129,7 +129,7 @@
                         <goal>exec</goal>
                     </goals>
                 </execution>
-<!--                <execution>
+                <execution>
                     <id>exec-npm-install2</id>
                     <phase>generate-sources</phase>
                     <configuration>
@@ -142,7 +142,7 @@
                     <goals>
                         <goal>exec</goal>
                     </goals>
-                </execution>-->
+                </execution>
                 <execution>
                     <id>exec-npm-run-tsc2</id>
                     <phase>generate-sources</phase>
