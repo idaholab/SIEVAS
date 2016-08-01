@@ -13,7 +13,7 @@ import { User } from './user';
 import { Group } from '../group/group';
 import { UserService } from './user.service';
 import { GroupService } from '../group/group.service';
-import { JsonError } from '../JsonError';
+import { JsonError } from '../jsonerror';
 import { LongValidator, NumberValidator, FloatValidator } from '../number.validator';
 
 @Component({
