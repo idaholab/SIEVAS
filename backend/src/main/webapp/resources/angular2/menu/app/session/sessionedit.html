@@ -1,0 +1,60 @@
+<p-growl [value]="msgs"></p-growl>
+
+<div *ngIf="session" class="container" style="width: 400px;">
+    <form #frmEdit="ngForm" (submit)="onSubmit()">
+        <div class="form-group">
+            <label>ID</label>
+            <input [(ngModel)]="session.id" name="id" #id="ngModel" class="form-control" disabled>
+        </div>
+        <div class="form-group">
+            <label>Name</label>
+            <input [(ngModel)]="session.name" name="permissionName" #name="ngModel" class="form-control" placeholder="Enter session name" required>
+            <div [hidden]="name.valid || name.pristine" class="alert alert-danger">
+                Session Name is required
+            </div>
+            <div class="form-group">
+                <label>Control Stream</label>
+                <input [(ngModel)]="session.controlStreamName" name="id" #controlStreamName="ngModel" class="form-control" disabled>
+            </div>
+            <div class="form-group">
+                <label>Data Stream</label>
+                <input [(ngModel)]="session.dataStreamName" name="id" #dataStreamName="ngModel" class="form-control" disabled>
+            </div>
+            <fieldset>
+                <legend>Owner</legend>
+                <div style="overflow: auto; max-height: 400px;">
+                    <ul class="checkbox-grid">
+                        <div *ngFor="let user of users" >
+                            <li><input type="radio" name="owner" [value]="user.id" [checked]="isOwner(user.id)" (click)="setOwner(user.id)"/><label style="font-weight: normal;">{{user.username}}</label></li>
+                        </div>
+                    </ul>
+                </div>
+            </fieldset>
+            <div [hidden]="ownerValid()" class="alert alert-danger">
+                Owner is required
+            </div>
+            <fieldset>
+                <legend>Groups</legend>
+                <div style="overflow: auto; max-height: 400px;">
+                    <ul class="checkbox-grid">
+                        <div *ngFor="let group of groups" >
+                            <li><input type="checkbox" name="group" [value]="group.id" [checked]="groupExists(group.id)" (click)="toggleGroup(group.id)"/><label style="font-weight: normal;">{{group.groupName}}</label></li>
+                        </div>
+                    </ul>
+                </div>
+            </fieldset>
+            <fieldset>
+                <legend>Users</legend>
+                <div style="overflow: auto; max-height: 400px;">
+                    <ul class="checkbox-grid">
+                        <div *ngFor="let user of users" >
+                            <li><input type="checkbox" name="user" [value]="user.id" [checked]="userExists(user.id)" (click)="toggleUser(user.id)"/><label style="font-weight: normal;">{{user.username}}</label></li>
+                        </div>
+                    </ul>
+                </div>
+            </fieldset>
+        </div>
+        <button type="button" class="btn btn-default" (click)="onCancel()">Cancel</button>
+        <button type="submit" class="btn btn-default" [disabled]="!ownerValid() || !frmEdit.valid" (click)="onSave()">Save</button>
+    </form>
+</div>
