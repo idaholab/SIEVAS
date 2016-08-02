@@ -47,13 +47,13 @@
             </div>
             <fieldset>
                 <legend>Access</legend>
-                <input type="checkbox" [(checked)]="user.enabled" name="enabled" style="float: left; margin-top: 5px;">
+                <input type="checkbox" [(ngModel)]="user.enabled" name="enabled" style="float: left; margin-top: 5px;">
                 <div style="margin-left: 25px;">Enabled</div>
                 
-                <input type="checkbox" [(checked)]="user.locked" name="enabled" style="float: left; margin-top: 5px;">
+                <input type="checkbox" [(ngModel)]="user.locked" name="locked" style="float: left; margin-top: 5px;">
                 <div style="margin-left: 25px;">Locked</div>
                 
-                <input type="checkbox" [(checked)]="user.expired" name="enabled" style="float: left; margin-top: 5px;">
+                <input type="checkbox" [(ngModel)]="user.expired" name="expired" style="float: left; margin-top: 5px;">
                 <div style="margin-left: 25px;">Expired</div>
                 
             </fieldset>
