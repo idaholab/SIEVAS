@@ -1,0 +1,26 @@
+
+button:hover {
+  background-color: #cfd8dc;
+}
+
+.delete {
+    background:url(resources/images/delete.png) no-repeat;
+    cursor:pointer;
+    width: 16px;
+    height: 16px;
+    border: none;
+    vertical-align: middle;
+}
+
+
+.create {
+    background:url(resources/images/create.png)  no-repeat;
+    background-position: left center;
+    cursor:pointer;
+    height: 20px;
+    position: relative;
+    line-height: 16px;
+    padding-left: 20px;
+    margin: 5px;
+    border: none;
+}
