@@ -1,0 +1,23 @@
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2008
+
+Project("{92BEA8B0-7D02-71B2-8A4B-FEC159C0C615}") = "nbody_planet_simulation", "Assembly-CSharp.csproj", "{B2655556-CE71-2DD8-8569-99C175B15E49}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B2655556-CE71-2DD8-8569-99C175B15E49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2655556-CE71-2DD8-8569-99C175B15E49}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2655556-CE71-2DD8-8569-99C175B15E49}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2655556-CE71-2DD8-8569-99C175B15E49}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = Assembly-CSharp.csproj
+	EndGlobalSection
+EndGlobal
