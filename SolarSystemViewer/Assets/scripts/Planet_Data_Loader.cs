@@ -160,11 +160,19 @@ public class Planet_Data_Loader : MonoBehaviour
 				
 				bodies[i].transform.position = new Vector3(float.Parse(values[0]), float.Parse(values[1]), float.Parse(values[2]));
 
-				Planet planet = bodies[i].GetComponent<Planet>();
-				if (planet!=null)
+
+
+
+				bodies [i].transform.Rotate (new Vector3 (0, 1, 0), -5.0f);
+				TextMesh txtMesh = bodies [i].GetComponentInChildren<TextMesh> ();
+				if (txtMesh != null)
+					txtMesh.transform.RotateAround(bodies[i].transform.position,new Vector3(0,-1,0),-5.0f);
+
+				LineRenderer lineRenderer = bodies [i].GetComponent<LineRenderer>();
+				if (lineRenderer!=null)
 				{
-					bodies [i].GetComponent<LineRenderer> ().SetVertexCount (currentFrame);
-					bodies[i].GetComponent<LineRenderer>().SetPosition(currentFrame-1,bodies[i].transform.position);
+					lineRenderer.SetVertexCount (currentFrame);
+					lineRenderer.SetPosition(currentFrame-1,bodies[i].transform.position);
 				}
 
 			}
@@ -219,13 +227,13 @@ public class Planet_Data_Loader : MonoBehaviour
 		// mars
 		bodies[4].transform.localScale = new Vector3(sunSize * 1.0f/5.0f, sunSize * 1.0f/5.0f, sunSize * 1.0f/5.0f);
 		// jupiter
-		bodies[5].transform.localScale = new Vector3(sunSize * 1.0f/5.68f, sunSize * 1.0f/9.68f, sunSize * 1.0f/9.68f);
+		bodies[5].transform.localScale = new Vector3(sunSize * 1.0f/9.68f, sunSize * 1.0f/9.68f, sunSize * 1.0f/9.68f);
 		// saturn
 		bodies[6].transform.localScale = new Vector3(sunSize * 1.0f/11.4f, sunSize * 1.0f/11.4f, sunSize * 1.0f/11.4f);
 		// uranus
-		bodies[7].transform.localScale = new Vector3(sunSize * 1.0f/26.8f, sunSize * 1.0f/26.8f, sunSize * 1.0f/26.8f);
+		bodies[7].transform.localScale = new Vector3(sunSize * 1.0f/16.8f, sunSize * 1.0f/16.8f, sunSize * 1.0f/16.8f);
 		// neptune 
-		bodies[8].transform.localScale = new Vector3(sunSize * 1.0f/27.7f, sunSize * 1.0f/27.7f, sunSize * 1.0f/27.7f);
+		bodies[8].transform.localScale = new Vector3(sunSize * 1.0f/17.7f, sunSize * 1.0f/17.7f, sunSize * 1.0f/17.7f);
 		// pluto
 		bodies[9].transform.localScale = new Vector3(sunSize * 1.0f/5.0f, sunSize * 1.0f/5.0f, sunSize * 1.0f/5.0f);	
 	}
