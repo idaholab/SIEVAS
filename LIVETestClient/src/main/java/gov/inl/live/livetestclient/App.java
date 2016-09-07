@@ -26,7 +26,9 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageListener;
+import javax.jms.MessageProducer;
 import javax.jms.Session;
+import javax.jms.TextMessage;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -206,7 +208,34 @@ public class App
             @Override
             public void onMessage(Message msg)
             {
-                Logger.getLogger(App.class.getName()).log(Level.INFO,"Data Message:" + msg);
+                if (msg instanceof TextMessage)
+                {
+                    TextMessage txtMsg = (TextMessage)msg;
+                    String objName = null;
+                    try
+                    {
+                        objName = txtMsg.getStringProperty("ObjectName");
+                    }
+                    catch(JMSException e)
+                    {
+                        Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, e);
+                    }
+                    if ((objName!=null) && objName.equals("Nbody"))
+                    {
+                        try
+                        {
+                            Logger.getLogger(App.class.getName()).log(Level.INFO,"NBODY:" + txtMsg.getText());
+                        }
+                        catch (JMSException ex)
+                        {
+                            Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                    else
+                        Logger.getLogger(App.class.getName()).log(Level.INFO,"Data Message:" + msg);
+                }
+                else
+                    Logger.getLogger(App.class.getName()).log(Level.INFO,"Data Message:" + msg);
             }
         });
         
@@ -221,9 +250,30 @@ public class App
                 Logger.getLogger(App.class.getName()).log(Level.INFO,"Control Message:" + msg);
             }
         });
+        MessageProducer controlProducer = amqSession.createProducer(controlDestination);
         //start!
         connection.start();
         Logger.getLogger(App.class.getName()).log(Level.INFO,"Done");
+        //set play message
+        TextMessage msg = amqSession.createTextMessage("Start");
+        msg.setStringProperty("ObjectName", "DVRControl");
+        controlProducer.send(msg);
+        Runtime.getRuntime().addShutdownHook(new Thread(){
+           @Override
+           public void run()
+           {
+               try
+               {
+                   TextMessage msg = amqSession.createTextMessage("Stop");
+                   msg.setStringProperty("ObjectName", "DVRControl");
+                   controlProducer.send(msg);
+               }
+               catch (JMSException ex)
+               {
+                   Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+               }
+           }
+        });
         //wait for a long time.
         ExecutorService es = Executors.newFixedThreadPool(1);
         es.shutdown();

@@ -22,6 +22,15 @@
     </parent>
     <build>
         <defaultGoal>package spring-boot:run</defaultGoal>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <excludes>
+                    <exclude>**/*.sql</exclude>
+                </excludes>
+            </resource>
+        </resources>
         <plugins>
           <plugin>
             <groupId>org.springframework.boot</groupId>
@@ -45,27 +54,30 @@
                 <fork>true</fork>
             </configuration>
           </plugin>
-          <plugin>
+<!--          <plugin>
             <artifactId>maven-resources-plugin</artifactId>
             <version>3.0.1</version>
             <executions>
               <execution>
-                <id>copy-resources</id>
-                <!-- here the phase you need -->
+                <id>default-resources</id>
+                 here the phase you need 
                 <phase>validate</phase>
                 <goals>
                   <goal>copy-resources</goal>
                 </goals>
                 <configuration>
-                  <outputDirectory>${project.build.directory}/${project.build.finalName}</outputDirectory>
+                  <outputDirectory>${project.build.outputDirectory}</outputDirectory>
                   <resources>          
                     <resource>
                       <directory>src/main/resources</directory>
                       <filtering>true</filtering>
+                      <excludes>
+                          <exclude>**/*.sql</exclude>
+                      </excludes>
                     </resource>
                   </resources>
-                </configuration>            
-              </execution>
+                </configuration>          
+              </execution>-->
 <!--              <execution>
                 <id>copy-resources-2</id>
                  here the phase you need 
@@ -83,8 +95,8 @@
                   </resources>
                 </configuration>            
               </execution>-->
-            </executions>
-          </plugin>
+<!--            </executions>
+          </plugin>-->
           <plugin>
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-maven-plugin</artifactId>
