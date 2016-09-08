@@ -1,0 +1,13 @@
+.button {
+    -fx-font-weight: bold;
+}
+
+#btnStop
+{
+    -fx-graphic: url('../images/stop.png');
+}
+
+#btnPlay
+{
+    -fx-graphic: url('../images/start.png');
+}
