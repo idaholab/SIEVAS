@@ -18,6 +18,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.stage.Stage;
@@ -41,23 +42,50 @@ public class SessionListController implements Initializable
     @FXML
     private TableView tableView;
     
-    public void LoadData() throws IOException
+    public void LoadData()
     {
        
         HttpGet getRequest = new HttpGet(baseURL + sessionListURL);
         HttpClient client = restController.getClientTrustingAllSSLCerts();
-        HttpResponse response = client.execute(getRequest);
+        HttpResponse response = null;
+        try
+        {
+            response = client.execute(getRequest);
+        }
+        catch(IOException e)
+        {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Data loading error");
+            alert.setHeaderText("Load session error");
+            alert.setContentText(e.getMessage());
+
+            alert.showAndWait();
+            return;
+        }
         //printResponse(response);
         evaluateSessions(response);
     }
     
-    private void evaluateSessions(HttpResponse response) throws IOException
+    private void evaluateSessions(HttpResponse response)
     {
-        ObjectMapper objMapper = new ObjectMapper();
-        //read result as a JsonListResult<LIVESession>
-        //NOTE: users and groups are missing in the local object since it is not needed
-        JsonListResult<LIVESession> result = objMapper.readValue(response.getEntity().getContent(), new TypeReference<JsonListResult<LIVESession> >(){});
-        tableView.setItems(FXCollections.observableArrayList(result.getData()));
+        try
+        {
+            ObjectMapper objMapper = new ObjectMapper();
+            //read result as a JsonListResult<LIVESession>
+            //NOTE: users and groups are missing in the local object since it is not needed
+            JsonListResult<LIVESession> result = objMapper.readValue(response.getEntity().getContent(), new TypeReference<JsonListResult<LIVESession> >(){});
+            tableView.setItems(FXCollections.observableArrayList(result.getData()));
+        }
+        catch (IOException ex)
+        {
+            Logger.getLogger(SessionListController.class.getName()).log(Level.SEVERE, null, ex);
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Data loading error");
+            alert.setHeaderText("Load session error");
+            alert.setContentText(ex.getMessage());
+
+            alert.showAndWait();
+        }
     }
     
     private void handleMouseClick(LIVESession session) throws IOException

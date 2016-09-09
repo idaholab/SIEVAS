@@ -52,7 +52,7 @@ public class LoginController implements Initializable
     
     
     @FXML
-    private void handleLogin(ActionEvent event) throws UnsupportedEncodingException, NoSuchAlgorithmException, KeyManagementException, IOException
+    private void handleLogin(ActionEvent event)
     {
         
         //setup to allow self signed certs
@@ -67,10 +67,25 @@ public class LoginController implements Initializable
         List <NameValuePair> nvps = new ArrayList <NameValuePair>();
             nvps.add(new BasicNameValuePair("username", username.getText()));
             nvps.add(new BasicNameValuePair("password", password.getText()));
-            request.setEntity(new UrlEncodedFormEntity(nvps));
-            HttpResponse response = client.execute(request);
-            //printResponse(response);
-            response.getEntity().consumeContent();
+            HttpResponse response;
+            try
+            {
+                request.setEntity(new UrlEncodedFormEntity(nvps));
+                response = client.execute(request);
+                //printResponse(response);
+                response.getEntity().consumeContent();
+            }
+            catch(IOException e)
+            {
+                Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE,"Login Failure", e);
+                Alert alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Login Error");
+                alert.setHeaderText("Login processing error");
+                alert.setContentText(e.getMessage());
+
+                alert.showAndWait();
+                return;
+            }
 
             boolean error = false;
             Header[] headers = response.getHeaders("Location");
@@ -101,7 +116,16 @@ public class LoginController implements Initializable
                 
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/SessionList.fxml"));
                 //Parent root = FXMLLoader.load(getClass().getResource("/fxml/SessionList.fxml"));
-                Parent root = loader.load();
+                Parent root;
+                try
+                {
+                    root = loader.load();
+                }
+                catch(IOException e)
+                {
+                    Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE,"Failure loading dialog", e);
+                    return;
+                }
                 SessionListController controller = loader.getController();
         
                 controller.setRestController(restController);
@@ -136,14 +160,7 @@ public class LoginController implements Initializable
     {
        if (event.getCode().equals(KeyCode.ENTER))
        {
-           try
-           {
-               handleLogin(new ActionEvent());
-           }
-           catch (NoSuchAlgorithmException | KeyManagementException | IOException ex)
-           {
-               Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
-           }
+           handleLogin(new ActionEvent());
        }
     }
     
