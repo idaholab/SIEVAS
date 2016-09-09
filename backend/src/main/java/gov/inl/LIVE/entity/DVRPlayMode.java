@@ -6,7 +6,7 @@
 package gov.inl.LIVE.entity;
 
 /**
- *
+ * Enum for DVR playing mode.
  * @author monejh
  */
 public enum DVRPlayMode

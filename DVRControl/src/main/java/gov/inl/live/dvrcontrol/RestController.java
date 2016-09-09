@@ -19,7 +19,7 @@ import org.apache.http.conn.ssl.X509HostnameVerifier;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 /**
- *
+ * Class to handle http related requests
  * @author monejh
  */
 public class RestController

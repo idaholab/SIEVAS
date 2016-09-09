@@ -1,10 +1,7 @@
 package gov.inl.live.dvrcontrol;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -32,6 +29,10 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.message.BasicNameValuePair;
 
 
+/***
+ * Handles login controller functions
+ * @author monejh
+ */
 public class LoginController implements Initializable
 {
     
@@ -51,6 +52,11 @@ public class LoginController implements Initializable
     public static String CLIENT_URL = "tcp://localhost:61616";
     
     
+    /***
+     * Handles the login request or the user using the specified user, 
+     * password, and base URL.
+     * @param event 
+     */
     @FXML
     private void handleLogin(ActionEvent event)
     {
@@ -148,6 +154,10 @@ public class LoginController implements Initializable
         
     }
     
+    /***
+     * Handles the cancel button by quitting
+     * @param event 
+     */
     @FXML
     private void handleCancel(ActionEvent event)
     {
@@ -155,6 +165,10 @@ public class LoginController implements Initializable
         
     }
     
+    /***
+     * Intercepts the enter key to process login on the password field.
+     * @param event 
+     */
     @FXML
     public void onKeyPressed(KeyEvent event)
     {
@@ -164,9 +178,14 @@ public class LoginController implements Initializable
        }
     }
     
+    /***
+     * Nothing to do here for this controller
+     * @param url
+     * @param rb 
+     */
     @Override
     public void initialize(URL url, ResourceBundle rb)
     {
-        // TODO
+        
     }    
 }

@@ -33,7 +33,7 @@ import javax.jms.TextMessage;
 import org.springframework.context.ApplicationContext;
 
 /**
- *
+ * Class for handling DVR functionality and control.
  * @author monejh
  */
 public class DVRService implements Runnable, MessageListener
@@ -55,6 +55,16 @@ public class DVRService implements Runnable, MessageListener
     private boolean playing = false;
     private double currentTime = 0.0;
     
+    /***
+     * Constructor for DVR service. Currently only loads the NBoyd driver. 
+     * TODO: Implement dynamic loading based on session settings and 
+     * configuration.
+     * @param context The ApplicationContext from spring for loading other beans
+     * @param amqSession The ActiveMQ Session
+     * @param controlMessageConsumer The Control stream consumer
+     * @param controlMessageProducer The control stream producer
+     * @param dataMessageProducer  The data stream producer
+     */
     public DVRService(ApplicationContext context, Session amqSession, MessageConsumer controlMessageConsumer, MessageProducer controlMessageProducer, MessageProducer dataMessageProducer)
     {
         this.objMapper = context.getBean(ObjectMapper.class);
@@ -67,6 +77,9 @@ public class DVRService implements Runnable, MessageListener
         
     }
     
+    /**
+     * Starts the DVR service. Not called automatically.
+     */
     public void start()
     {
         scheduleFuture = scheduler.scheduleAtFixedRate(this, 0, 100, TimeUnit.MILLISECONDS);
@@ -80,6 +93,10 @@ public class DVRService implements Runnable, MessageListener
         }
     }
     
+    /***
+     * Gets the play speed of the DVR
+     * @return 
+     */
     public double getPlaySpeed()
     {
         lock.readLock().lock();
@@ -97,6 +114,11 @@ public class DVRService implements Runnable, MessageListener
         
     }
     
+    /***
+     * Sets the play speed of the DVR
+     * @param playSpeed Speed to set. If playSpeed > 0, time moves forward. 
+     * If playSpeed < 0, then DVR works backwards.
+     */
     private void setPlaySpeed(double playSpeed)
     {
         lock.writeLock().lock();
@@ -104,6 +126,10 @@ public class DVRService implements Runnable, MessageListener
         lock.writeLock().unlock();
     }
     
+    /***
+     * Gets the current time for the DVR
+     * @return The time in seconds.
+     */
     public double getCurrentTime()
     {
         lock.readLock().lock();
@@ -117,6 +143,10 @@ public class DVRService implements Runnable, MessageListener
         }
     }
     
+    /***
+     * Sets the current time for the DVR
+     * @param currentTime The time to set.
+     */
     private void setCurrentTime(double currentTime)
     {
         lock.writeLock().lock();
@@ -124,6 +154,9 @@ public class DVRService implements Runnable, MessageListener
         lock.writeLock().unlock();
     }
     
+    /***
+     * Stops the playback of the DVR
+     */
     private void stopPlayback()
     {
         lock.writeLock().lock();
@@ -132,6 +165,9 @@ public class DVRService implements Runnable, MessageListener
         lock.writeLock().unlock();
     }
     
+    /***
+     * Starts the playback of the DVR
+     */
     private void startPlayback()
     {
         lock.writeLock().lock();
@@ -142,6 +178,9 @@ public class DVRService implements Runnable, MessageListener
         lock.writeLock().unlock();
     }
     
+    /***
+     * Handles the DVR playback if active
+     */
     @Override
     public void run()
     {
@@ -182,12 +221,21 @@ public class DVRService implements Runnable, MessageListener
 
     }
     
-    
+    /***
+     * Stops the DVR service
+     */
     public void stop()
     {
         scheduleFuture.cancel(true);
     }
 
+    
+    /***
+     * Handles the message from the control stream. Currently responds only to 
+     * DVRCommandMessage.
+     * @param msg The message to interpret. The Property "ObjectName" should be
+     * set to the type of the object sent.
+     */
     @Override
     public void onMessage(Message msg)
     {

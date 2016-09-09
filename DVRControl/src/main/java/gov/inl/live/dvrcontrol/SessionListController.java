@@ -27,7 +27,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 
 /**
- *
+ * Handles the presenting of the session list on SIEVAS server.
  * @author monejh
  */
 public class SessionListController implements Initializable
@@ -36,12 +36,15 @@ public class SessionListController implements Initializable
     public static String CLIENT_URL = "tcp://localhost:61616";
     
     private String baseURL = "";
-    
     private RestController restController;
     
     @FXML
     private TableView tableView;
     
+    /***
+     * Loads the data once all the parameters are set. This requires baseURL
+     * and RestController to be set.
+     */
     public void LoadData()
     {
        
@@ -62,10 +65,13 @@ public class SessionListController implements Initializable
             alert.showAndWait();
             return;
         }
-        //printResponse(response);
         evaluateSessions(response);
     }
     
+    /***
+     * Handles the response of the session list
+     * @param response  The HTTP response
+     */
     private void evaluateSessions(HttpResponse response)
     {
         try
@@ -88,6 +94,11 @@ public class SessionListController implements Initializable
         }
     }
     
+    /***
+     * Handles the mouse click on a session object by loading DVR controls.
+     * @param session The session object
+     * @throws IOException 
+     */
     private void handleMouseClick(LIVESession session) throws IOException
     {
         if (session!=null)
@@ -109,32 +120,34 @@ public class SessionListController implements Initializable
             stage.setTitle("SIEVAS DVR Controls - Session " + session.getName());
             stage.setScene(scene);
             stage.show();
-//            try
-//            {
-//                connectToLIVE(session);
-//            }
-//            catch(JMSException | InterruptedException e)
-//            {
-//                Logger.getLogger(SessionListController.class.getName()).log(Level.SEVERE, null, e);
-//            }
         }
             
         
     }
     
-   
-
+    /***
+     * Sets the base URL for the server
+     * @param url 
+     */
     public void setBaseURL(String url)
     {
         this.baseURL = url;
     }
     
-    
+    /***
+     * Sets the REST Controller for sharing login context
+     * @param rest 
+     */
     public void setRestController(RestController rest)
     {
         this.restController = rest;
     }
     
+    /***
+     * Handles init of view. Handles a double clock on a row.
+     * @param location
+     * @param resources 
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources)
     {
