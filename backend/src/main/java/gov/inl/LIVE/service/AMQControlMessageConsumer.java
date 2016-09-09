@@ -76,7 +76,7 @@ public class AMQControlMessageConsumer implements MessageListener, Runnable
                 {
                     TextMessage txtMsg = session.createTextMessage(new Date().toString());
                     txtMsg.setStringProperty("MessageType", "PingMessage");
-                    producer.send(txtMsg);
+                    //producer.send(txtMsg);
                 }
                 catch (JMSException ex)
                 {
