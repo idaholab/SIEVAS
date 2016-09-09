@@ -22,6 +22,8 @@ import javax.jms.MessageListener;
 import javax.jms.Session;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.broker.BrokerService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 /**
@@ -38,7 +40,9 @@ public class ActiveMQService implements MessageListener
     private Connection connection;
     private Session session;
     private HashMap<Long,AMQSessionInfo> sessionsInfoMap = new HashMap<>();
+    private DVRService dvrService;
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(THREAD_POOL_SIZE);
+    private final ApplicationContext context;
     
     private static final String MAIN_CONTROL_TOPIC = "control";
     private static final String CONTROL_PREFIX = "control";
@@ -47,13 +51,17 @@ public class ActiveMQService implements MessageListener
     private static final String CONNECTOR_URL = "tcp://localhost:61616";
     private static final String CLIENT_URL = "tcp://localhost:61616";
     
+    
     /***
      * Constructor to handle startup. Starts the ActiveMQ broker and creates
      *          the server control topic.
      * @throws Exception 
      */
-    ActiveMQService() throws Exception
+    @Autowired
+    ActiveMQService(ApplicationContext context) throws Exception
     {
+        this.context = context;
+        
         brokerService = new BrokerService();
         brokerService.addConnector(CONNECTOR_URL);
         Logger.getLogger(ActiveMQService.class.getName()).log(Level.SEVERE, "Starting Message Service...");
@@ -117,6 +125,9 @@ public class ActiveMQService implements MessageListener
             sessionInfo.setDataConsumerThread(new AMQDataMessageConsumer(sessionInfo.getDataProducer(), session));
             sessionInfo.getDataConsumer().setMessageListener(sessionInfo.getDataConsumerThread());
             scheduler.schedule(sessionInfo.getDataConsumerThread(), 0, TimeUnit.MILLISECONDS);
+            
+            dvrService = new DVRService(context, session, sessionInfo.getControlConsumer(), sessionInfo.getControlProducer(), sessionInfo.getDataProducer());
+            dvrService.start();
         }
         catch(JMSException e)
         {
@@ -141,6 +152,7 @@ public class ActiveMQService implements MessageListener
         {
             try
             {
+                dvrService.stop();
                 sessionInfo.getControlConsumerThread().stop();
                 sessionInfo.getControlConsumer().close();
                 sessionInfo.getControlProducer().close();
