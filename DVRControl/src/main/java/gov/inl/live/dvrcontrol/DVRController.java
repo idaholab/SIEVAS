@@ -5,6 +5,9 @@
  */
 package gov.inl.live.dvrcontrol;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
@@ -17,7 +20,9 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javax.jms.Connection;
 import javax.jms.Destination;
@@ -41,6 +46,7 @@ public class DVRController implements Initializable
     
     private String baseURL = "";
     private RestController restController;
+    private ObjectMapper objMapper = new ObjectMapper();
     
     @FXML
     private Button btnStop;
@@ -50,6 +56,12 @@ public class DVRController implements Initializable
     
     @FXML
     private TextArea txtInfo;
+    
+    @FXML
+    private Label lblPlaySpeed;
+    
+    @FXML
+    private Label lblPlaying;
     
     private LIVESession session;
     private ActiveMQConnectionFactory factory;
@@ -86,27 +98,67 @@ public class DVRController implements Initializable
     private void handleStop(ActionEvent event) throws JMSException
     {
         //set stop message
-        TextMessage msg = amqSession.createTextMessage("Stop");
-        msg.setStringProperty("ObjectName", "DVRControl");
-        controlProducer.send(msg);
+        DVRCommandMessage dvrMsg = new DVRCommandMessage(DVRCommandType.Stop, (long)Math.floor(Math.random()*Long.MAX_VALUE));
+        try
+        {
+            TextMessage msg = amqSession.createTextMessage(objMapper.writeValueAsString(dvrMsg));
+            msg.setStringProperty("ObjectName", dvrMsg.getClass().getSimpleName());
+            controlProducer.send(msg);
+        }
+        catch(JMSException|JsonProcessingException e)
+        {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Playback error");
+            alert.setHeaderText("Error stopping playback");
+            alert.setContentText(e.getMessage());
+
+            alert.showAndWait();
+        }
     }
     
     @FXML
-    private void handleStart(ActionEvent event) throws JMSException
+    private void handleStart(ActionEvent event)
     {
         //set play message
-        TextMessage msg = amqSession.createTextMessage("Start");
-        msg.setStringProperty("ObjectName", "DVRControl");
-        controlProducer.send(msg);
+        DVRCommandMessage dvrMsg = new DVRCommandMessage(DVRCommandType.Start, (long)Math.floor(Math.random()*Long.MAX_VALUE));
+        try
+        {
+            TextMessage msg = amqSession.createTextMessage(objMapper.writeValueAsString(dvrMsg));
+            msg.setStringProperty("ObjectName", dvrMsg.getClass().getSimpleName());
+            controlProducer.send(msg);
+        }
+        catch(JMSException|JsonProcessingException e)
+        {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Playback error");
+            alert.setHeaderText("Error starting playback");
+            alert.setContentText(e.getMessage());
+
+            alert.showAndWait();
+        }
+        
     }
     
     @FXML
     private void handleQuit(ActionEvent event) throws JMSException
     {
         //set stop message
-        TextMessage msg = amqSession.createTextMessage("Start");
-        msg.setStringProperty("ObjectName", "DVRControl");
-        controlProducer.send(msg);
+        DVRCommandMessage dvrMsg = new DVRCommandMessage(DVRCommandType.Stop, (long)Math.floor(Math.random()*Long.MAX_VALUE));
+        try
+        {
+            TextMessage msg = amqSession.createTextMessage(objMapper.writeValueAsString(dvrMsg));
+            msg.setStringProperty("ObjectName", dvrMsg.getClass().getSimpleName());
+            controlProducer.send(msg);
+        }
+        catch(JMSException|JsonProcessingException e)
+        {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Playback error");
+            alert.setHeaderText("Error stopping playback");
+            alert.setContentText(e.getMessage());
+
+            alert.showAndWait();
+        }
         System.exit(0);
     }
     
@@ -199,7 +251,57 @@ public class DVRController implements Initializable
             @Override
             public void onMessage(Message msg)
             {
-                appendText("Control Message:" + msg);
+                TextMessage txtMsg = (TextMessage)msg;
+                String objName = null;
+                try
+                {
+                    objName = txtMsg.getStringProperty("ObjectName");
+                }
+                catch(JMSException e)
+                {
+                    appendException(e);
+                    //Logger.getLogger(DVRController.class.getName()).log(Level.SEVERE, null, e);
+                }
+                if ((objName!=null) && objName.equals(DVRCommandMessageReply.class.getSimpleName()))
+                {
+                    try
+                    {
+                        DVRCommandMessageReply dvrMsg = objMapper.readValue(txtMsg.getText(), DVRCommandMessageReply.class);
+                        switch(dvrMsg.getCommandType())
+                        {
+                            case Start:
+                            case Stop:
+                            case GetStatus:
+                                appendText("DVR Now " + dvrMsg.getPlayMode() + ", speed = " + dvrMsg.getPlaySpeed() + "\n");
+                                if (dvrMsg.getPlayMode() == DVRPlayMode.Started)
+                                {
+                                    Platform.runLater(()->{
+                                        btnStop.setDisable(false);
+                                        btnStart.setDisable(true);
+                                        lblPlaySpeed.setText("" + dvrMsg.getPlaySpeed());
+                                        lblPlaying.setText("Playing");
+                                    });
+                                }
+                                else if (dvrMsg.getPlayMode() == DVRPlayMode.Stopped)
+                                {
+                                    System.out.println("Enabling START");
+                                    Platform.runLater(()->{
+                                        btnStop.setDisable(true);
+                                        btnStart.setDisable(false);
+                                        lblPlaySpeed.setText("" + dvrMsg.getPlaySpeed());
+                                        lblPlaying.setText("Stopped");
+                                    });
+                                }
+                                break;
+                        }
+                    } 
+                    catch (IOException | JMSException ex)
+                    {
+                        Logger.getLogger(DVRController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+                else
+                    appendText("Control Message:" + msg);
                 //Logger.getLogger(DVRController.class.getName()).log(Level.INFO,"Control Message:" + msg);
             }
         });
@@ -226,6 +328,23 @@ public class DVRController implements Initializable
                }
            }
         });
+        
+        //request status
+        DVRCommandMessage dvrMsg = new DVRCommandMessage(DVRCommandType.GetStatus, (long)Math.floor(Math.random()*Long.MAX_VALUE));
+        TextMessage txtMsg;
+        try
+        {
+            txtMsg = amqSession.createTextMessage(objMapper.writeValueAsString(dvrMsg));
+            txtMsg.setStringProperty("ObjectName", dvrMsg.getClass().getSimpleName());
+            controlProducer.send(txtMsg);
+        }
+        catch (JsonProcessingException ex)
+        {
+            Logger.getLogger(DVRController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        
+        
         //wait for a long time.
         ExecutorService es = Executors.newFixedThreadPool(1);
         es.shutdown();

@@ -10,6 +10,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.inl.LIVE.common.IData;
 import gov.inl.LIVE.common.IDriver;
 import gov.inl.LIVE.driver.NbodyDriver;
+import gov.inl.LIVE.entity.DVRCommandMessage;
+import gov.inl.LIVE.entity.DVRCommandMessageReply;
+import gov.inl.LIVE.entity.DVRPlayMode;
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -47,7 +51,8 @@ public class DVRService implements Runnable, MessageListener
     private ScheduledFuture scheduleFuture;
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
     
-    private double playSpeed = 0.0;
+    private double playSpeed = 1.0;
+    private boolean playing = false;
     private double currentTime = 0.0;
     
     public DVRService(ApplicationContext context, Session amqSession, MessageConsumer controlMessageConsumer, MessageProducer controlMessageProducer, MessageProducer dataMessageProducer)
@@ -80,7 +85,10 @@ public class DVRService implements Runnable, MessageListener
         lock.readLock().lock();
         try
         {
-            return playSpeed;
+            if (playing)
+                return playSpeed;
+            else
+                return 0.0;
         }
         finally
         {
@@ -119,14 +127,18 @@ public class DVRService implements Runnable, MessageListener
     private void stopPlayback()
     {
         lock.writeLock().lock();
-        this.playSpeed = 0.0;
+        //this.playSpeed = 0.0;
+        this.playing = false;
         lock.writeLock().unlock();
     }
     
     private void startPlayback()
     {
         lock.writeLock().lock();
-        this.playSpeed = 1.0;
+        //this.playSpeed = 1.0;
+        if (this.playSpeed == 0.0)
+            this.playSpeed = 1.0;
+        this.playing = true;
         lock.writeLock().unlock();
     }
     
@@ -134,7 +146,7 @@ public class DVRService implements Runnable, MessageListener
     public void run()
     {
         lock.readLock().lock();
-        if (playSpeed!=0.0)
+        if (playing && (playSpeed!=0.0))
         {
             
             double startTime;
@@ -179,6 +191,7 @@ public class DVRService implements Runnable, MessageListener
     @Override
     public void onMessage(Message msg)
     {
+        Logger.getLogger(DVRService.class.getName()).log(Level.SEVERE, "MSG:" + msg);
         if (msg instanceof TextMessage)
         {
             String txt = "", objName="";
@@ -200,17 +213,51 @@ public class DVRService implements Runnable, MessageListener
             {
                 Logger.getLogger(DVRService.class.getName()).log(Level.SEVERE, null, ex);
             }
-            if ((objName!=null) && objName.equals("DVRControl"))
-                switch(txt)
+            if ((objName!=null) && objName.equals(DVRCommandMessage.class.getSimpleName()))
+            {
+                DVRCommandMessage cmdMsg;
+                try
                 {
-                    case "Start":
+                    cmdMsg = objMapper.readValue(txt, DVRCommandMessage.class);
+                }
+                catch (IOException ex)
+                {
+                    Logger.getLogger(DVRService.class.getName()).log(Level.SEVERE, null, ex);
+                    return;
+                }
+                DVRCommandMessageReply replyMsg = new DVRCommandMessageReply(cmdMsg.getId(), cmdMsg.getCommandType(), false);
+                switch(cmdMsg.getCommandType())
+                {
+                    case Start:
                         startPlayback();
+                        replyMsg.setPlayMode((playing) ? DVRPlayMode.Started: DVRPlayMode.Stopped);
+                        replyMsg.setPlaySpeed(playSpeed);
+                        replyMsg.setSuccess(true);
                         break;
-                    case "Stop":
+                    case Stop:
                         stopPlayback();
+                        replyMsg.setPlayMode((playing) ? DVRPlayMode.Started: DVRPlayMode.Stopped);
+                        replyMsg.setPlaySpeed(playSpeed);
+                        replyMsg.setSuccess(true);
+                        break;
+                    case GetStatus:
+                        //return result
+                        replyMsg.setPlayMode((playing) ? DVRPlayMode.Started: DVRPlayMode.Stopped);
+                        replyMsg.setPlaySpeed(playSpeed);
+                        replyMsg.setSuccess(true);
                         break;
                 }
-            
+                try
+                {
+                    TextMessage replyTxtMsg = amqSession.createTextMessage(objMapper.writeValueAsString(replyMsg));
+                    replyTxtMsg.setStringProperty("ObjectName", replyMsg.getClass().getSimpleName());
+                    controlMessageProducer.send(replyTxtMsg);
+                } 
+                catch (JsonProcessingException | JMSException ex)
+                {
+                    Logger.getLogger(DVRService.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
         }
     }
     

@@ -10,11 +10,19 @@
     <padding>
         <javafx.geometry.Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
     </padding>
-    <Label style="-fx-font: NORMAL 20 Tahoma;" text="DVR Controls"                
-        GridPane.columnIndex="0" GridPane.rowIndex="0">
-    </Label>
-    <Button fx:id="btnStop" onAction="#handleStop" GridPane.rowIndex="1" GridPane.columnIndex="0" />
-    <Button fx:id="btnPlay" onAction="#handleStart" GridPane.rowIndex="1" GridPane.columnIndex="1" />
-    <Button fx:id="btnQuit" onAction="#handleQuit" text="Quit" GridPane.rowIndex="2" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.halignment="CENTER"   />
-    <TextArea fx:id="txtInfo" maxHeight="500" GridPane.rowIndex="3" GridPane.columnIndex="0" GridPane.columnSpan="2" wrapText="true"  /> 
+    <Label style="-fx-font: NORMAL 20 Tahoma;" text="DVR Controls" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+    
+    <Button fx:id="btnStop" disable="true"  onAction="#handleStop" GridPane.rowIndex="1" GridPane.columnIndex="0" />
+    <Button fx:id="btnStart" disable="true" onAction="#handleStart" GridPane.rowIndex="1" GridPane.columnIndex="1" />
+    <HBox GridPane.columnIndex="0" GridPane.rowIndex="2" GridPane.columnSpan="2" >
+        <Label style="-fx-font: NORMAL 12 Tahoma;" text="Play Speed: " />
+        <Label style="-fx-font: NORMAL 12 Tahoma;" fx:id="lblPlaySpeed" text="Waiting"/>
+    </HBox>
+    <HBox GridPane.columnIndex="0" GridPane.rowIndex="3" GridPane.columnSpan="2" >
+        <Label style="-fx-font: NORMAL 12 Tahoma;" fx:id="lblPlaying" text="Waiting"/>
+    </HBox>
+    
+    
+    <Button fx:id="btnQuit" onAction="#handleQuit" text="Quit" GridPane.rowIndex="4" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.halignment="CENTER"   />
+    <TextArea fx:id="txtInfo" maxHeight="500" GridPane.rowIndex="5" GridPane.columnIndex="0" GridPane.columnSpan="2" wrapText="true"  /> 
 </GridPane>

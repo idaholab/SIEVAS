@@ -7,7 +7,7 @@
     -fx-graphic: url('../images/stop.png');
 }
 
-#btnPlay
+#btnStart
 {
     -fx-graphic: url('../images/start.png');
 }
