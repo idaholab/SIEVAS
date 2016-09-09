@@ -8,8 +8,17 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 
+/***
+ * Handles the main application startup
+ * @author monejh
+ */
 public class MainApp extends Application {
 
+    /***
+     * Starts the main page for application. This presents a login window.
+     * @param stage
+     * @throws Exception 
+     */
     @Override
     public void start(Stage stage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("/fxml/Login.fxml"));

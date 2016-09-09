@@ -8,7 +8,7 @@ package gov.inl.LIVE.entity;
 import java.util.Objects;
 
 /**
- *
+ * Class for replies to DVR commands
  * @author monejh
  */
 public class DVRCommandMessageReply
@@ -19,12 +19,20 @@ public class DVRCommandMessageReply
     private DVRPlayMode playMode;
     private double playSpeed;
 
+    /***
+     * Default constructor. Does nothing.
+     */
     public DVRCommandMessageReply()
     {
         
     }
     
-    
+    /***
+     * Constructor for unique id, command, and success flag.
+     * @param id THe unique ID of the request. It should match the DVRCommandMessage id.
+     * @param commandType The type of the command being replied to.
+     * @param success True for success, false otherwise.
+     */
     public DVRCommandMessageReply(long id, DVRCommandType commandType, boolean success)
     {
         this.id = id;

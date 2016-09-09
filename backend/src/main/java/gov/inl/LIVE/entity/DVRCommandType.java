@@ -6,7 +6,7 @@
 package gov.inl.LIVE.entity;
 
 /**
- *
+ * Enum for commands for DVR controls
  * @author monejh
  */
 public enum DVRCommandType

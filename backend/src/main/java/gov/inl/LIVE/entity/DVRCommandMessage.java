@@ -8,7 +8,7 @@ package gov.inl.LIVE.entity;
 import java.util.Objects;
 
 /**
- *
+ * A command message for issuing DVR related commands
  * @author monejh
  */
 public class DVRCommandMessage
@@ -17,19 +17,25 @@ public class DVRCommandMessage
     private long id;
 
     
+    /***
+     * Default constructor
+     */
     public DVRCommandMessage()
     {
         
     }
     
+    /***
+     * Constructor for command and unique id.
+     * @param commandType THe type of the command
+     * @param id  The ID of the request.
+     */
     public DVRCommandMessage(DVRCommandType commandType, long id)
     {
         this.commandType = commandType;
         this.id = id;
     }
 
-    
-    
     
     public long getId()
     {
