@@ -42,7 +42,6 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 public class DVRController implements Initializable
 {
     public static String sessionListURL = "api/sessions/";
-    public static String CLIENT_URL = "tcp://localhost:61616";
     
     private String baseURL = "";
     private RestController restController;
@@ -195,7 +194,7 @@ public class DVRController implements Initializable
         appendText("Connecting...\n");
         
         //connect to AMQ first
-        factory = new ActiveMQConnectionFactory(CLIENT_URL);
+        factory = new ActiveMQConnectionFactory(session.getActivemqUrl());
         connection = factory.createConnection();
         amqSession = connection.createSession(false,  Session.AUTO_ACKNOWLEDGE);
         

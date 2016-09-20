@@ -30,6 +30,12 @@ public class LIVESession
 		set;
 	}
 
+	public String activemqUrl
+	{
+		get;
+		set;
+	}
+
 	/*public object owner
 	{
 		get;
@@ -56,7 +62,7 @@ public class LIVESession
 
 	public override string ToString ()
 	{
-		return string.Format ("[LIVESession: id={0}, name={1}, dataStreamName={2}, controlStreamName={3}]", id, name, dataStreamName, controlStreamName);
+		return string.Format ("[LIVESession: id={0}, name={1}, dataStreamName={2}, controlStreamName={3}, activemqUrl={4}]", id, name, dataStreamName, controlStreamName, activemqUrl);
 	}
 }
 

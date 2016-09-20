@@ -21,6 +21,7 @@ public class LIVESession
     private String name;
     private String dataStreamName;
     private String controlStreamName;
+    private String activemqUrl;
 
     public LIVESession()
     {
@@ -114,6 +115,16 @@ public class LIVESession
     {
         this.controlStreamName = controlStreamName;
     }
+
+    public String getActivemqUrl()
+    {
+        return activemqUrl;
+    }
+
+    public void setActivemqUrl(String activemqUrl)
+    {
+        this.activemqUrl = activemqUrl;
+    }
     
     
     
@@ -122,7 +133,8 @@ public class LIVESession
     {
         return "ID: " + id + ", Name:" + name
                     + ", Control Stream Name:" + controlStreamName
-                    + ", Data Stream Name:" + dataStreamName;
+                    + ", Data Stream Name:" + dataStreamName
+                    + ", ActiveMQ URL:" + activemqUrl;
     }
     
 }

@@ -147,6 +147,7 @@ public class LIVESessionController
             Hibernate.initialize(group.getPermissionCollection());
         }
         LIVESession session = new LIVESession(1L, "test", user);
+        session.setActivemqUrl(this.amqService.getActiveMQClientUrl());
         try
         {
             createLIVESession(session);
@@ -274,6 +275,7 @@ public class LIVESessionController
         filteredList.stream().forEach((session) ->
         {
             cleanSession(session);
+            session.setActivemqUrl(this.amqService.getActiveMQClientUrl());
         });
         
         return new ResponseEntity<>(objMapper.writeValueAsString(new JsonListResult<>(total, filteredList)), HttpStatus.OK);
@@ -299,6 +301,7 @@ public class LIVESessionController
             if (!allowEdit(session, currentUser))
                 return new ResponseEntity<>(objMapper.writeValueAsString(""), HttpStatus.BAD_REQUEST);
             cleanSession(session);
+            session.setActivemqUrl(this.amqService.getActiveMQClientUrl());
             return new ResponseEntity<>(objMapper.writeValueAsString(session), HttpStatus.OK);
         }
         
@@ -345,7 +348,7 @@ public class LIVESessionController
         
         sessionsMap.put(id, session);
         cleanSession(session);
-        
+        session.setActivemqUrl(this.amqService.getActiveMQClientUrl());
         
         return new ResponseEntity<>(objMapper.writeValueAsString(session), HttpStatus.OK);
         
@@ -383,6 +386,7 @@ public class LIVESessionController
         }
         sessionsMap.put(session.getId(), session);
         cleanSession(session);
+        session.setActivemqUrl(this.amqService.getActiveMQClientUrl());
         AMQSessionInfo sessionInfo = amqService.addSession(session.getId());
         session.setControlStreamName(sessionInfo.getControlTopicName());
         session.setDataStreamName(sessionInfo.getDataTopicName());

@@ -33,7 +33,6 @@ import org.apache.http.client.methods.HttpGet;
 public class SessionListController implements Initializable
 {
     public static String sessionListURL = "api/sessions/";
-    public static String CLIENT_URL = "tcp://localhost:61616";
     
     private String baseURL = "";
     private RestController restController;
