@@ -41,6 +41,13 @@ public class Planet_Data_Loader : MonoBehaviour
 	float m_timeCounter = 0.0f;
 	float m_lastFramerate = 0.0f;
 	public float m_refreshTime = 0.5f;
+	public bool running = false;
+
+	public void startPlayback()
+	{
+		this.running = true;
+	}
+
 
 	// Use this for initialization
 	void Start ()
@@ -98,37 +105,40 @@ public class Planet_Data_Loader : MonoBehaviour
 	// Update is called once per frame
 	void Update () {
 
-		if( m_timeCounter < m_refreshTime )
+		if (running)
 		{
-			m_timeCounter += Time.deltaTime;
-			m_frameCounter++;
-		}
-		else
-		{
-			//This code will break if you set your m_refreshTime to 0, which makes no sense.
-			m_lastFramerate = (float)m_frameCounter/m_timeCounter;
-			frames_per_second = (int)m_lastFramerate;
-			//print ("frames per second = " + frames_per_second);
-			skip_count = (int) (steps_per_second / frames_per_second);
-			//print("skipping " + skip_count + " data points per frame");
+			if (m_timeCounter < m_refreshTime)
+			{
+				m_timeCounter += Time.deltaTime;
+				m_frameCounter++;
+			}
+			else
+			{
+				//This code will break if you set your m_refreshTime to 0, which makes no sense.
+				m_lastFramerate = (float)m_frameCounter / m_timeCounter;
+				frames_per_second = (int)m_lastFramerate;
+				//print ("frames per second = " + frames_per_second);
+				skip_count = (int)(steps_per_second / frames_per_second);
+				//print("skipping " + skip_count + " data points per frame");
 
-			m_frameCounter = 0;
-			m_timeCounter = 0.0f;
-		}
-		currentFrame++;
+				m_frameCounter = 0;
+				m_timeCounter = 0.0f;
+			}
+			currentFrame++;
 
-		try
-		{
-			readNextTimeStep();
+			try
+			{
+				readNextTimeStep ();
+			}
+			catch (Exception e)
+			{
+				print (e.Message);
+				print ("Simulation reinitialized because end of data was likely reached.");
+				cleanup ();
+				init ();
+			}
+			handleCameraInput ();
 		}
-		catch(Exception e)
-		{
-			print (e.Message);
-			print ("Simulation reinitialized because end of data was likely reached.");
-			cleanup ();
-			init ();
-		}
-		handleCameraInput();
 	}
 
 	// properly deletes objects

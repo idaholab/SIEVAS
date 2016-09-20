@@ -101,6 +101,11 @@ export class AppComponent implements OnInit, AfterViewInit
 
     onSubmit(frmLogin)
     {
-        this.post('login',frmLogin.value,"post");
+
+        let url = 'login';
+        let redirectParam = this.getParameterByName("redirect");
+        if (redirectParam)
+            url += "?redirect=" + redirectParam;
+        this.post(url,frmLogin.value,"post");
     }
 }
