@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.EventSystems;
+using Apache.NMS;
 
 public class SessionViewController : MonoBehaviour, Tacticsoft.ITableViewDataSource, ITableClick {
 
@@ -66,6 +67,32 @@ public class SessionViewController : MonoBehaviour, Tacticsoft.ITableViewDataSou
 			print (cell.sessionInfo);
 			canvas.gameObject.SetActive (false);
 			loader.startPlayback ();
+			NMSConnectionFactory cf = new NMSConnectionFactory("activemq:" + cell.sessionInfo.activemqUrl);
+			IConnection connection = cf.CreateConnection ();
+			ISession amqSession = connection.CreateSession (AcknowledgementMode.AutoAcknowledge);
+			ITopic controlTopic = amqSession.GetTopic (cell.sessionInfo.controlStreamName);
+			IMessageConsumer controlConsumer = amqSession.CreateConsumer (controlTopic);
+			controlConsumer.Listener += onControlMessage;
+
+			ITopic dataTopic = amqSession.GetTopic (cell.sessionInfo.dataStreamName);
+			IMessageConsumer dataConsumer = amqSession.CreateConsumer (dataTopic);
+			dataConsumer.Listener += onDataMessage;
+
+			connection.Start ();
+
 		}
+	}
+
+
+	private void onControlMessage(IMessage msg)
+	{
+		print ("CONTROL");
+		print (msg);
+	}
+
+	private void onDataMessage(IMessage msg)
+	{
+		print ("DATA");
+		print (msg);
 	}
 }
