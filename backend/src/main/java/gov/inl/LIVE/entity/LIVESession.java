@@ -22,6 +22,7 @@ public class LIVESession
     private List<PermissionGroup> groups = new ArrayList<>();
     private String dataStreamName;
     private String controlStreamName;
+    private String activemqUrl;
 
     /***
      * Default contructor, does nothing.
@@ -182,6 +183,18 @@ public class LIVESession
     {
         this.controlStreamName = controlStreamName;
     }
+
+    public String getActivemqUrl()
+    {
+        return activemqUrl;
+    }
+
+    public void setActivemqUrl(String activemqUrl)
+    {
+        this.activemqUrl = activemqUrl;
+    }
+    
+    
     
     
     @Override
@@ -192,7 +205,8 @@ public class LIVESession
                     + ", Users:" + users
                     + ",Groups:" + groups
                     + ", Control Stream Name:" + controlStreamName
-                    + ", Data Stream Name:" + dataStreamName;
+                    + ", Data Stream Name:" + dataStreamName
+                    + ", ActiveMQ URL:" + activemqUrl;
     }
     
 }

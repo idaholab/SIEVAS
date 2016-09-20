@@ -109,8 +109,10 @@ public class btnLoginScript : MonoBehaviour {
 			if (request.responseCode == REDIRECT_HTTP_STATUS) {
 				Dictionary<string,string> headers = request.GetResponseHeaders ();
 				string location = headers [LOCATION_HEADER];
-				if (!string.IsNullOrEmpty (location)) {
-					if (location.EndsWith (ERROR_PARAM)) {
+				if (!string.IsNullOrEmpty (location))
+				{
+					if (location.EndsWith (ERROR_PARAM))
+					{
 						ModalDialog tmp = new ModalDialog ("Login Error", "Invalid username/password.", "OK", null);
 						tmp.show ();
 					}

@@ -72,13 +72,18 @@ public class ActiveMQService implements MessageListener
         
     }
     
+    public String getActiveMQClientUrl()
+    {
+        return CLIENT_URL;
+    }
+    
     /***
      * Starts the control topic for the server (not client).
      * @throws JMSException 
      */
     private void start() throws JMSException
     {
-        factory = new ActiveMQConnectionFactory(CLIENT_URL);
+        factory = new ActiveMQConnectionFactory(getActiveMQClientUrl());
         connection = factory.createConnection();
         session = connection.createSession(false,  Session.AUTO_ACKNOWLEDGE);
         mainControlDestination = session.createTopic(MAIN_CONTROL_TOPIC);
