@@ -53,6 +53,7 @@
      <Compile Include="Assets\scripts\JsonList.cs" />
      <Compile Include="Assets\scripts\LIVESession.cs" />
      <Compile Include="Assets\scripts\ModalDialog.cs" />
+     <Compile Include="Assets\scripts\Nbody.cs" />
      <Compile Include="Assets\scripts\Planet.cs" />
      <Compile Include="Assets\scripts\Planet_Data_Loader.cs" />
      <Compile Include="Assets\scripts\SessionCell.cs" />

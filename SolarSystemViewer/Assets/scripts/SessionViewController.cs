@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine.EventSystems;
 using Apache.NMS;
+using Newtonsoft.Json;
 
 public class SessionViewController : MonoBehaviour, Tacticsoft.ITableViewDataSource, ITableClick {
 
@@ -66,7 +67,7 @@ public class SessionViewController : MonoBehaviour, Tacticsoft.ITableViewDataSou
 		{
 			print (cell.sessionInfo);
 			canvas.gameObject.SetActive (false);
-			loader.startPlayback ();
+			//loader.startPlayback ();
 			NMSConnectionFactory cf = new NMSConnectionFactory("activemq:" + cell.sessionInfo.activemqUrl);
 			IConnection connection = cf.CreateConnection ();
 			ISession amqSession = connection.CreateSession (AcknowledgementMode.AutoAcknowledge);
@@ -76,7 +77,8 @@ public class SessionViewController : MonoBehaviour, Tacticsoft.ITableViewDataSou
 
 			ITopic dataTopic = amqSession.GetTopic (cell.sessionInfo.dataStreamName);
 			IMessageConsumer dataConsumer = amqSession.CreateConsumer (dataTopic);
-			dataConsumer.Listener += onDataMessage;
+			//dataConsumer.Listener += onDataMessage;
+			dataConsumer.Listener += loader.onDataMessage;
 
 			connection.Start ();
 
@@ -92,7 +94,25 @@ public class SessionViewController : MonoBehaviour, Tacticsoft.ITableViewDataSou
 
 	private void onDataMessage(IMessage msg)
 	{
-		print ("DATA");
-		print (msg);
+		if (msg is ITextMessage)
+		{
+			ITextMessage txtMsg = msg as ITextMessage;
+			string objName = txtMsg.Properties.GetString ("ObjectName");
+			if (objName == "Nbody")
+			{
+				JsonSerializerSettings settings = new JsonSerializerSettings();
+				settings.MissingMemberHandling = MissingMemberHandling.Ignore;
+				settings.CheckAdditionalContent = false;
+				Nbody nbody = JsonConvert.DeserializeObject<Nbody> (txtMsg.Text, settings);
+				print (nbody);
+			}
+			else
+				print ("UNKNOWN OBJECT TYPE" + objName);
+		}
+		else
+		{
+			print ("UNKNOWN MSG");
+			print (msg);
+		}
 	}
 }
