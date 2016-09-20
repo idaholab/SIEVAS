@@ -51,25 +51,15 @@ public class SessionCell : TableViewCell
 		}
 	}
 
-	/*public void SetRowNumber(int rowNumber) {
-		m_rowNumberText.text = "Row " + rowNumber.ToString();
-		m_background.color = GetColorForRow(rowNumber);
-	}*/
-
-	private int m_numTimesBecameVisible;
-	public void NotifyBecameVisible() {
-		m_numTimesBecameVisible++;
-		m_visibleCountText.text = "# rows this cell showed : " + m_numTimesBecameVisible.ToString();
-	}
 
 	private Color GetColorForRow(int row) {
-		switch (row % 3) {
+		switch (row % 2) {
 		case 0:
-			return Color.blue;
+			return new Color (150, 150, 150);
 		case 1:
 			return Color.white;
 		default:
-			return Color.red;
+			return new Color (100, 100, 100);
 		}
 	}
 
