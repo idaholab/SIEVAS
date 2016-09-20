@@ -4,6 +4,8 @@ using System.Text;
 using System.IO;
 using System.Collections.Generic;
 using System;
+using Apache.NMS;
+using Newtonsoft.Json;
 
 public class Planet_Data_Loader : MonoBehaviour
 {
@@ -42,6 +44,7 @@ public class Planet_Data_Loader : MonoBehaviour
 	float m_lastFramerate = 0.0f;
 	public float m_refreshTime = 0.5f;
 	public bool running = false;
+	Vector3[] bodyPositions = new Vector3[10];
 
 	public void startPlayback()
 	{
@@ -139,6 +142,14 @@ public class Planet_Data_Loader : MonoBehaviour
 			}
 			handleCameraInput ();
 		}
+		for (int ii = 0; ii < 10; ii++)
+		{
+			if (bodyPositions [ii] != null)
+			{
+				bodies [ii].transform.position = bodyPositions [ii];
+			}
+		}
+		handleCameraInput ();
 	}
 
 	// properly deletes objects
@@ -248,6 +259,30 @@ public class Planet_Data_Loader : MonoBehaviour
 		bodies[9].transform.localScale = new Vector3(sunSize * 1.0f/5.0f, sunSize * 1.0f/5.0f, sunSize * 1.0f/5.0f);	
 	}
 
+
+	public void onDataMessage(IMessage msg)
+	{
+		if (msg is ITextMessage)
+		{
+			ITextMessage txtMsg = msg as ITextMessage;
+			string objName = txtMsg.Properties.GetString ("ObjectName");
+			if (objName == "Nbody")
+			{
+				JsonSerializerSettings settings = new JsonSerializerSettings();
+				settings.MissingMemberHandling = MissingMemberHandling.Ignore;
+				settings.CheckAdditionalContent = false;
+				Nbody nbody = JsonConvert.DeserializeObject<Nbody> (txtMsg.Text, settings);
+				bodyPositions [nbody.planetNumber - 1] = new Vector3 ((float)nbody.x, (float)nbody.y, (float)nbody.z);
+			}
+			else
+				print ("UNKNOWN OBJECT TYPE" + objName);
+		}
+		else
+		{
+			print ("UNKNOWN MSG");
+			print (msg);
+		}
+	}
 
 
 }
