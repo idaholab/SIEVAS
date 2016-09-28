@@ -397,12 +397,11 @@ public class NBody2
                 System.out.println(" step = " + ns);
                 nc = 0;
             }
-            if (ns % steps_in_1AU == 0)
+            if (ns % 500 == 0)
             {
                 for (i = 1; i <= N; i++)
                 /* i from 1 by 1 to N do */
                 {
-
                     pw[i].println(alpha[i][0] + " " + beta[i][0] + " " + Gamma[i][0]);
                     sqlPW.println("INSERT INTO nbody(planet_num,step,x,y,z,u,v,w) VALUES(" + i + "," + ns + ","+ alpha[i][0] + "," + beta[i][0] + "," + Gamma[i][0]
                         + "," +delta[i][0] + "," + rho[i][0] + "," + lambda[i][0] + ");");

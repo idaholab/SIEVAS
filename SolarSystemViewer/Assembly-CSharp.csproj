@@ -45,6 +45,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\TSTableView\Examples\DynamicCellHeight\DynamicHeightCell.cs" />
+     <Compile Include="Assets\TSTableView\Examples\DynamicCellHeight\DynamicHeightTableViewController.cs" />
+     <Compile Include="Assets\TSTableView\Examples\Simple\ScrollingEventsHandler.cs" />
+     <Compile Include="Assets\TSTableView\Examples\Simple\SimpleTableViewController.cs" />
+     <Compile Include="Assets\TSTableView\Examples\Simple\VisibleCounterCell.cs" />
      <Compile Include="Assets\TSTableView\ITableViewDataSource.cs" />
      <Compile Include="Assets\TSTableView\TableView.cs" />
      <Compile Include="Assets\TSTableView\TableViewCell.cs" />
@@ -70,14 +75,17 @@
  <Reference Include="UnityEngine.Analytics">
  <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/UnityAnalytics/UnityEngine.Analytics.dll</HintPath>
  </Reference>
+ <Reference Include="Apache.NMS">
+ <HintPath>/Users/monejh/Documents/LIVE/SolarSystemViewer/Assets/Apache.NMS.dll</HintPath>
+ </Reference>
+ <Reference Include="Ionic.Zlib">
+ <HintPath>/Users/monejh/Documents/LIVE/SolarSystemViewer/Assets/Ionic.Zlib.dll</HintPath>
+ </Reference>
  <Reference Include="Newtonsoft.Json">
  <HintPath>/Users/monejh/Documents/LIVE/SolarSystemViewer/Assets/Newtonsoft.Json.dll</HintPath>
  </Reference>
  <Reference Include="Apache.NMS.ActiveMQ">
  <HintPath>/Users/monejh/Documents/LIVE/SolarSystemViewer/Assets/Resources/Apache.NMS.ActiveMQ.dll</HintPath>
- </Reference>
- <Reference Include="Apache.NMS">
- <HintPath>/Users/monejh/Documents/LIVE/SolarSystemViewer/Assets/Apache.NMS.dll</HintPath>
  </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
