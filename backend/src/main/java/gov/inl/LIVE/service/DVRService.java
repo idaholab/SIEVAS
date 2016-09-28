@@ -194,22 +194,33 @@ public class DVRService implements Runnable, MessageListener
             else
                 startTime = currentTime - 0.1*playSpeed;
 
-            //getNextBlock of Data
-            List<IData> dataList = driver.getData(startTime, 0.1*playSpeed, 60.0, 1000);
-            //Send Data
-            dataList.stream().forEach((data) ->
+            List<IData> dataList = null;
+            try
             {
-                try
+                //getNextBlock of Data
+                dataList = driver.getData(startTime, 0.1*playSpeed, 60.0, 1000);
+            }
+            catch(Exception e)
+            {
+                Logger.getLogger(DVRService.class.getName()).log(Level.SEVERE, null, e);
+            }
+            if (dataList!=null)
+            {
+                //Send Data
+                dataList.stream().forEach((data) ->
                 {
-                    TextMessage msg = amqSession.createTextMessage(objMapper.writeValueAsString(data));
-                    msg.setStringProperty("ObjectName", data.getClass().getSimpleName());
-                    dataMessageProducer.send(msg);
-                }
-                catch (JMSException | JsonProcessingException ex)
-                {
-                    Logger.getLogger(DVRService.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            });
+                    try
+                    {
+                        TextMessage msg = amqSession.createTextMessage(objMapper.writeValueAsString(data));
+                        msg.setStringProperty("ObjectName", data.getClass().getSimpleName());
+                        dataMessageProducer.send(msg);
+                    }
+                    catch (JMSException | JsonProcessingException ex)
+                    {
+                        Logger.getLogger(DVRService.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                });
+            }
             lock.readLock().unlock();
             lock.writeLock().lock();
             currentTime+= playSpeed*0.1;
@@ -303,7 +314,7 @@ public class DVRService implements Runnable, MessageListener
                 } 
                 catch (JsonProcessingException | JMSException ex)
                 {
-                    Logger.getLogger(DVRService.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(DVRService.class.getName()).log(Level.INFO, null, ex);
                 }
             }
         }

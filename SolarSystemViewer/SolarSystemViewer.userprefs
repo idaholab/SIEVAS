@@ -1,12 +1,16 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/scripts/ModalDialog.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/scripts/Planet_Data_Loader.cs">
     <Files>
-      <File FileName="Assets/scripts/ModalDialog.cs" Line="49" Column="1" />
-      <File FileName="Assets/scripts/btnLoginScript.cs" Line="1" Column="1" />
-      <File FileName="Assets/scripts/Planet_Data_Loader.cs" Line="1" Column="1" />
+      <File FileName="Assets/TSTableView/TableViewCell.cs" Line="1" Column="1" />
+      <File FileName="Assets/scripts/ModalDialog.cs" Line="15" Column="69" />
+      <File FileName="Assets/scripts/Planet_Data_Loader.cs" Line="160" Column="4" />
       <File FileName="Assets/scripts/Planet.cs" Line="1" Column="1" />
       <File FileName="Assets/TSTableView/TableView.cs" Line="1" Column="1" />
+      <File FileName="Assets/scripts/SessionViewController.cs" Line="81" Column="50" />
+      <File FileName="Assets/scripts/SessionCell.cs" Line="46" Column="1" />
+      <File FileName="Assets/scripts/LIVESession.cs" Line="29" Column="7" />
+      <File FileName="Assets/scripts/Nbody.cs" Line="65" Column="3" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

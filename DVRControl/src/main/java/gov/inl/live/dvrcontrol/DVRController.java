@@ -165,7 +165,13 @@ public class DVRController implements Initializable
     private void appendText(String txt)
     {
         if (txtInfo!=null)
-            Platform.runLater(() -> txtInfo.appendText(txt));
+            Platform.runLater(() -> {
+                String currentTxt = txtInfo.getText();
+                if (currentTxt.length()>4000)
+                    currentTxt = currentTxt.substring(currentTxt.length()-4000, currentTxt.length()-1);
+                currentTxt += txt;
+                txtInfo.setText(currentTxt);
+            });
         
     }
     
@@ -177,8 +183,15 @@ public class DVRController implements Initializable
         pw.println();
         e.printStackTrace(pw);
         pw.println();
+        
         if (txtInfo!=null)
-            Platform.runLater(() -> txtInfo.appendText(sw.toString()));
+            Platform.runLater(() -> {
+                String currentTxt = txtInfo.getText();
+                if (currentTxt.length()>4000)
+                    currentTxt = currentTxt.substring(currentTxt.length()-4000, currentTxt.length()-1);
+                currentTxt += pw.toString();
+                txtInfo.setText(currentTxt);
+            });
         
     }
     
