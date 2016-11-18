@@ -80,27 +80,36 @@ public class NbodyDriver implements IDriver
         
         double startGenTime = maxStep*nbodyInfo.getTimestep();
         //double h = Math.pow(0.5, 14); //can change to 14 or 16 to change time step
-        List<Nbody[]> results = generator.run(startGenTime, startTime+timestep, listPrior, nbodyInfo.getTimestep(), maxStep);
+        List<Nbody> results = generator.run(startGenTime, startTime+timestep, listPrior, nbodyInfo.getTimestep(), maxStep);
         
         //remove front steps not needed
         int stepsToSkip = (int)Math.floor((startTime - startGenTime)/nbodyInfo.getTimestep());
         System.out.println("SKIPPING:" + stepsToSkip);
         
-        results = results.subList(stepsToSkip, results.size());
+        //results = results.subList(stepsToSkip*10, results.size());
         //now remove step smaller than resolution
         //TODO
         System.out.println("Computing final array");
-        List<Nbody> list = new ArrayList<>((int)(results.size()/10)+1);
-        for(int jj=0; jj<results.size(); jj+= (results.size()/10))
+        
+        
+        int itemsToSkip = (results.size()/10)/10;
+        List<Nbody> list = new ArrayList<>((int)(results.size()/itemsToSkip)*10);
+        System.out.println("RESULT SIZE:" + results.size());
+        System.out.println("STARTING AT:" + (stepsToSkip*10));
+        System.out.println("SKIPPING THESE:" + itemsToSkip);
+        for(int jj=Math.max(0,stepsToSkip*10-1); jj<results.size(); jj+= itemsToSkip*10)
         {
-            Nbody[] nbodyArray = results.get(jj);
-            System.out.println("GOT ARRAY");
-            for(int ii=0;ii<nbodyArray.length;ii++)
+            for(int ii=0;ii<10;ii++)
             {
-                //set time for DVR engine
-                nbodyArray[ii].setTime(nbodyArray[ii].getStep()*nbodyInfo.getTimestep());
-                list.add(nbodyArray[ii]);
+                Nbody nbody = results.get(jj + ii);
+                if (nbody!=null)
+                {
+                    //set time for DVR engine
+                    nbody.setTime(nbody.getStep()*nbodyInfo.getTimestep());    
+                    list.add(nbody);
+                }
             }
+            
         }
         //now run solution between each point
         //TODO

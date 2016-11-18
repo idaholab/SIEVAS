@@ -44,7 +44,7 @@ public class NBodyGenerator
         return x * x;
     }
 
-    public List<Nbody[]> run(double startTime, double endTime, List<Nbody> coords, double h, long initialTimestep)
+    public List<Nbody> run(double startTime, double endTime, List<Nbody> coords, double h, long initialTimestep)
     {
         int N = 10;
         int K1 = 8;
@@ -135,11 +135,9 @@ public class NBodyGenerator
 
         
         /* Initialize for the output. */
-       List<Nbody[]> results = new ArrayList<Nbody[]>();
-       Nbody[] first = new Nbody[N];
-       results.add(first);
+       List<Nbody> results = new ArrayList<>(num_time_steps*10);
        for(int ii=0;ii<N;ii++)
-            first[ii] = coords.get(ii);
+            results.add(coords.get(ii));
 
         /*  Do the  simulation.  */
         nc = 0;
@@ -330,23 +328,22 @@ public class NBodyGenerator
             }
             //if (ns % steps_in_1AU == 0)
             //{
-                Nbody[] next = new Nbody[N];
-                results.add(next);
                 for (int ii = 1; ii <= N; ii++)
                 /* i from 1 by 1 to N do */
                 {    
                     
                     
-                    next[ii-1] = new Nbody();
-                    next[ii-1].setId((long)ii);
-                    next[ii-1].setPlanetNumber(ii);
-                    next[ii-1].setStep(initialTimestep+ns-1);
-                    next[ii-1].setX(alpha[ii][0]);
-                    next[ii-1].setY(beta[ii][0]);
-                    next[ii-1].setZ(Gamma[ii][0]);
-                    next[ii-1].setU(delta[ii][0]);
-                    next[ii-1].setV(rho[ii][0]);
-                    next[ii-1].setW(lambda[ii][0]);
+                    Nbody next = new Nbody();
+                    next.setId((long)ii);
+                    next.setPlanetNumber(ii);
+                    next.setStep(initialTimestep+ns-1);
+                    next.setX(alpha[ii][0]);
+                    next.setY(beta[ii][0]);
+                    next.setZ(Gamma[ii][0]);
+                    next.setU(delta[ii][0]);
+                    next.setV(rho[ii][0]);
+                    next.setW(lambda[ii][0]);
+                    results.add(next);
                 }
             //}
 
