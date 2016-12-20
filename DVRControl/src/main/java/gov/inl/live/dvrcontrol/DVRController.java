@@ -278,6 +278,7 @@ public class DVRController implements Initializable
                 {
                     try
                     {
+                        System.out.println("Got control message");
                         DVRCommandMessageReply dvrMsg = objMapper.readValue(txtMsg.getText(), DVRCommandMessageReply.class);
                         switch(dvrMsg.getCommandType())
                         {

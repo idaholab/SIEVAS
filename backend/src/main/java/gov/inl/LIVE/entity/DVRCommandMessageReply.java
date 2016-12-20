@@ -17,8 +17,10 @@ public class DVRCommandMessageReply
     private DVRCommandType commandType;
     private boolean success;
     private DVRPlayMode playMode;
-    private double playSpeed;
-
+    private double speed;
+    private double startTime;
+    private double endTime;
+    
     /***
      * Default constructor. Does nothing.
      */
@@ -85,14 +87,33 @@ public class DVRCommandMessageReply
 
     public double getPlaySpeed()
     {
-        return playSpeed;
+        return speed;
     }
 
     public void setPlaySpeed(double playSpeed)
     {
-        this.playSpeed = playSpeed;
+        this.speed = playSpeed;
     }
     
+    public double getStartTime()
+    {
+        return startTime;
+    }
+    
+    public double getEndTime()
+    {
+        return endTime;
+    }
+    
+    public void setStartTime(double startTime)
+    {
+        this.startTime = startTime;
+    }
+    
+    public void setEndTime(double endTime)
+    {
+        this.endTime = endTime;
+    }
     
     
 
@@ -135,7 +156,7 @@ public class DVRCommandMessageReply
     @Override
     public String toString()
     {
-        return "DVRCommandMessageReply{" + "id=" + id + ", commandType=" + commandType + ", success=" + success + ", playMode=" + playMode + ", playSpeed=" + playSpeed + '}';
+        return "DVRCommandMessageReply{" + "id=" + id + ", commandType=" + commandType + ", success=" + success + ", playMode=" + playMode + ", speed=" + speed + '}';
     }
 
     

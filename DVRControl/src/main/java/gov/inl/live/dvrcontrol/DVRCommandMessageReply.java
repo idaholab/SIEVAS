@@ -18,6 +18,8 @@ public class DVRCommandMessageReply
     private boolean success;
     private DVRPlayMode playMode;
     private double playSpeed;
+    private double startTime;
+    private double endTime;
 
     public DVRCommandMessageReply()
     {
@@ -84,6 +86,25 @@ public class DVRCommandMessageReply
         this.playSpeed = playSpeed;
     }
     
+    public double getStartTime()
+    {
+        return startTime;
+    }
+    
+    public double getEndTime()
+    {
+        return endTime;
+    }
+    
+    public void setStartTime(double startTime)
+    {
+        this.startTime = startTime;
+    }
+
+    public void setEndTime(double endTime)
+    {
+        this.endTime = endTime;
+    }
     
     
 
