@@ -8,9 +8,7 @@ package gov.inl.LIVE.driver;
 import gov.inl.LIVE.DAO.CriteriaBuilderCriteriaQueryRootTriple;
 import gov.inl.LIVE.DAO.NbodyDAO;
 import gov.inl.LIVE.DAO.NbodyInfoDAO;
-import gov.inl.LIVE.common.IData;
 import gov.inl.LIVE.common.IDriver;
-import gov.inl.LIVE.connector.NBody;
 import gov.inl.LIVE.entity.Nbody;
 import gov.inl.LIVE.entity.NbodyInfo;
 import java.util.ArrayList;
@@ -91,9 +89,9 @@ public class NbodyDriver implements IDriver
         //TODO
         System.out.println("Computing final array");
         
-        
         int itemsToSkip = (results.size()/10)/10;
         List<Nbody> list = new ArrayList<>((int)(results.size()/itemsToSkip)*10);
+                System.out.println("LIST SIZE:" + (int)(results.size()/itemsToSkip)*10);
         System.out.println("RESULT SIZE:" + results.size());
         System.out.println("STARTING AT:" + (stepsToSkip*10));
         System.out.println("SKIPPING THESE:" + itemsToSkip);
@@ -118,7 +116,7 @@ public class NbodyDriver implements IDriver
         
         return list;
     }
-
+    
     @Override
     public void shutdown()
     {

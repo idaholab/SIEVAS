@@ -26,10 +26,7 @@ public class DVRCommandMessage
         this.commandType = commandType;
         this.id = id;
     }
-
-    
-    
-    
+      
     public long getId()
     {
         return id;

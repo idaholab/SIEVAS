@@ -11,7 +11,7 @@ package gov.inl.LIVE.entity;
  */
 public enum DVRCommandType
 {
-    GetStatus(1), Start(2), Stop(3);
+    GetStatus(1), Start(2), Stop(3), SetStart(4), SetPlaySpeed(5);
 
     private int value;
     

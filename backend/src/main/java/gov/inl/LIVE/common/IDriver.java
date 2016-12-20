@@ -26,6 +26,8 @@ public interface IDriver
      * @return
      */
     public List getData(double startTime, double timestep, double resolution, long maxResults);
+    default public double getStartTime(){return 0.0;};
+    default public double getEndTime(){return 0.0;};
     
     public void shutdown();
 }

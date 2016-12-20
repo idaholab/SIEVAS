@@ -8,17 +8,17 @@
         </div>
         <div class="form-group">
             <label>Name</label>
-            <input [(ngModel)]="session.name" name="permissionName" #name="ngModel" class="form-control" placeholder="Enter session name" required>
+            <input [(ngModel)]="session.name" name="sessionName" #name="ngModel" class="form-control" placeholder="Enter session name" required>
             <div [hidden]="name.valid || name.pristine" class="alert alert-danger">
                 Session Name is required
             </div>
             <div class="form-group">
                 <label>Control Stream</label>
-                <input [(ngModel)]="session.controlStreamName" name="id" #controlStreamName="ngModel" class="form-control" disabled>
+                <input [(ngModel)]="session.controlStreamName" name="controlStreamName" #controlStreamName="ngModel" class="form-control" disabled>
             </div>
             <div class="form-group">
                 <label>Data Stream</label>
-                <input [(ngModel)]="session.dataStreamName" name="id" #dataStreamName="ngModel" class="form-control" disabled>
+                <input [(ngModel)]="session.dataStreamName" name="dataStreamName" #dataStreamName="ngModel" class="form-control" disabled>
             </div>
             <fieldset>
                 <legend>Owner</legend>

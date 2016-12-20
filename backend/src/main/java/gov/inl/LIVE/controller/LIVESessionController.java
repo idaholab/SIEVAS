@@ -302,6 +302,8 @@ public class LIVESessionController
                 return new ResponseEntity<>(objMapper.writeValueAsString(""), HttpStatus.BAD_REQUEST);
             cleanSession(session);
             session.setActivemqUrl(this.amqService.getActiveMQClientUrl());
+                  System.out.println("CONTROL STREAM NAME:" + session.getControlStreamName());
+
             return new ResponseEntity<>(objMapper.writeValueAsString(session), HttpStatus.OK);
         }
         
@@ -389,6 +391,7 @@ public class LIVESessionController
         session.setActivemqUrl(this.amqService.getActiveMQClientUrl());
         AMQSessionInfo sessionInfo = amqService.addSession(session.getId());
         session.setControlStreamName(sessionInfo.getControlTopicName());
+  //     System.out.println("CONTROL STREAM NAME:" + session.getControlStreamName());
         session.setDataStreamName(sessionInfo.getDataTopicName());
         
         return new ResponseEntity<>(objMapper.writeValueAsString(session), HttpStatus.OK);

@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.inl.LIVE.common.IData;
 import gov.inl.LIVE.common.IDriver;
 import gov.inl.LIVE.driver.NbodyDriver;
+import gov.inl.LIVE.driver.WaterDriver;
 import gov.inl.LIVE.entity.DVRCommandMessage;
 import gov.inl.LIVE.entity.DVRCommandMessageReply;
 import gov.inl.LIVE.entity.DVRPlayMode;
@@ -54,9 +55,10 @@ public class DVRService implements Runnable, MessageListener
     private double playSpeed = 1.0;
     private boolean playing = false;
     private double currentTime = 0.0;
+    private double startTime = 0.0;
     
     /***
-     * Constructor for DVR service. Currently only loads the NBoyd driver. 
+     * Constructor for DVR service. Currently only loads the NBody driver. 
      * TODO: Implement dynamic loading based on session settings and 
      * configuration.
      * @param context The ApplicationContext from spring for loading other beans
@@ -68,7 +70,8 @@ public class DVRService implements Runnable, MessageListener
     public DVRService(ApplicationContext context, Session amqSession, MessageConsumer controlMessageConsumer, MessageProducer controlMessageProducer, MessageProducer dataMessageProducer)
     {
         this.objMapper = context.getBean(ObjectMapper.class);
-        this.driver = new NbodyDriver();
+        //this.driver = new NbodyDriver();
+        this.driver = new WaterDriver();
         this.amqSession = amqSession;
         this.controlMessageConsumer = controlMessageConsumer;
         this.controlMessageProducer = controlMessageProducer;
@@ -185,20 +188,17 @@ public class DVRService implements Runnable, MessageListener
     public void run()
     {
         lock.readLock().lock();
-        if (playing && (playSpeed!=0.0))
+        if (true)
+   //     if (playing && (playSpeed!=0.0))
         {
-            
-            double startTime;
-            if (playSpeed>0)
-                startTime = currentTime;
-            else
-                startTime = currentTime - 0.1*playSpeed;
-
             List<IData> dataList = null;
             try
             {
                 //getNextBlock of Data
                 dataList = driver.getData(startTime, 0.1*playSpeed, 60.0, 1000);
+                
+                // reset start time so it doesn't get stuck at one specific time
+                startTime = 0.0;
             }
             catch(Exception e)
             {
@@ -211,9 +211,11 @@ public class DVRService implements Runnable, MessageListener
                 {
                     try
                     {
+                        data.getClass();
                         TextMessage msg = amqSession.createTextMessage(objMapper.writeValueAsString(data));
                         msg.setStringProperty("ObjectName", data.getClass().getSimpleName());
                         dataMessageProducer.send(msg);
+
                     }
                     catch (JMSException | JsonProcessingException ex)
                     {
@@ -250,7 +252,7 @@ public class DVRService implements Runnable, MessageListener
     @Override
     public void onMessage(Message msg)
     {
-        Logger.getLogger(DVRService.class.getName()).log(Level.SEVERE, "MSG:" + msg);
+        Logger.getLogger(DVRService.class.getName()).log(Level.SEVERE, "MSG:{0}", msg);
         if (msg instanceof TextMessage)
         {
             String txt = "", objName="";
@@ -285,6 +287,7 @@ public class DVRService implements Runnable, MessageListener
                     return;
                 }
                 DVRCommandMessageReply replyMsg = new DVRCommandMessageReply(cmdMsg.getId(), cmdMsg.getCommandType(), false);
+                
                 switch(cmdMsg.getCommandType())
                 {
                     case Start:
@@ -304,7 +307,35 @@ public class DVRService implements Runnable, MessageListener
                         replyMsg.setPlayMode((playing) ? DVRPlayMode.Started: DVRPlayMode.Stopped);
                         replyMsg.setPlaySpeed(playSpeed);
                         replyMsg.setSuccess(true);
+                        
+                        // if start and end time aren't equal, then it is saved data or atleast data that can be generated from a specific start time
+                        if (this.driver.getStartTime() != this.driver.getEndTime())
+                        {
+                            replyMsg.setStartTime(this.driver.getStartTime());
+                            replyMsg.setEndTime(this.driver.getEndTime());
+                            
+                        }
+                        else
+                        {
+                            replyMsg.setStartTime(0.0);
+                            replyMsg.setEndTime(0.0);
+                        }
+                        
                         break;
+                    case SetStart:
+                        startTime = cmdMsg.getStartTime() + System.currentTimeMillis();
+                        replyMsg.setStartTime(startTime);
+                        replyMsg.setPlayMode((playing) ? DVRPlayMode.Started: DVRPlayMode.Stopped);
+                        replyMsg.setPlaySpeed(playSpeed);
+                        replyMsg.setSuccess(true);
+                        break;
+                    case SetPlaySpeed:
+                        playSpeed = cmdMsg.getPlaySpeed();
+                        replyMsg.setSuccess(true);
+                        replyMsg.setPlaySpeed(playSpeed);
+                        replyMsg.setPlayMode((playing) ? DVRPlayMode.Started: DVRPlayMode.Stopped);
+                        replyMsg.setPlaySpeed(playSpeed);
+                        System.out.println("SET PLAY SPEED TO: " + cmdMsg.getPlaySpeed());
                 }
                 try
                 {

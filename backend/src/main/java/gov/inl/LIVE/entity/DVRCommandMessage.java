@@ -15,6 +15,8 @@ public class DVRCommandMessage
 {
     private DVRCommandType commandType;
     private long id;
+    public double startTime;
+    public double speed;
 
     
     /***
@@ -41,12 +43,31 @@ public class DVRCommandMessage
     {
         return id;
     }
-
+    
+    public double getStartTime()
+    {
+        return startTime;
+    }
+    
+    public void setStartTime(double startTime)
+    {
+        this.startTime = startTime;
+    }
+    
     public void setId(long id)
     {
         this.id = id;
     }
 
+    public double getPlaySpeed()
+    {
+        return speed;
+    }
+
+    public void setPlaySpeed(double playSpeed)
+    {
+        this.speed = playSpeed;
+    }
     
     public DVRCommandType getCommandType()
     {
