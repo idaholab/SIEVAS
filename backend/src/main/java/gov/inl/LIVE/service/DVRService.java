@@ -55,7 +55,7 @@ public class DVRService implements Runnable, MessageListener
     private double playSpeed = 1.0;
     private boolean playing = false;
     private double currentTime = 0.0;
-    private double startTime = 0.0;
+    private double startTime = -1.0;
     
     /***
      * Constructor for DVR service. Currently only loads the NBody driver. 
@@ -188,17 +188,17 @@ public class DVRService implements Runnable, MessageListener
     public void run()
     {
         lock.readLock().lock();
-        if (true)
-   //     if (playing && (playSpeed!=0.0))
+    //    if (true)
+        if (playing && (playSpeed!=0.0))
         {
             List<IData> dataList = null;
             try
             {
                 //getNextBlock of Data
-                dataList = driver.getData(startTime, 0.1*playSpeed, 60.0, 1000);
+                dataList = driver.getData(startTime, playSpeed, 60.0, 1000);
                 
                 // reset start time so it doesn't get stuck at one specific time
-                startTime = 0.0;
+                startTime = -1.0;
             }
             catch(Exception e)
             {
@@ -323,7 +323,7 @@ public class DVRService implements Runnable, MessageListener
                         
                         break;
                     case SetStart:
-                        startTime = cmdMsg.getStartTime() + System.currentTimeMillis();
+                        startTime = cmdMsg.getStartTime();
                         replyMsg.setStartTime(startTime);
                         replyMsg.setPlayMode((playing) ? DVRPlayMode.Started: DVRPlayMode.Stopped);
                         replyMsg.setPlaySpeed(playSpeed);
@@ -331,6 +331,10 @@ public class DVRService implements Runnable, MessageListener
                         break;
                     case SetPlaySpeed:
                         playSpeed = cmdMsg.getPlaySpeed();
+                        if (playSpeed <= 0.0)
+                        {
+                            playSpeed = 1.0;
+                        }
                         replyMsg.setSuccess(true);
                         replyMsg.setPlaySpeed(playSpeed);
                         replyMsg.setPlayMode((playing) ? DVRPlayMode.Started: DVRPlayMode.Stopped);

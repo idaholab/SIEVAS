@@ -8,6 +8,7 @@ package gov.inl.LIVE.entity;
 import gov.inl.LIVE.common.IData;
 import gov.inl.LIVE.common.IIdentifier;
 import java.io.Serializable;
+import java.util.Arrays;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
@@ -113,6 +114,6 @@ public class WaterData  extends IData implements Serializable, IIdentifier<Long>
     @Override
     public String toString()
     {
-        return "WaterData{id=" + id + ", type=" + type + ", step=" + step + "}";
+        return "WaterData{id=" + id + ", type=" + type + ", step=" + step + "temp" + Arrays.toString(temp) + "time" + getTime() + "}";
     }
 }

@@ -25,14 +25,10 @@ import java.lang.Math;
  */
 public class WaterDriver  implements IDriver {
     
-    private static int stopRow = 0;
-    private static int previousRow = 0;
     private static int stopColumn = 0;
-    private static int pipeRow = 4;
-    private static double initTime = 0.0;
-    private static double previousTime = 0.0;
+    private static double scheduledTime = 0.0;
     private static double dataDelta = 0.0;
-    private static double timeDelta = 0.0;
+    private static int dataIndex = 0;
     private Workbook wb;
     private Sheet sheetStream;
     private Sheet sheetPipe;
@@ -52,23 +48,11 @@ public class WaterDriver  implements IDriver {
     @Override
     public void init(ApplicationContext context)
     {
-        /*
-        this.nbodyInfoDAO = context.getBean(NbodyInfoDAO.class);
-        this.nbodyDAO = context.getBean(NbodyDAO.class);
-        
-        this.nbodyInfo = nbodyInfoDAO.findById(nbodyInfoId);
-        
-        triple = nbodyDAO.getCriteriaTriple();
-        cb = triple.getCriteriaBuilder();
-        root = triple.getRoot();
-        orderBy[0] = cb.asc(root.get("step"));
-        orderBy[1] = cb.asc(root.get("planetNumber"));
-        */
-        
-                    // open the file
-            // TODO: this should probably be a pop up and more advance checking of file could be implemented
+        // open the file
+        // TODO: this should probably be a pop up and more advance checking of file could be implemented
 
-                    System.out.println("opening file");
+        System.out.println("opening file");
+        
         try {
             wb = WorkbookFactory.create(new File("C:/Users/SZEWTG/Downloads/water pipe dynamic result 2016 9 13.xlsx"));
 
@@ -89,180 +73,222 @@ public class WaterDriver  implements IDriver {
     @Override
     public List getData(double startTime, double timestep, double resolution, long maxResults)
     {
-        System.out.println("RUNNING PARSER");      
-
-        if (initTime == 0.0)
-        {
-            initTime = System.currentTimeMillis();
-        }
+        System.out.println("RUNNING PARSER");  
         
+        double currentSystemTime = System.currentTimeMillis();
         List<WaterData> list = new ArrayList<>();
-        try {
-            if (resolution == 0.0)
-            {
-                resolution = 1.0;
-            }
-            
-            //get the row corresponding to the given start time
-            if (startTime != 0.0)
-            {
-                stopRow = (int) Math.floor((startTime) * 100.0);
-            }
-            
-            //always send the first data set, then check timings of things
-            if (stopRow != 0)
-            {
-                double currentRowTime = sheetStream.getRow(START_ROW_DATA +  stopRow).getCell(TIME_COLUMN).getNumericCellValue();
-                double previousRowTime = sheetStream.getRow(START_ROW_DATA + stopRow - 1).getCell(TIME_COLUMN).getNumericCellValue();
-                System.out.println("current row " + currentRowTime
-                        + " previous row " + previousRowTime
-                        + " speed " + resolution);
-                
-                double timeScale = 3600000; //hours to milliseconds
-                dataDelta = ((currentRowTime - previousRowTime)/1.0) * timeScale;
-
-                timeDelta = (System.currentTimeMillis() - previousTime);
-                
-                System.out.println("dataDelta " + dataDelta + " timeDelta " + timeDelta);
-
-                // if we haven't reached the time to send the next set data, just leave
-                if (dataDelta > timeDelta)
-                {
-                    return list;
-                }
-
-                double skip;
-
-                double scheduleRate = 0.1;
-
-                previousRow = stopRow;
-
-                // if the data is required to be sent faster than the schedule rate, figure out how much data to skip
-                if (dataDelta < scheduleRate && dataDelta > 0.0)
-                {
-                    skip = scheduleRate / dataDelta;
-
-                    stopRow = (int) Math.floor((skip + 
-                            sheetStream.getRow(START_ROW_DATA +  stopRow).getCell(TIME_COLUMN).getNumericCellValue() * 100.0));
-                    
-                    // if we try to go past the data set, wrap around to the appropriate spot
-                    if (stopRow + START_ROW_DATA > sheetStream.getPhysicalNumberOfRows())
-                    {
-                        stopRow = stopRow - (sheetStream.getPhysicalNumberOfRows() - START_ROW_DATA);
-                    }
-                }
-            }
-            WaterData waterData = new WaterData();
-                                                                        
-            list = new ArrayList<>(sheetStream.getPhysicalNumberOfRows() * sheetStream.getRow(1).getPhysicalNumberOfCells());
-            
-
-            
-            //if (System.currentTimeMillis() > sheetStream.getRow(START_ROW_DATA +  stopRow).getCell(TIME_COLUMN).getNumericCellValue()*1000/resolution + initTime)
-            //while((stopRow < (sheetStream.getPhysicalNumberOfRows() - START_ROW_DATA)) && (count < MAX_ENTRIES))
-            {
-                System.out.println("row " + stopRow);
-                                
-                // if we need to start from first column again
-                if (stopColumn == 5)
-                {
-                    stopColumn = 0;    
-                }
-                
-                // add in pipe data first
-                if (stopColumn == 0){
-                    double delta = (System.currentTimeMillis() - initTime)/1000;
-                    System.out.println("C " + delta + " S " + sheetStream.getRow(START_ROW_DATA +  stopRow).getCell(TIME_COLUMN).getNumericCellValue() + " P " + sheetPipe.getRow(pipeRow).getCell(1).getNumericCellValue());
-                    
         
-                    // calcuate the offset of the when pipe data starts in context of stream data
-                    double pipeOffset = sheetPipe.getRow(4).getCell(1).getNumericCellValue();
-                    
-                    //if the current row time is greater than the start time of pipe data
-                    if (sheetStream.getRow(START_ROW_DATA +  stopRow).getCell(TIME_COLUMN).getNumericCellValue() >= pipeOffset)
-                    {
-                        pipeRow = (int)(2.0*(sheetStream.getRow(START_ROW_DATA +  stopRow).getCell(TIME_COLUMN).getNumericCellValue() - pipeOffset)*100.0);
-                        String cellContent = sheetPipe.getRow(0).getCell(1).getStringCellValue();
-                        waterData.setType("Pipe");
-                        String id = "";
-                        
-                        if (cellContent != null && cellContent.length() > 0)
-                        {
-                            // get which pipe this is
-                            for (int cc = 0; Character.isDigit(cellContent.charAt(cc)); cc++)
-                            {
-                                id += cellContent.charAt(cc);
-                            }
+        // offset for start time
+        if (startTime >= 0.0d)
+        {
+            setDataIndex(getIndexAtTime(startTime));
+            
+            // set to run this data set immediately
+            setScheduledTime(0.0);
+            System.out.println("Setting Start Time " + startTime); 
+        }
+        
+        double delta = currentSystemTime - getScheduledTime();
+        System.out.println("System Time - Scheduled time " +  delta);
+        
+        // if we have reached the time for the next data to go out
+        if (currentSystemTime >= getScheduledTime() )
+        {
+                    System.out.println("Current Index " + getDataIndex()); 
+            // process pipe data
+            list = setPipeData(getDataIndex(), list);
 
-                            if (!"".equals(id))
-                            {
-                                // set the pipe id now
-                                waterData.setId(Long.parseLong(id));
-                            }
-                            
-                            // set the temperatures along the pipe
-                            for(int kk = 0; kk < 11; kk++)
-                            {
-                                waterData.setTemp(sheetPipe.getRow(pipeRow + 1).getCell(2 + kk).getNumericCellValue(), kk);
-                            }
+            //process stream data
+            list = setStreamData(getDataIndex(), list);
+               
+            //update the index for next run through 
+            setDataIndex(getNextDataIndex(timestep));
+            
+                    System.out.println("Next Index " + getDataIndex()); 
+            
+        }
+        
+        return list;
+        
+    }
+    
+    // get the current index that should be process
+    private int getDataIndex()
+    {
+        return dataIndex;
+    }
+    
+    // set the index that should be processed
+    private void setDataIndex(int index)
+    {
+        dataIndex = index;
+    }
+    
+    // given a time (with reference to data time), get the corresponding index
+    private int getIndexAtTime(double time)
+    {
+        return (int)time*100;
+    }
+    
+    // given an index, get the time for that index
+    private double getTimeAtIndex(int index)
+    {
+        return sheetStream.getRow(START_ROW_DATA +  index).getCell(TIME_COLUMN).getNumericCellValue();
+    }
+    
+    // get the time the next data should go out
+    private double getScheduledTime()
+    {
+        return scheduledTime;
+    }
+    
+    // set the next time data should go out
+    private void setScheduledTime(double time)
+    {
+        scheduledTime = time;
+    }
+    
+    private int getNextDataIndex(double speed)
+    {
+            int currentIndex = getDataIndex();
+            int previousIndex = currentIndex - 1;
 
-                            waterData.setTime(sheetPipe.getRow(pipeRow).getCell(1).getNumericCellValue());
-                            list.add(waterData);
-                            count++;
-                                                    System.out.println("Temp P" + Arrays.toString(waterData.getTemp()));
-                            // skip over every other row 
-                            pipeRow = pipeRow + 2;
-                        }
-                    }
-                }
-                
-                while ((stopColumn < sheetStream.getRow(1).getPhysicalNumberOfCells()) && (count < MAX_ENTRIES))
-                {
-                    String cellContent = sheetStream.getRow(START_ROW_HEADER).getCell(START_COLUMN_HEADER + COLUMN_OFFSET * stopColumn).getStringCellValue();
-                    int clen = cellContent.length();
-
-                    // if the pseudo header cell has an something in it with an s then we found a stream set
-                    if (clen > 1 && cellContent != null && cellContent.contains("s")){
-                        waterData.setType("Stream");
-                        waterData.setId(Long.parseLong(cellContent.substring(1,clen)));
-                        //System.out.println("TIME S" + sheetStream.getRow(START_ROW_DATA + stopRow).getCell(TIME_COLUMN + COLUMN_OFFSET * stopColumn).getNumericCellValue());
-                        waterData.setTemp(sheetStream.getRow(START_ROW_DATA + stopRow).getCell(TEMP_COLUMN + COLUMN_OFFSET * stopColumn).getNumericCellValue(), 0);
-                        waterData.setTime(sheetStream.getRow(START_ROW_DATA + stopRow).getCell(TIME_COLUMN + COLUMN_OFFSET * stopColumn).getNumericCellValue());
-                        list.add(waterData);
-                        
-                        count++;
-
-                    }
-                    stopColumn++;
-                }
-                stopRow++;
-            }
-
-            // if we reached max entries to send this time, save off where to beging for next time
-            if (count >= MAX_ENTRIES){
-                System.out.println("Reached Max entries to send");
+            if (currentIndex == 0)
+            {
+                return currentIndex + 1;
             }
             
-            // else we have reached the end of the file, reset the starting positions to start from beginning
-            if (count <= MAX_ENTRIES && (stopColumn < sheetStream.getRow(1).getPhysicalNumberOfCells()) && (count < MAX_ENTRIES) && (stopColumn < sheetStream.getRow(1).getPhysicalNumberOfCells()))
+            double currentRowTime = sheetStream.getRow(START_ROW_DATA +  currentIndex).getCell(TIME_COLUMN).getNumericCellValue();
+            double previousRowTime = sheetStream.getRow(START_ROW_DATA + previousIndex).getCell(TIME_COLUMN).getNumericCellValue();
+
+            double timeScale = 1;//3600000; hours to milliseconds
+            dataDelta = ((currentRowTime - previousRowTime)/speed) * timeScale;
+
+            System.out.println("dataDelta " + dataDelta);
+
+            double skip;
+            int nextIndex;
+
+            // very important!!! if scheduled rate changes in DVRService, this needs to be updated as well
+            // TODO: make method to get AMQ schedule rate
+            double scheduleRate = 0.1;
+
+            // if the data is required to be sent faster than the schedule rate, figure out how much data to skip
+            if (dataDelta < scheduleRate && dataDelta > 0.0)
             {
-                System.out.println("Reached End of file restarting");
-                stopRow = 0;
-                stopColumn = 0;
-                pipeRow = 4;
+                skip = scheduleRate / dataDelta;
+
+                nextIndex = (int) Math.floor((skip + getDataIndex()));               
+                setScheduledTime(0.0);
             }
+            else
+            {
+                nextIndex = getDataIndex() + 1;
+                setScheduledTime(dataDelta + System.currentTimeMillis());
+            }
+                
+            // if we try to go past the data set, wrap around to the appropriate spot
+            if (nextIndex + START_ROW_DATA >= sheetStream.getLastRowNum())
+            {
+                nextIndex = nextIndex - (sheetStream.getPhysicalNumberOfRows() - START_ROW_DATA);
+            }
+            
+        return nextIndex;
+    }
+    
+    
+    // set the pipe data at the given index in the provided list
+    List<WaterData> setPipeData(int index, List<WaterData> list)
+    {
+        // TODO: handle multiple pipe data sheets
+        double pipeStartTime = sheetPipe.getRow(4).getCell(1).getNumericCellValue();
+        WaterData waterData = new WaterData();
 
+        //if the current row time for stream data is greater than  or equal to the start time of pipe data, start adding in pipe data
+        if (getTimeAtIndex(index) >= pipeStartTime)
+        {
+            //ugh precision problems....
+            int t1 =(int)(getTimeAtIndex(index) * 100);
+            int t2 = (int)(pipeStartTime * 100);
+            int pipeIndex = 2*(t1-t2)+5;
+            
+            String cellContent = sheetPipe.getRow(0).getCell(1).getStringCellValue();
 
-            System.out.println("SIZE " + count + "Stop Row" + stopRow + "Stop Column" + stopColumn);
-        } catch (Throwable e) {
-             System.out.println(e.getMessage());
+            String id = "";
+
+            if (cellContent != null && cellContent.length() > 0)
+            {
+                // get which pipe this is
+                for (int cc = 4; Character.isDigit(cellContent.charAt(cc)); cc++)
+                {
+                    id += cellContent.charAt(cc);
+
+                }
+
+                if (!"".equals(id))
+                {
+                    // set the pipe id now
+                    waterData.setId(Long.parseLong(id));
+                }
+
+                waterData.setType("Pipe" + id);
+
+                // set the temperatures along the pipe
+                for(int kk = 0; kk < 11; kk++)
+                {
+                    waterData.setTemp(sheetPipe.getRow(pipeIndex).getCell(2 + kk).getNumericCellValue(), kk);
+                }
+
+                waterData.setTime(getTimeAtIndex(index));
+
+                list.add(waterData);
+                                int row = pipeIndex;
+                System.out.println("Pipe Data @ Row " + row + "     " + waterData); 
+            }
+        }
+        else
+        {
+            
+        }
+        return list;
+    }
+    
+    // set the stream data at the given index in the provided list
+    List<WaterData> setStreamData(int index, List<WaterData> list)
+    {        
+        // process stream data
+        while ((stopColumn < sheetStream.getRow(START_ROW_HEADER).getPhysicalNumberOfCells()))
+        {
+            String cellContent = sheetStream.getRow(START_ROW_HEADER).getCell(START_COLUMN_HEADER + COLUMN_OFFSET * stopColumn).getStringCellValue();
+            int clen = cellContent.length();
+
+            // if the pseudo header cell has an something in it with an s then we found a stream set
+            if (clen > 0 && cellContent.contains("s")){
+                // get new water data
+                WaterData waterData = new WaterData();
+
+                waterData.setType("Stream" + cellContent);
+                waterData.setId(Long.parseLong(cellContent.substring(1,clen)));
+                //System.out.println("TIME S" + sheetStream.getRow(START_ROW_DATA + stopRow).getCell(TIME_COLUMN + COLUMN_OFFSET * stopColumn).getNumericCellValue());
+                waterData.setTemp(sheetStream.getRow(START_ROW_DATA + index).getCell(TEMP_COLUMN + COLUMN_OFFSET * stopColumn).getNumericCellValue(), 0);
+                waterData.setTime(sheetStream.getRow(START_ROW_DATA + index).getCell(TIME_COLUMN + COLUMN_OFFSET * stopColumn).getNumericCellValue());
+                list.add(waterData);
+                int row = START_ROW_DATA + index;
+                System.out.println("Stream Data @ Row " + row + "     " + waterData); 
+
+            }
+            stopColumn++;
         }
 
-        
-        previousTime = System.currentTimeMillis();
+        if (stopColumn >= sheetStream.getRow(1).getPhysicalNumberOfCells())
+        {
+            stopColumn = 0;
+        }
+
         return list;
     }
 
+    
     @Override
     public double getStartTime()
     {
