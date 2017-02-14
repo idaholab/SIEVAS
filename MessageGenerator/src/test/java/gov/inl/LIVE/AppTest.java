@@ -1,4 +1,4 @@
-package gov.inl.LIVE;
+package gov.inl.SIEVAS;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

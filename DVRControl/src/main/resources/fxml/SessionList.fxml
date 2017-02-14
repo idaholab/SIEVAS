@@ -8,7 +8,7 @@
 
 <GridPane alignment="CENTER" hgap="10.0" vgap="10.0"
     xmlns:fx="http://javafx.com/fxml"
-    fx:controller="gov.inl.live.dvrcontrol.SessionListController">
+    fx:controller="gov.inl.SIEVAS.dvrcontrol.SessionListController">
     <padding>
         <javafx.geometry.Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
     </padding>

@@ -2,12 +2,12 @@ import { Injectable } from '@angular/core';
 
 import { Http } from '@angular/http';
 
-import { LIVESession } from './session';
+import { SIEVASSession } from './session';
 import { BaseService } from '../BaseService';
 
 
 @Injectable()
-export class SessionService extends BaseService<number, LIVESession>
+export class SessionService extends BaseService<number, SIEVASSession>
 {
     constructor(http: Http)
     {

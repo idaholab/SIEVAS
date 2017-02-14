@@ -6,7 +6,7 @@ import { DataTable, Column, Header, Footer} from 'primeng/primeng';
 import { LazyLoadEvent } from 'primeng/primeng';
 import { Message, Growl } from 'primeng/primeng';
 
-import { LIVESession } from './session';
+import { SIEVASSession } from './session';
 import { SessionService } from './session.service';
 
 
@@ -25,8 +25,8 @@ import { SessionService } from './session.service';
 export class SessionComponent implements OnInit
 {
     title = 'Sessions';
-    sessions: LIVESession[];
-    selectedSession: LIVESession;
+    sessions: SIEVASSession[];
+    selectedSession: SIEVASSession;
     totalRecords: number = 0;
     msgs: Message[] = [];
     lastLazyLoadEvent: LazyLoadEvent = null;
@@ -53,7 +53,7 @@ export class SessionComponent implements OnInit
         this.router.navigate(['/sessions/create']);
     }
     
-    onDelete(session: LIVESession, event: any)
+    onDelete(session: SIEVASSession, event: any)
     {
       event.stopPropagation();
       this.sessionService
