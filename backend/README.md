@@ -21,23 +21,23 @@
 
         sudo apt-get install postgresql-9.3
 
-2. Run the install.sh script located in the backend directory (AVL/LIVE/backend):
+2. Run the install.sh script located in the backend directory (AVL/SIEVAS/backend):
 
-        cd AVL/LIVE/backend
+        cd SIEVAS/backend
         ./install.sh
 
 ## Testing the Build
 1. Open a terminal, then build and run backend:
 
-        cd AVL/LIVE/backend
+        cd SIEVAS/backend
         mvn
 
-2. Open another terminal, then build and run LIVETestClient:
+2. Open another terminal, then build and run SIEVASTestClient:
 
-        cd AVL/LIVE/LIVETestClient
+        cd SIEVAS/SIEVASTestClient
         mvn
 
-3. The LIVETestClient should prompt you for a username and password. The username is 'user' and the password is 'password'. You will then be prompted to select a session from the available list. Enter the ID number of the desired session and hit enter. At this point, the terminal will display the date and time every five seconds. If this is the case, the login was a success.
+3. The SIEVASTestClient should prompt you for a username and password. The username is 'user' and the password is 'password'. You will then be prompted to select a session from the available list. Enter the ID number of the desired session and hit enter. At this point, the terminal will display the date and time every five seconds. If this is the case, the login was a success.
 
 ## Creating a New Account
 Navigate to https://localhost:8443. Log in with 'user' and 'password'. From here, it is possible to create new users and sessions.

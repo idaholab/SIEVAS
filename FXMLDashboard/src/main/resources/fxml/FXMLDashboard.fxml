@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 
-<GridPane fx:controller="com.inl.fxmldashboard.FXMLDashboardController" xmlns:fx="http://javafx.com/fxml" >
+<GridPane fx:controller="gov.inl.SIEVAS.fxmldashboard.FXMLDashboardController" xmlns:fx="http://javafx.com/fxml" >
     <stylesheets>
         <URL value="@/styles/dashboardStyle.css"/>
     </stylesheets>

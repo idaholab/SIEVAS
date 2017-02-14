@@ -4,7 +4,7 @@ import { User } from '../user/user';
 import { Group } from '../group/group';
 
 
-export class LIVESession implements IIdentifier<number>, ITypeName
+export class SIEVASSession implements IIdentifier<number>, ITypeName
 {
     id: number;
     name: string;

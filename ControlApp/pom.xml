@@ -2,7 +2,7 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>gov.inl.LIVE</groupId>
+  <groupId>gov.inl.SIEVAS</groupId>
   <artifactId>ControlApp</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>jar</packaging>
@@ -12,7 +12,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <mainClass>gov.inl.LIVE.ControlApp.App</mainClass>
+    <mainClass>gov.inl.SIEVAS.ControlApp.App</mainClass>
     <activemq-version>5.13.3</activemq-version>
   </properties>
 
