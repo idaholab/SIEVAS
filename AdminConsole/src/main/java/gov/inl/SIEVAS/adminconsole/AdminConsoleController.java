@@ -7,6 +7,7 @@ package gov.inl.SIEVAS.adminconsole;
  */
 
 import gov.inl.SIEVAS.adminconsole.permission.PermissionsController;
+import gov.inl.SIEVAS.adminconsole.permissiongroup.PermissionGroupController;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
@@ -38,6 +39,7 @@ public class AdminConsoleController //implements Initializable
     private static final String ABOUT_TEXT = "About this";
     private static final String ABOUT_DESCRIPTION = "SIEVAS v0.1";
     private static final String PERMISSION_FXML = "/fxml/Permissions.fxml";
+    private static final String PERMISSIONGROUP_FXML = "/fxml/PermissionGroup.fxml";
     protected static final String CONTENT_FAILURE_MSG = "Failure loading content";
     private static final String COLON = ":";
     
@@ -109,6 +111,33 @@ public class AdminConsoleController //implements Initializable
         setContent((Pane)root);
         
         PermissionsController controller = loader.getController();
+        controller.setBaseURL(baseURL);
+        controller.LoadData();
+        
+    }
+    
+    
+    /***
+     * Handles the groups admin selection by showing the pane for the grid.
+     * @param event The event to process
+     */
+    @FXML
+    private void handlePermissionGroups(ActionEvent event)
+    {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(PERMISSIONGROUP_FXML));
+        Parent root;
+        try
+        {
+            root = loader.load();
+        }
+        catch(IOException e)
+        {
+            Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE,CONTENT_FAILURE_MSG + COLON + PERMISSION_FXML , e);
+            return;
+        }
+        setContent((Pane)root);
+        
+        PermissionGroupController controller = loader.getController();
         controller.setBaseURL(baseURL);
         controller.LoadData();
         

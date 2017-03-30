@@ -395,7 +395,7 @@ public abstract class BaseController<T extends IIdentifier>
             alert.showAndWait();*/
             return;
         }
-        evaluatePermissions(response);
+        evaluateResults(response);
     }
     
     
@@ -403,7 +403,7 @@ public abstract class BaseController<T extends IIdentifier>
      * Handles the response of the permission list
      * @param response  The HTTP response
      */
-    private void evaluatePermissions(HttpResponse response)
+    private void evaluateResults(HttpResponse response)
     {
         try
         {

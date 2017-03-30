@@ -10,7 +10,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Button?>
 
-<VBox id="AnchorPane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gov.inl.SIEVAS.adminconsole.permission.PermissionsController">
+<VBox id="AnchorPane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gov.inl.SIEVAS.adminconsole.permissiongroup.PermissionGroupController">
    <children>
       
       <Pagination prefHeight="11.0" prefWidth="248.0" fx:id="pagination" >
@@ -26,9 +26,9 @@
                             <javafx.scene.control.cell.PropertyValueFactory property="id" /> 
                         </cellValueFactory>
                     </TableColumn>
-                  <TableColumn id="permissionName" fx:id="colPermissionName" prefWidth="75.0" text="Name">
+                  <TableColumn id="groupName" fx:id="colGroupNam" prefWidth="250.0" text="Name">
                       <cellValueFactory>
-                          <javafx.scene.control.cell.PropertyValueFactory property="permissionName" /> 
+                          <javafx.scene.control.cell.PropertyValueFactory property="groupName" /> 
                       </cellValueFactory>
                   </TableColumn>
                 </columns>

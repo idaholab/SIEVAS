@@ -5,6 +5,7 @@
  */
 package gov.inl.SIEVAS.adminconsole;
 
+import gov.inl.SIEVAS.adminconsole.permissiongroup.PermissionGroup;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;

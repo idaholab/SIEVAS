@@ -18,6 +18,7 @@
           <Menu mnemonicParsing="false" text="Admin">
             <items>
               <MenuItem mnemonicParsing="false" onAction="#handlePermissions" text="Permissions" />
+              <MenuItem mnemonicParsing="false" onAction="#handlePermissionGroups" text="Groups" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Help">
