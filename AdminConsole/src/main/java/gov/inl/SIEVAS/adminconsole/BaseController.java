@@ -42,11 +42,13 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.util.EntityUtils;
 
 /**
- *
+ * Abstract class for the basecontroller of all the main views. Shows a grid, 
+ *  pagination, and new button.
  * @author monejh
  */
 public abstract class BaseController<T extends IIdentifier>
 {
+    
     @FXML
     private Pagination pagination;
     
@@ -55,6 +57,43 @@ public abstract class BaseController<T extends IIdentifier>
     
     @FXML
     private Button btnNew;
+    
+    /*Need to override these */
+    /***
+     * 
+     * @return Gets the FXML path of the edit window
+     */
+    public abstract String getObjectEditFXML();
+    
+    /***
+     * Create a new object of type T
+     * @return the newly created object.
+     */
+    public abstract T createObject();
+    
+    /***
+     * Gets the text name to display to user
+     * @return The string of the text object name
+     */
+    public abstract String getObjectTextName();
+    
+    /***
+     * Gets the URL for listing/deleting the object
+     * @return The relative URL to the base URL to use.
+     */
+    public abstract String getObjectURL();
+    
+    /***
+     * Gets the type reference for the listing JSON.
+     * @return The strong typereference for the T object.
+     */
+    public abstract TypeReference<JsonListResult<T > > getTypeReferenceForList();
+    
+    /***
+     * The extra content menu items you want to display for each row.
+     * @return 
+     */
+    public abstract List<MenuItem> getContextMenuItems();
     
     protected static final String DEFAULT_SORT_FIELD = "id";
     protected static final String CSS_URL = "/styles/Styles.css";
@@ -85,12 +124,9 @@ public abstract class BaseController<T extends IIdentifier>
     private int sortOrder = 1;
     private long lastStartIndex = 0;
     private final int PAGE_SIZE = 10;
+    private long count = 0;
     
-    public abstract String getObjectEditFXML();
-    public abstract T createObject();
-    public abstract String getObjectTextName();
-    public abstract String getObjectURL();
-    public abstract TypeReference<JsonListResult<T > > getTypeReferenceForList();
+    
     
     /***
      * Sets the base URL for the server
@@ -101,10 +137,10 @@ public abstract class BaseController<T extends IIdentifier>
         this.baseURL = url;
     }
     
-    
-    public abstract List<MenuItem> getContextMenuItems();
-    
-    
+    /***
+     * Handles the window init. Sets the callback for pagination, context menu, 
+     *  and double clicks to edit.
+     */
     @FXML
     public void initialize()//URL url, ResourceBundle rb)
     {
@@ -147,7 +183,10 @@ public abstract class BaseController<T extends IIdentifier>
         
     }
     
-    
+    /***
+     * Handles the context menu delete option. Makes the rest call to delete.
+     * @param obj The object to delete
+     */
     private void handleDelete(T obj)
     {
         String url = baseURL + getObjectURL() + obj.getId();
@@ -188,6 +227,9 @@ public abstract class BaseController<T extends IIdentifier>
         LoadData(lastStartIndex,PAGE_SIZE);
     }
     
+    /***
+     * Handles a change in the sort for the table.
+     */
     private void handleSortChange()
     {
         ObservableList<TableColumn<T,?>> list = tableView.getSortOrder();
@@ -206,7 +248,10 @@ public abstract class BaseController<T extends IIdentifier>
     
     
     
-    
+    /***
+     * Handles the double click of the mouse on a row. Opens the edit window.
+     * @param obj The object clicked.
+     */
     private void handleMouseClick(T obj)
     {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(getObjectEditFXML()));
@@ -240,7 +285,10 @@ public abstract class BaseController<T extends IIdentifier>
         
     }
     
-    
+    /***
+     * Handles a click on the new button. Opens the edit window with a 
+     *  new object.
+     */
     @FXML
     private void onNewClick()
     {
@@ -276,7 +324,11 @@ public abstract class BaseController<T extends IIdentifier>
     }
     
     
-    
+    /***
+     * Callback for pagination to create new page for the table.
+     * @param pageIndex The index of the page to render.
+     * @return The Pane contents of the page. Returns the new button and grid.
+     */
     public Pane createPage(int pageIndex)
     {
         
@@ -288,6 +340,9 @@ public abstract class BaseController<T extends IIdentifier>
         return box;
     }
     
+    /***
+     * Handles the initial loading of data. Call after all values are set.
+     */
     public void LoadData()
     {
         tableView.setSortPolicy(new Callback<TableView, Boolean>(){
@@ -302,6 +357,11 @@ public abstract class BaseController<T extends IIdentifier>
         LoadData(0,PAGE_SIZE);
     }
     
+    /***
+     * Handles loading a specific page for the table.
+     * @param start The start record to show.
+     * @param count The number of records to show.
+     */
     public void LoadData(long start, long count)
     {  
         HttpGet getRequest;
@@ -338,8 +398,7 @@ public abstract class BaseController<T extends IIdentifier>
         evaluatePermissions(response);
     }
     
-    private Collection<T> data;
-    private long count = 0;
+    
     /***
      * Handles the response of the permission list
      * @param response  The HTTP response
@@ -363,7 +422,6 @@ public abstract class BaseController<T extends IIdentifier>
                 tableView.getItems().addAll(result.getData());
                 
             }
-            this.data = result.getData();
             this.count = result.getTotal();
             long pageCount = this.count/PAGE_SIZE;
             if (this.count % PAGE_SIZE != 0)

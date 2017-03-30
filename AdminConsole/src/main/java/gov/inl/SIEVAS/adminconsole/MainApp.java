@@ -13,6 +13,11 @@ import javafx.stage.Stage;
  * @author monejh
  */
 public class MainApp extends Application {
+    
+    
+    public static final String LOGIN_FXML = "/fxml/Login.fxml";
+    public static final String CSS_URL = "/styles/Styles.css";
+    public static final String LOGIN_TITLE = "SIEVAS Login";
 
     /***
      * Starts the main page for application. This presents a login window.
@@ -21,12 +26,12 @@ public class MainApp extends Application {
      */
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("/fxml/Login.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource(LOGIN_FXML));
         
         Scene scene = new Scene(root);
-        scene.getStylesheets().add("/styles/Styles.css");
+        scene.getStylesheets().add(CSS_URL);
         
-        stage.setTitle("SIEVAS Login");
+        stage.setTitle(LOGIN_TITLE);
         stage.setScene(scene);
         stage.show();
     }

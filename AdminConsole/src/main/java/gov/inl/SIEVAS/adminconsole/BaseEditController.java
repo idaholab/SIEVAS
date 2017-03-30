@@ -26,7 +26,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.util.EntityUtils;
 
 /**
- *
+ * Class to handle the edit window.
  * @author monejh
  * @param <T>
  */
@@ -44,6 +44,7 @@ public abstract class BaseEditController<T extends IIdentifier> implements Initi
     protected T object;
     private boolean createMode = false;
     
+    /* Need these two buttons */
     @FXML
     private Button btnCancel;
     
@@ -52,9 +53,27 @@ public abstract class BaseEditController<T extends IIdentifier> implements Initi
     
     
     /* Need to override these*/
+    /***
+     * Handles the loading of data into the window. Should take this.object 
+     *  and put in the form fields.
+     */
     public abstract void LoadData();
+    
+    /***
+     * Gets the URL for saving/creating the object
+     * @return The object URL relative to the baseURL
+     */
     public abstract String getObjectURL();
+    
+    /***
+     * Updates this.object with values from the form fields.
+     */
     public abstract void UpdateObjectWithFormData();
+    
+    /***
+     * Gets the text name for the object to display to the user.
+     * @return The text of the object name.
+     */
     public abstract String getObjectTextName();
     
    
@@ -68,12 +87,19 @@ public abstract class BaseEditController<T extends IIdentifier> implements Initi
     }
     
     
-    
+    /**
+     * Sets the object for the edit window to use.
+     * @param obj 
+     */
     public void setObject(T obj)
     {
         this.object = obj;
     }
     
+    /***
+     * Sets whether to run in create mode.
+     * @param create True if in create mode, false if in edit.
+     */
     public void setCreateMode(boolean create)
     {
         this.createMode = create;
@@ -86,12 +112,14 @@ public abstract class BaseEditController<T extends IIdentifier> implements Initi
     @Override
     public void initialize(URL url, ResourceBundle rb)
     {
-        // TODO
+        
     }
     
     
-    
-    
+    /***
+     * Saves the current data in the window
+     * @return Returns true if save was successful, false otherwise.
+     */
     private boolean SaveData()
     {
         String url = baseURL + getObjectURL();
@@ -160,7 +188,10 @@ public abstract class BaseEditController<T extends IIdentifier> implements Initi
     }
     
     
-    
+    /***
+     * Handles the cancel button click by closing the window.
+     * @param event The event to process.
+     */
     @FXML
     private void onCancel(ActionEvent event)
     {
@@ -169,7 +200,10 @@ public abstract class BaseEditController<T extends IIdentifier> implements Initi
     }
     
     
-    
+    /***
+     * Handles the save button click by saving the data.
+     * @param event The event to process.
+     */
     @FXML
     private void onSave(ActionEvent event)
     {

@@ -6,6 +6,7 @@ package gov.inl.SIEVAS.adminconsole;
  * and open the template in the editor.
  */
 
+import gov.inl.SIEVAS.adminconsole.permission.PermissionsController;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
@@ -20,7 +21,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 
 /**
- * FXML Controller class
+ * Class to handle the main window.
  *
  * @author monejh
  */
@@ -61,13 +62,21 @@ public class AdminConsoleController //implements Initializable
         //nothing to do here
     }
     
-    
+    /***
+     * Handle the quit menu item by exiting
+     * @param event The event to process
+     */
     @FXML
     private void handleQuit(ActionEvent event)
     {
         System.exit(0);
     }
     
+    
+    /***
+     * Handles the about dialog.
+     * @param event The event to process
+     */
     @FXML
     private void handleAbout(ActionEvent event)
     {
@@ -79,6 +88,10 @@ public class AdminConsoleController //implements Initializable
         alert.showAndWait();
     }
     
+    /***
+     * Handles the permission admin selection by showing the pane for the grid.
+     * @param event The event to process
+     */
     @FXML
     private void handlePermissions(ActionEvent event)
     {
@@ -101,8 +114,12 @@ public class AdminConsoleController //implements Initializable
         
     }
     
-    
-    public void setContent (Pane anchorPane){
+    /***
+     * Sets the content of the main window pane replace what is there.
+     * @param anchorPane The new content of the pane.
+     */
+    public void setContent (Pane anchorPane)
+    {
         List<Node> nodes = anchorPane.getChildren();
         content.getChildren().clear();
         content.getChildren().addAll(nodes);
