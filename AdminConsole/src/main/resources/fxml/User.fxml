@@ -10,7 +10,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Button?>
 
-<VBox id="AnchorPane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gov.inl.SIEVAS.adminconsole.permissiongroup.PermissionGroupController">
+<VBox id="AnchorPane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gov.inl.SIEVAS.adminconsole.user.UserController">
    <children>
       
       <Pagination prefHeight="11.0" prefWidth="248.0" fx:id="pagination" >
@@ -26,9 +26,19 @@
                             <javafx.scene.control.cell.PropertyValueFactory property="id" /> 
                         </cellValueFactory>
                     </TableColumn>
-                  <TableColumn id="groupName" fx:id="colGroupName" prefWidth="250.0" text="Name">
+                  <TableColumn id="username" fx:id="colUsername" prefWidth="250.0" text="Username">
                       <cellValueFactory>
-                          <javafx.scene.control.cell.PropertyValueFactory property="groupName" /> 
+                          <javafx.scene.control.cell.PropertyValueFactory property="username" /> 
+                      </cellValueFactory>
+                  </TableColumn>
+                  <TableColumn id="firstName" fx:id="colFirstName" prefWidth="250.0" text="First Name">
+                      <cellValueFactory>
+                          <javafx.scene.control.cell.PropertyValueFactory property="firstName" /> 
+                      </cellValueFactory>
+                  </TableColumn>
+                  <TableColumn id="lastName" fx:id="colLastName" prefWidth="250.0" text="Last Name">
+                      <cellValueFactory>
+                          <javafx.scene.control.cell.PropertyValueFactory property="lastName" /> 
                       </cellValueFactory>
                   </TableColumn>
                 </columns>

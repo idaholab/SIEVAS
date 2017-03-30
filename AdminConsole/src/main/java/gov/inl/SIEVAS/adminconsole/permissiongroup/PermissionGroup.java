@@ -9,7 +9,7 @@ import gov.inl.SIEVAS.adminconsole.permission.Permission;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import gov.inl.SIEVAS.adminconsole.IIdentifier;
-import gov.inl.SIEVAS.adminconsole.UserInfo;
+import gov.inl.SIEVAS.adminconsole.user.UserInfo;
 import java.io.Serializable;
 import java.util.Collection;
 import javax.persistence.Basic;
