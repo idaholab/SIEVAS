@@ -1,0 +1,21 @@
+.button {
+    -fx-font-weight: bold;
+}
+
+#btnStop
+{
+    -fx-graphic: url('../images/stop.png');
+}
+
+#btnStart
+{
+    -fx-graphic: url('../images/start.png');
+}
+
+.table-row-cell:empty {
+    -fx-background-color: white;
+}
+ 
+.table-row-cell:empty .table-cell {
+    -fx-border-width: 0px;
+}
