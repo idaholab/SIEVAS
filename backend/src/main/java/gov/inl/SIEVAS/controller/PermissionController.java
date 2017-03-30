@@ -9,10 +9,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.inl.SIEVAS.DAO.CriteriaBuilderCriteriaQueryRootTriple;
 import gov.inl.SIEVAS.DAO.PermissionDAO;
+import gov.inl.SIEVAS.DAO.UserInfoDAO;
 import gov.inl.SIEVAS.common.JsonError;
 import gov.inl.SIEVAS.common.JsonListResult;
 import gov.inl.SIEVAS.common.Utility;
 import gov.inl.SIEVAS.entity.Permission;
+import gov.inl.SIEVAS.entity.PermissionGroup;
+import gov.inl.SIEVAS.entity.UserInfo;
 import java.io.IOException;
 import java.util.List;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -24,7 +27,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -45,6 +50,9 @@ public class PermissionController
     
     @Autowired
     PermissionDAO permissionDAO;
+    
+    @Autowired
+    UserInfoDAO userInfoDAO;
     
     
     /***
@@ -140,6 +148,42 @@ public class PermissionController
             return new ResponseEntity<>(objMapper.writeValueAsString(""), HttpStatus.NOT_FOUND);
         else
             return new ResponseEntity<>(objMapper.writeValueAsString(perm), HttpStatus.OK);
+        
+    }
+    
+    /***
+     * Gets a permission by id.
+     * @param permission The permission name to get
+     * @return returns true or false as a JSON object
+     * @throws JsonProcessingException 
+     */
+    @RequestMapping(value = "/api/permissions/user/{perm}", method = RequestMethod.GET, produces = "application/json")
+    public ResponseEntity<String> getUserHasPermission(@PathVariable(value = "perm") String permission)
+            throws JsonProcessingException
+    {
+        
+        CriteriaBuilderCriteriaQueryRootTriple<Permission,Permission> triple = permissionDAO.getCriteriaTriple();
+        CriteriaBuilder cb = triple.getCriteriaBuilder();
+        Root<Permission> root = triple.getRoot();
+        
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (StringUtils.isEmpty(username))
+            return new ResponseEntity<>(objMapper.writeValueAsString(""), HttpStatus.NOT_FOUND);
+        UserInfo currentUser = Utility.getUserByUsername(username, userInfoDAO);
+        if (currentUser == null)
+            return new ResponseEntity<>(objMapper.writeValueAsString(""), HttpStatus.NOT_FOUND);
+        
+        for(PermissionGroup group: currentUser.getPermissionGroupCollection())
+        {
+            for(Permission perm: group.getPermissionCollection())
+            {
+                if (perm.getPermissionName().equals(permission))
+                {
+                    return new ResponseEntity<>(objMapper.writeValueAsString(""), HttpStatus.OK);
+                }
+            }
+        }
+        return new ResponseEntity<>(objMapper.writeValueAsString(""), HttpStatus.NOT_FOUND);
         
     }
     
