@@ -76,11 +76,19 @@ public class LoginController implements Initializable
     private static final String LOAD_PERM_ERROR = "Load permission error";
     
     
+    /***
+     * Handles whether this an initial login or not.
+     * @param running If true, this is not initial login, false if so.
+     */
     public void setRunning(boolean running)
     {
         this.running = running;
     }
     
+    /***
+     * Sets the event handler for successful login while running = true.
+     * @param handler The handler to call.
+     */
     public void setEventHandler(EventHandler<ActionEvent> handler)
     {
         this.handler = handler;
@@ -221,7 +229,10 @@ public class LoginController implements Initializable
         }
     }
     
-    
+    /***
+     * Checks the user has the admin permission
+     * @param baseURL The user of the server to check.
+     */
     private void handlePermissionCheck(String baseURL)
     {
         HttpGet getRequest = new HttpGet(baseURL + PERMISSION_CHECK_URL + ADMIN_PERMISSION);
