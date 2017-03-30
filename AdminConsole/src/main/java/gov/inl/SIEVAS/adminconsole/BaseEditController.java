@@ -39,7 +39,7 @@ public abstract class BaseEditController<T extends IIdentifier> implements Initi
     private static final String COLON = ":";
     
     
-    private String baseURL = "";
+    protected String baseURL = "";
     private final RestController restController = RestController.getInstance();
     protected T object;
     private boolean createMode = false;

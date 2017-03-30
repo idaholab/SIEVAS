@@ -3,11 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package gov.inl.SIEVAS.adminconsole;
+package gov.inl.SIEVAS.adminconsole.permissiongroup;
 
 import gov.inl.SIEVAS.adminconsole.permission.Permission;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import gov.inl.SIEVAS.adminconsole.IIdentifier;
+import gov.inl.SIEVAS.adminconsole.UserInfo;
 import java.io.Serializable;
 import java.util.Collection;
 import javax.persistence.Basic;
