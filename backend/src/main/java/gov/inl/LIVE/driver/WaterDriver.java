@@ -42,9 +42,7 @@ public class WaterDriver  implements IDriver {
     private static final int START_ROW_DATA = 4;
     private static final int COLUMN_OFFSET = 6;
     private static final int TEMP_COLUMN = 3;
-    private static final int PRESS_COLUMN = 4;
     private static final int TIME_COLUMN = 1;
-    private static final int MAX_ENTRIES = 1000;
     int count = 0;
     
     @Override
@@ -248,12 +246,12 @@ public class WaterDriver  implements IDriver {
         for (int sheetNum = 0; sheetNum < pipeCount; sheetNum++)
         {
             int numberOfPipes = sheetPipe[sheetNum].getRow(0).getPhysicalNumberOfCells();
-            
+
             // go through each pipe in sheet
             for (int pipeNum = 0; pipeNum < numberOfPipes; pipeNum++)
             {
                 int offset = pipeNum * 13; 
-                System.out.println("Offset " +  offset + " sheetnum " + sheetNum + " pipenum " + pipeNum + " numberofpipes " + numberOfPipes);
+
                 double pipeStartTime = sheetPipe[sheetNum].getRow(4).getCell(1+offset).getNumericCellValue();
                 WaterData waterData = new WaterData();
 

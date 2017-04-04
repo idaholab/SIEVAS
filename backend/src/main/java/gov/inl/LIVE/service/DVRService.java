@@ -11,11 +11,13 @@ import gov.inl.LIVE.common.IData;
 import gov.inl.LIVE.common.IDriver;
 import gov.inl.LIVE.driver.NbodyDriver;
 import gov.inl.LIVE.driver.WaterDriver;
+import gov.inl.LIVE.driver.UavDriver;
 import gov.inl.LIVE.entity.DVRCommandMessage;
 import gov.inl.LIVE.entity.DVRCommandMessageReply;
 import gov.inl.LIVE.entity.DVRPlayMode;
 import java.io.IOException;
 import java.util.List;
+import java.util.Scanner;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -69,9 +71,50 @@ public class DVRService implements Runnable, MessageListener
      */
     public DVRService(ApplicationContext context, Session amqSession, MessageConsumer controlMessageConsumer, MessageProducer controlMessageProducer, MessageProducer dataMessageProducer)
     {
+        
+        // get which driver should be ran from the user
+        int option = 0;
+        String input ="0";
+        
+        do {
+
+            synchronized (this) {
+                System.out.println(System.getProperty("line.separator")+System.getProperty("line.separator")+"Pick which driver you would like (1-n):");
+                System.out.println(System.getProperty("line.separator")+"1: Nbody");
+                System.out.println("2: Water Security Test Bed");
+                System.out.println("3: UAV IRC");
+                Scanner keyboard = new Scanner(System.in);
+                input = keyboard.nextLine();
+                System.out.println("Selected: " + input + System.getProperty("line.separator")+System.getProperty("line.separator"));
+            
+
+                switch (input) {
+
+                    case "1": this.driver = new NbodyDriver();
+                    option = 1;
+                    break;
+
+
+                    case "2": this.driver = new WaterDriver();
+                    option = 2;
+                    break;
+
+                    case "3": this.driver = new UavDriver();
+                    option = 3;
+                    break;
+
+                    default:
+                    System.out.println("Invalid Selection, try again");
+                    break;
+                }    
+            }
+            
+        } while (option == 0);
+                
         this.objMapper = context.getBean(ObjectMapper.class);
         //this.driver = new NbodyDriver();
-        this.driver = new WaterDriver();
+        //this.driver = new WaterDriver();
+        //this.driver = new UavDriver();
         this.amqSession = amqSession;
         this.controlMessageConsumer = controlMessageConsumer;
         this.controlMessageProducer = controlMessageProducer;
