@@ -143,5 +143,10 @@
             <version>2.4</version>
             <type>jar</type>
         </dependency>
+        <dependency>
+            <groupId>eu.hansolo.enzo</groupId>
+            <artifactId>Enzo</artifactId>
+            <version>0.3.6</version>
+        </dependency>
     </dependencies>
 </project>

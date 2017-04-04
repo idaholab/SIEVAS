@@ -154,6 +154,39 @@ public class UserInfoController
     }
     
     /***
+     * Gets a user by id
+     * @param id The ID of the user.
+     * @return THe user found or the error as JSON.
+     * @throws JsonProcessingException 
+     */
+    @RequestMapping(value = "/api/users/username/{username}/{id}", method = RequestMethod.GET, produces = "application/json")
+    public ResponseEntity<String> getUserByUsername(
+            @PathVariable(value = "id") long id,
+            @PathVariable(value = "username") String username)
+            throws JsonProcessingException
+    {
+        
+        CriteriaBuilderCriteriaQueryRootTriple<UserInfo,UserInfo> triple = userInfoDAO.getCriteriaTriple();
+        CriteriaBuilder cb = triple.getCriteriaBuilder();
+        Root<UserInfo> root = triple.getRoot();
+        
+        Predicate pred = cb.and(cb.equal(root.get("username"), username),
+                                        cb.notEqual(root.get("id"), id));
+        if (id == 0)
+            pred = cb.equal(root.get("username"), username);
+        List<UserInfo> list = userInfoDAO.findByCriteria(triple, null, 0, -1, pred);
+        if (list.size()==0)
+            return new ResponseEntity<>(objMapper.writeValueAsString(""), HttpStatus.NOT_FOUND);
+        else
+        {
+            UserInfo user = list.get(0);
+            user.setPassword("");
+            return new ResponseEntity<>(objMapper.writeValueAsString(user), HttpStatus.OK);
+        }
+        
+    }
+    
+    /***
      * Updates the given user.
      * @param id The ID of the user to update.
      * @param user The values for the user to update to. If password is empty,
