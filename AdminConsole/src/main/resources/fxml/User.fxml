@@ -13,10 +13,10 @@
 <VBox id="AnchorPane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gov.inl.SIEVAS.adminconsole.user.UserController">
    <children>
       
-      <Pagination prefHeight="11.0" prefWidth="248.0" fx:id="pagination" >
+      <Pagination prefHeight="11.0" prefWidth="475.0" fx:id="pagination" >
           <fx:define>
               <Button fx:id="btnNew" prefHeight="30.0" prefWidth="75.0" mnemonicParsing="false" onAction="#onNewClick" text="New" textAlignment="CENTER"/>
-              <TableView fx:id="tableView" minHeight="300.0" minWidth="500.0">
+              <TableView fx:id="tableView" minHeight="448.0" minWidth="500.0">
                 <placeholder>
                     <Label text="No search results found."/>
                 </placeholder>
@@ -26,21 +26,42 @@
                             <javafx.scene.control.cell.PropertyValueFactory property="id" /> 
                         </cellValueFactory>
                     </TableColumn>
-                  <TableColumn id="username" fx:id="colUsername" prefWidth="250.0" text="Username">
+                  <TableColumn id="username" fx:id="colUsername" prefWidth="150.0" text="Username">
                       <cellValueFactory>
                           <javafx.scene.control.cell.PropertyValueFactory property="username" /> 
                       </cellValueFactory>
                   </TableColumn>
-                  <TableColumn id="firstName" fx:id="colFirstName" prefWidth="250.0" text="First Name">
+                  <TableColumn id="firstName" fx:id="colFirstName" prefWidth="150.0" text="First Name">
                       <cellValueFactory>
                           <javafx.scene.control.cell.PropertyValueFactory property="firstName" /> 
                       </cellValueFactory>
                   </TableColumn>
-                  <TableColumn id="lastName" fx:id="colLastName" prefWidth="250.0" text="Last Name">
+                  <TableColumn id="lastName" fx:id="colLastName" prefWidth="150.0" text="Last Name">
                       <cellValueFactory>
                           <javafx.scene.control.cell.PropertyValueFactory property="lastName" /> 
                       </cellValueFactory>
                   </TableColumn>
+                  <TableColumn id="edipi" fx:id="colEDIPI" prefWidth="150.0" text="EDIPI">
+                      <cellValueFactory>
+                          <javafx.scene.control.cell.PropertyValueFactory property="edipi" /> 
+                      </cellValueFactory>
+                  </TableColumn>
+                  <TableColumn id="enabled" fx:id="colEnabled" prefWidth="50.0" text="Enabled">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="enabled" />
+                    </cellValueFactory>
+                  </TableColumn>
+                  <TableColumn id="locked" fx:id="colLocked" prefWidth="50.0" text="Locked">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="locked" />
+                    </cellValueFactory>
+                  </TableColumn>
+                  <TableColumn id="expired" fx:id="colExpired" prefWidth="50.0" text="Expired">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="expired" />
+                    </cellValueFactory>
+                  </TableColumn>
+                  
                 </columns>
               </TableView>
           </fx:define>
