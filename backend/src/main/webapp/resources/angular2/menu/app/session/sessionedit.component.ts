@@ -8,7 +8,7 @@ import { Message, Growl } from 'primeng/primeng';
 import 'rxjs/add/operator/do';
 
 import { ResultSet } from '../resultset';
-import { LIVESession } from './session';
+import { SIEVASSession } from './session';
 import { Group } from '../group/group';
 import { User } from '../user/user';
 import { SessionService } from './session.service';
@@ -26,7 +26,7 @@ import { JsonError } from '../jsonerror';
 export class SessionEditComponent implements OnInit, OnDestroy
 {
   @Input()
-  session: LIVESession;
+  session: SIEVASSession;
   
   @Output()
   close = new EventEmitter();
@@ -72,7 +72,7 @@ export class SessionEditComponent implements OnInit, OnDestroy
         }
         else
         {
-            this.session = new LIVESession();
+            this.session = new SIEVASSession();
         }
     });
   }
@@ -90,7 +90,7 @@ export class SessionEditComponent implements OnInit, OnDestroy
   onSave()
   {
       this.sessionService.save(this.session)
-          .then((session: LIVESession) => {
+          .then((session: SIEVASSession) => {
                 this.session = session;
                 this.close.emit(session);
                 this.router.navigate(['/sessions']);

@@ -1,5 +1,5 @@
 
-import gov.inl.live.nbody.Polynomial;
+import gov.inl.SIEVAS.nbody.Polynomial;
 import junit.framework.TestCase;
 import org.junit.Test;
 import static org.junit.Assert.assertTrue;
