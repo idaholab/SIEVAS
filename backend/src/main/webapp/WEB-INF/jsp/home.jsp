@@ -10,7 +10,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Live Integrated Visualization Environment & Exchange (LIVE2)</title>
+    <title>Scientific & Intelligence Exascale Visualization Analysis System (SIEVAS)</title>
     <link rel="stylesheet" href="<c:url value='/resources/angular2/menu/node_modules/bootstrap/dist/css/bootstrap.min.css'></c:url>">
     <script src="<c:url value='/resources/angular2/menu/node_modules/core-js/client/shim.min.js'></c:url>"></script>
     <script src="<c:url value='/resources/angular2/menu/node_modules/zone.js/dist/zone.js'></c:url>"></script>

@@ -28,7 +28,7 @@ import { SessionEditComponent } from './session/sessionedit.component';
 })
 export class AppComponent implements OnInit
 {
-    title = 'LIVE2';
+    title = 'SIEVAS';
     items: MenuItem[];
     menuClick = new EventEmitter();
       

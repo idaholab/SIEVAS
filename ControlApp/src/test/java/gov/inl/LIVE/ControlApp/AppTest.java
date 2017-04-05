@@ -1,4 +1,4 @@
-package gov.inl.LIVE.ControlApp;
+package gov.inl.SIEVAS.ControlApp;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

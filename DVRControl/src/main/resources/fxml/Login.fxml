@@ -6,7 +6,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<GridPane xmlns:fx="http://javafx.com/fxml/1" id="AnchorPane" prefHeight="200" prefWidth="320" fx:controller="gov.inl.live.dvrcontrol.LoginController"
+<GridPane xmlns:fx="http://javafx.com/fxml/1" id="AnchorPane" prefHeight="200" prefWidth="320" fx:controller="gov.inl.SIEVAS.dvrcontrol.LoginController"
     hgap="10" vgap="10"
     >
     <padding><javafx.geometry.Insets top="25" right="25" bottom="10" left="25"/></padding>

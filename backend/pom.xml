@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>gov.inl.LIVE</groupId>
+    <groupId>gov.inl.SIEVAS</groupId>
     <artifactId>backend</artifactId>
     <version>1.1-SNAPSHOT</version>
     <packaging>jar</packaging>
@@ -13,7 +13,7 @@
         <postgres-version>9.4.1208</postgres-version>
         <hibernate.version>5.2.1.Final</hibernate.version>
         <spring.version>4.3.2.RELEASE</spring.version>
-        <start-class>gov.inl.LIVE.Application</start-class>
+        <start-class>gov.inl.SIEVAS.Application</start-class>
     </properties>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -103,9 +103,9 @@
                 <version>4.0.3</version>
                 <configuration>
                     <driver>org.postgresql.Driver</driver>
-                    <url>jdbc:postgresql://localhost:5432/live</url>
-                    <user>live</user>
-                    <password>live</password>
+                    <url>jdbc:postgresql://localhost:5432/sievas</url>
+                    <user>sievas</user>
+                    <password>sievas</password>
                 </configuration>
          </plugin>
          <plugin>
