@@ -64,6 +64,16 @@ public class UavData  extends IData implements Serializable, IIdentifier<Long> {
         this.id = id;
     }
 
+    public String getType()
+    {
+	return type;
+    }
+
+    public void setType(String type)
+    {
+	this.type = type;
+    }
+
     public double getX()
     {
         return x;
