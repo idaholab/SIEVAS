@@ -29,6 +29,7 @@ import com.adobe.xmp.properties.XMPPropertyInfo;
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.lang.GeoLocation;
 import com.drew.metadata.exif.GpsDirectory;
+import java.util.Scanner;
 
 /**
  *
@@ -37,7 +38,7 @@ import com.drew.metadata.exif.GpsDirectory;
 public class UavDriver  implements IDriver {
     
 
-    private static double scheduledTime = 0.0;
+    private double scheduledTime = 0.0;
     private double startTime, endTime;
     String outStrLine;
     Date startDate = new Date();
@@ -47,6 +48,7 @@ public class UavDriver  implements IDriver {
     Boolean firstRun;
     Boolean runOnce;
     double speed;
+    String path;
                 
 
     FileInputStream fstream;
@@ -59,8 +61,14 @@ public class UavDriver  implements IDriver {
         firstRun = true;
         runOnce = true;
         
+                
+        System.out.println(System.getProperty("line.separator")+System.getProperty("line.separator")+"Please enter the path for UAV text file and images:");
+        Scanner keyboard = new Scanner(System.in);
+        path = keyboard.nextLine();
+        System.out.println("Path " + path + System.getProperty("line.separator")+System.getProperty("line.separator"));
+        
         try{
-            fstream = new FileInputStream("C:\\Users\\SZEWTG\\Documents\\new_IRC_flight_calibrated_external_camera_parameters.txt");
+            fstream = new FileInputStream(path+"new_IRC_flight_calibrated_external_camera_parameters.txt");
             in = new DataInputStream(fstream);
             br = new BufferedReader(new InputStreamReader(in));           
             
@@ -69,6 +77,8 @@ public class UavDriver  implements IDriver {
 
           }catch (Exception e){
             System.err.println("Error: " + e.getMessage());
+
+            init(context);
           }
     }
 
@@ -131,10 +141,13 @@ public class UavDriver  implements IDriver {
             
             if ((str = br.readLine()) == null)
             {
+                fstream = new FileInputStream(path+"new_IRC_flight_calibrated_external_camera_parameters.txt");
+                in = new DataInputStream(fstream);
                 br = new BufferedReader(new InputStreamReader(in));
 
                 // skip the header in the file
                 str = br.readLine();
+		str = br.readLine();
             }
             
             String[] tokens = str.split(" ");
@@ -147,8 +160,17 @@ public class UavDriver  implements IDriver {
             nextData.setGYaw(Double.parseDouble(tokens[6]));
             nextData.setStep(Long.parseLong(tokens[0].replaceAll("[^0-9]", "")));
 
-            System.out.println("C:\\Users\\SZEWTG\\Documents\\IRC_UAV_Images\\" + tokens[0]); 
-            File file = new File("C:\\Users\\SZEWTG\\Documents\\IRC_UAV_Images\\" + tokens[0]);
+	    if (nextData.getStep() == 666)
+	    {
+	        nextData.setType("init");
+	    }
+	    else
+	    {
+		nextData.setType("data");
+	    }
+
+            System.out.println(path + tokens[0]); 
+            File file = new File(path + tokens[0]);
  
             Metadata metadata = ImageMetadataReader.readMetadata(file);
 
@@ -244,17 +266,22 @@ public class UavDriver  implements IDriver {
 
             
             
-            if (runOnce)
+            if (runOnce || "init".equals(nextData.getType()))
             {
                 startDate = date;
-                nextData.setTtp(0.0f);
+                nextData.setTtp(0.0);
             }
             else
             {
                 nextData.setTtp((getDateDiff(startDate, date)/1000-sentData.getTime())/speed);
             }
-            
-            nextData.setTime((getDateDiff(startDate, date))/(speed*1000));
+
+	    if (nextData.getTtp() > 10.0)
+	    {
+		nextData.setTtp(5.0/speed);
+ 	    }
+
+            nextData.setTime((getDateDiff(startDate, date))/(1000));
             runOnce = false;
             
         } catch(Exception a){
