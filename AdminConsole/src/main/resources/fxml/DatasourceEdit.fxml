@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.control.cell.TextFieldTableCell?>
+
+<AnchorPane id="AnchorPane" prefHeight="518.0" prefWidth="615.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gov.inl.SIEVAS.adminconsole.datasource.DatasourceEditController">
+   <children>
+      <GridPane layoutX="5.0" layoutY="6.0" prefHeight="710.0" prefWidth="595.0">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="290.0" minWidth="10.0" prefWidth="120.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="507.0" minWidth="10.0" prefWidth="473.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints maxHeight="77.0" minHeight="0.0" prefHeight="23.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="161.0" minHeight="6.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="212.0" minHeight="10.0" prefHeight="208.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="210.0" minHeight="10.0" prefHeight="476.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="210.0" minHeight="10.0" prefHeight="208.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="210.0" minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Label contentDisplay="RIGHT" text="ID:" textAlignment="RIGHT" GridPane.halignment="RIGHT" />
+            <TextField fx:id="txtID" editable="false" promptText="ID" GridPane.columnIndex="1" />
+            
+            <Label text="Name:" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
+            <TextField fx:id="txtName" promptText="Name" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            
+            <Label text="Driver:" GridPane.halignment="RIGHT" GridPane.rowIndex="2" />
+            <ListView fx:id="lvDrivers" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            
+            <Label text="Description:" GridPane.halignment="RIGHT" GridPane.rowIndex="3" />
+            <TextArea fx:id="txtDescription" prefHeight="231.0" prefWidth="476.0" promptText="Description" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            
+            <Label text="Options:" GridPane.halignment="RIGHT" GridPane.rowIndex="4" />
+            <TableView fx:id="tvOptions" GridPane.columnIndex="1" GridPane.rowIndex="4" editable="true" >
+                <placeholder>
+                    <Label text="No options found."/>
+                </placeholder>
+                <columns>
+                    <TableColumn id="id" fx:id="colID" prefWidth="75.0" text="ID" editable="false">
+                        <cellValueFactory>
+                            <javafx.scene.control.cell.PropertyValueFactory property="id" /> 
+                        </cellValueFactory>
+                    </TableColumn>
+                  <TableColumn id="optionName" fx:id="colOptionName" prefWidth="175.0" text="Name">
+                      <cellValueFactory>
+                          <javafx.scene.control.cell.PropertyValueFactory property="optionName" /> 
+                      </cellValueFactory>
+                  </TableColumn>
+                  <TableColumn id="optionValue" fx:id="colOptionValue" prefWidth="275.0" text="Value" editable="true" >
+                      <cellValueFactory>
+                          <javafx.scene.control.cell.PropertyValueFactory property="optionValue" /> 
+                      </cellValueFactory>
+                      <cellFactory>
+                           <TextFieldTableCell fx:factory="forTableColumn" />
+                      </cellFactory>
+                  </TableColumn>
+                </columns>
+              </TableView>
+            
+            <Button fx:id="btnSave" mnemonicParsing="false" onAction="#onSave" text="Save" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="5" />
+            <Button fx:id="btnCancel" mnemonicParsing="false" onAction="#onCancel" prefHeight="27.0" prefWidth="69.0" text="Cancel" GridPane.rowIndex="5" />
+         </children>
+      </GridPane>
+   </children>
+</AnchorPane>
