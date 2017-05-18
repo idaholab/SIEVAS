@@ -35,7 +35,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
- *
+ * Class for datasource controller
  * @author monejh
  */
 @Controller
@@ -184,9 +184,9 @@ public class DatasourceController
     }
     
     /***
-     * Creates a new permission.
-     * @param perm The permission object to create.
-     * @return The created permission object or the error that occurred in
+     * Creates a new datasource.
+     * @param perm The datasource object to create.
+     * @return The created datasource object or the error that occurred in
      *              processing.
      * @throws JsonProcessingException 
      */
@@ -211,8 +211,8 @@ public class DatasourceController
     }
     
     /***
-     * Deletes a given permission.
-     * @param id The ID of the permission to delete.
+     * Deletes a given datasource.
+     * @param id The ID of the datasource to delete.
      * @return Nothing if no error, otherwise the error object.
      * @throws JsonProcessingException
      * @throws IOException 

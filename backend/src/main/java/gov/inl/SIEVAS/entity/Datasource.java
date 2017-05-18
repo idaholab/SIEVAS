@@ -30,7 +30,7 @@ import javax.validation.constraints.Size;
 import org.springframework.security.core.GrantedAuthority;
 
 /**
- *
+ * Datasource JPA
  * @author monejh
  */
 @Entity

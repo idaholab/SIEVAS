@@ -49,6 +49,7 @@ public class DVRService implements Runnable, MessageListener
 {
     
     private int THREAD_POOL_SIZE = 10;
+    private static final String OPTION_LIST_FUNCTION = "getOptionList";
     
     private HashMap<Datasource, IDriver> datasourceMap = new HashMap<>();
     private ObjectMapper objMapper;
@@ -71,6 +72,7 @@ public class DVRService implements Runnable, MessageListener
      * TODO: Implement dynamic loading based on session settings and 
      * configuration.
      * @param context The ApplicationContext from spring for loading other beans
+     * @param datasourceList The new list of datasources to use
      * @param amqSession The ActiveMQ Session
      * @param controlMessageConsumer The Control stream consumer
      * @param controlMessageProducer The control stream producer
@@ -84,16 +86,13 @@ public class DVRService implements Runnable, MessageListener
         String input ="0";
                 
         this.objMapper = context.getBean(ObjectMapper.class);
-        //this.driver = new NbodyDriver();
-        //this.driver = new WaterDriver();
-        //this.driver = new UavDriver();
         this.amqSession = amqSession;
         this.controlMessageConsumer = controlMessageConsumer;
         this.controlMessageProducer = controlMessageProducer;
         this.dataMessageProducer = dataMessageProducer;
         this.context = context;
         
-        
+        //for each data source
         for(Datasource ds : datasourceList)
         {
             
@@ -103,7 +102,7 @@ public class DVRService implements Runnable, MessageListener
             {
                 Class<? extends IDriver> clazz = (Class<? extends IDriver>) Class.forName(ds.getDriverName());
                 driver = clazz.newInstance();
-                options = (List<DriverOption>) clazz.getMethod("getOptionList").invoke(driver);
+                options = (List<DriverOption>) clazz.getMethod(OPTION_LIST_FUNCTION).invoke(driver);
             }
             catch (ClassNotFoundException ex)
             {
@@ -156,7 +155,7 @@ public class DVRService implements Runnable, MessageListener
                 }
             }
             
-            //TODO UPDATE THESE
+            //run the driver and store
             driver.init(context,options);
             datasourceMap.put(ds,driver);
         }
@@ -180,7 +179,11 @@ public class DVRService implements Runnable, MessageListener
     }
     
     
-    
+    /***
+     * Update the list of data sources for the DVR
+     * @param datasources The new list of data sources
+     * @return 
+     */
     public boolean updateDatasources(List<Datasource> datasources)
     {
         //update matches for options
@@ -194,6 +197,7 @@ public class DVRService implements Runnable, MessageListener
                     IDriver driver = datasourceMap.get(ds2);
                     lock.readLock().unlock();
                     lock.writeLock().lock();
+                    //shutdown existing driver
                     driver.shutdown();
                     //set option values
                     List<DriverOption> options = null;
@@ -201,7 +205,7 @@ public class DVRService implements Runnable, MessageListener
                     {
                         Class<? extends IDriver> clazz = (Class<? extends IDriver>) Class.forName(ds.getDriverName());
                         driver = clazz.newInstance();
-                        options = (List<DriverOption>) clazz.getMethod("getOptionList").invoke(driver);
+                        options = (List<DriverOption>) clazz.getMethod(OPTION_LIST_FUNCTION).invoke(driver);
                     }
                     catch (ClassNotFoundException ex)
                     {
@@ -251,6 +255,7 @@ public class DVRService implements Runnable, MessageListener
                     if (options == null)
                         options = new ArrayList<DriverOption>();
                     
+                    //startup again
                     driver.init(context, options);
                     lock.writeLock().unlock();
                     lock.readLock().lock();
@@ -258,7 +263,7 @@ public class DVRService implements Runnable, MessageListener
             }
         }
         
-        //add new
+        //add new datasources
         for(Datasource ds: datasources)
         {
             if (!datasourceMap.containsKey(ds))
@@ -270,7 +275,7 @@ public class DVRService implements Runnable, MessageListener
                 {
                     Class<? extends IDriver> clazz = (Class<? extends IDriver>) Class.forName(ds.getDriverName());
                     driver = clazz.newInstance();
-                    options = (List<DriverOption>) clazz.getMethod("getOptionList").invoke(driver);
+                    options = (List<DriverOption>) clazz.getMethod(OPTION_LIST_FUNCTION).invoke(driver);
                 }
                 catch (ClassNotFoundException ex)
                 {
@@ -441,7 +446,6 @@ public class DVRService implements Runnable, MessageListener
     public void run()
     {
         lock.readLock().lock();
-    //    if (true)
         if (playing && (playSpeed!=0.0))
         {
             List<IData> dataList = new ArrayList<>();
@@ -456,6 +460,7 @@ public class DVRService implements Runnable, MessageListener
                     startTime = -1.0;
                     
                     dataList.addAll(driverDataList);
+                    //merge into exist list of data - use merge sort (TODO?)
                     Collections.sort(dataList, new Comparator<IData>() {
                         @Override
                         public int compare(IData o1, IData o2)
@@ -471,6 +476,7 @@ public class DVRService implements Runnable, MessageListener
                 }
             }
             
+            //stream the ordered data
             if (dataList!=null)
             {
                 //Send Data
@@ -580,6 +586,8 @@ public class DVRService implements Runnable, MessageListener
                         replyMsg.setPlaySpeed(playSpeed);
                         replyMsg.setSuccess(true);
                         
+                        
+                        //get the global max/min times based on each driver
                         double startTime = Double.MAX_VALUE;
                         double endTime = Double.MIN_VALUE;
                         

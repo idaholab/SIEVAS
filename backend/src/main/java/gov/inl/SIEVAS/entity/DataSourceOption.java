@@ -27,7 +27,7 @@ import javax.validation.constraints.Size;
 import org.springframework.security.core.GrantedAuthority;
 
 /**
- *
+ * Datasource option value JPA
  * @author monejh
  */
 

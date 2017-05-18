@@ -34,7 +34,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 
 /**
- * FXML Controller class
+ * Class for session edit.
  *
  * @author monejh
  */
@@ -74,7 +74,9 @@ public class SessionEditController extends BaseEditController<SIEVASSession>
     private RestController restController = RestController.getInstance();
     
     
-    
+    /***
+     * Handle the load of users, groups, and datasources
+     */
     @Override
     public void LoadData()
     {

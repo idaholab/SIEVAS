@@ -13,7 +13,7 @@ import java.util.List;
 import javafx.scene.control.MenuItem;
 
 /**
- * FXML Controller class
+ * Class for session grid view
  *
  * @author monejh
  */

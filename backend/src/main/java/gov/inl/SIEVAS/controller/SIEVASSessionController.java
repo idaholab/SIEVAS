@@ -302,7 +302,6 @@ public class SIEVASSessionController
                 return new ResponseEntity<>(objMapper.writeValueAsString(""), HttpStatus.BAD_REQUEST);
             cleanSession(session);
             session.setActivemqUrl(this.amqService.getActiveMQClientUrl());
-                  System.out.println("CONTROL STREAM NAME:" + session.getControlStreamName());
 
             return new ResponseEntity<>(objMapper.writeValueAsString(session), HttpStatus.OK);
         }
@@ -332,8 +331,7 @@ public class SIEVASSessionController
         }
         catch(Exception e)
         {
-            System.out.println("ERROR:" + e.getMessage());
-            e.printStackTrace();
+            Logger.getLogger(DriverController.class.getName()).log(Level.SEVERE, null, e);
         }
         if (session == null)
             return new ResponseEntity<>(objMapper.writeValueAsString(""), HttpStatus.BAD_REQUEST);
@@ -404,7 +402,6 @@ public class SIEVASSessionController
         session.setActivemqUrl(this.amqService.getActiveMQClientUrl());
         AMQSessionInfo sessionInfo = amqService.addSession(session);
         session.setControlStreamName(sessionInfo.getControlTopicName());
-  //     System.out.println("CONTROL STREAM NAME:" + session.getControlStreamName());
         session.setDataStreamName(sessionInfo.getDataTopicName());
         
         return new ResponseEntity<>(objMapper.writeValueAsString(session), HttpStatus.OK);
@@ -455,8 +452,6 @@ public class SIEVASSessionController
 //        StringWriter sw = new StringWriter();
 //        PrintWriter pw = new PrintWriter(sw);
 //        exception.printStackTrace(pw);
-        System.out.println(exception.getMessage());
-        exception.printStackTrace();
         return new ResponseEntity<>(objMapper.writeValueAsString(new JsonError(exception.getMessage())), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
