@@ -35,7 +35,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 
 /**
- * FXML Controller class
+ * Class to handle datasource edit.
  *
  * @author monejh
  */
@@ -75,6 +75,9 @@ public class DatasourceEditController extends BaseEditController<Datasource>
     
     
     
+    /***
+     * Loads the data for the users, groups, and data sources.
+     */
     @Override
     public void LoadData()
     {

@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.Objects;
 
 /**
- *
+ * Class for in-memory driver information options
  * @author monejh
  */
 public class DriverInfo

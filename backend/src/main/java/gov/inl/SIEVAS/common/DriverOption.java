@@ -8,7 +8,7 @@ package gov.inl.SIEVAS.common;
 import java.util.Objects;
 
 /**
- *
+ * Class for driver options and values
  * @author monejh
  */
 public class DriverOption

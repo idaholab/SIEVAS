@@ -41,7 +41,7 @@ import org.reflections.Reflections;
 import org.springframework.web.bind.annotation.PathVariable;
 
 /**
- *
+ * Class for driver information. Read-only.
  * @author monejh
  */
 @Controller
@@ -98,7 +98,7 @@ public class DriverController
     }
     
     /***
-     * Sets up the initial session for user "user"
+     * Sets up the list of drivers for later use.
      */
     @Transactional
     private void setup()
@@ -128,7 +128,7 @@ public class DriverController
     
     
     /***
-     * Gets the listing of sessions that the user has access to.
+     * Gets the listing of drivers that the user has access to.
      * @param start The starting row.
      * @param count The number of records to get
      * @param sortField The field to sort on.
@@ -161,20 +161,25 @@ public class DriverController
     }
     
     
+    /***
+     * Gets the list of options for the given driver.
+     * @param driver The driver full name to process
+     * @return The list of DriverOption as a JSON.
+     * @throws JsonProcessingException 
+     */
     @RequestMapping(value = "/api/drivers/optionlist/", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<String> getDriverOptions(
             @RequestParam(name = "driver", defaultValue = "") String driver
     )
             throws JsonProcessingException
     {
-        System.out.println("DRIVER = " + driver);
+        
         List<DriverOption> options = new ArrayList<DriverOption>();
         try
         {
             Class<? extends IDriver> clazz = (Class<? extends IDriver>) Class.forName(driver);
             IDriver driverInstance = (IDriver)clazz.newInstance();
             options = (List<DriverOption>) clazz.getMethod("getOptionList").invoke(driverInstance);
-            System.out.println("OPTS:" + options);
         } 
         catch (ClassNotFoundException ex)
         {

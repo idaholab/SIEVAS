@@ -147,6 +147,11 @@ public class ActiveMQService implements MessageListener
         
     }
     
+    /***
+     * Updates a session for data source changes
+     * @param saveSession The session to apply changes from
+     * @return True if success, false otherwise
+     */
     public boolean updateSession(SIEVASSession saveSession)
     {
         return dvrService.updateDatasources(saveSession.getDatasources());

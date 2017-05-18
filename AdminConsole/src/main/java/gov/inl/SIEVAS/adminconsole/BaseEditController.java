@@ -168,7 +168,6 @@ public abstract class BaseEditController<T extends IIdentifier> implements Initi
         ObjectMapper objMapper = new ObjectMapper();
         try
         {
-            System.out.println("WRITING:" + objMapper.writeValueAsString(object));
             request.setEntity(new StringEntity(objMapper.writeValueAsString(object), DEFAULT_ENCODING));
         }
         catch (JsonProcessingException ex)

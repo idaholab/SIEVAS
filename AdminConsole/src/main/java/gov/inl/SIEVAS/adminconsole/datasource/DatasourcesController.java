@@ -12,7 +12,10 @@ import java.util.List;
 import javafx.scene.control.MenuItem;
 
 
-
+/***
+ * Class to handle grid for datasources
+ * @author monejh
+ */
 public class DatasourcesController extends BaseController<Datasource>//implements Initializable
 {
 

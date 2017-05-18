@@ -33,7 +33,7 @@ import gov.inl.SIEVAS.common.DriverOption;
 import java.util.Scanner;
 
 /**
- *
+ * Class to get UAV data
  * @author SZEWTG
  */
 public class UavDriver  implements IDriver {
