@@ -5,6 +5,7 @@
  */
 package gov.inl.SIEVAS.driver;
 
+import gov.inl.SIEVAS.common.DriverOption;
 import gov.inl.SIEVAS.common.IDriver;
 import java.util.List;
 import java.util.ArrayList;
@@ -43,17 +44,34 @@ public class WaterDriver  implements IDriver {
     private static final int COLUMN_OFFSET = 6;
     private static final int TEMP_COLUMN = 3;
     private static final int TIME_COLUMN = 1;
+    private static final String FILENAME_OPTION = "filename";
     int count = 0;
     
     @Override
-    public void init(ApplicationContext context)
+    public List<DriverOption> getOptionList()
+    {
+        DriverOption option = new DriverOption(FILENAME_OPTION,"");
+        List<DriverOption> list = new ArrayList<>();
+        list.add(option);
+        return list;
+    }
+    
+    @Override
+    public void init(ApplicationContext context, List<DriverOption> options)
     {
         // open the file
         // TODO: this should probably be a pop up and more advance checking of file could be implemented
 
-        System.out.println(System.getProperty("line.separator")+System.getProperty("line.separator")+"Please enter the path for the excel file that has water data:");
-        Scanner keyboard = new Scanner(System.in);
-        String filename = keyboard.nextLine();
+        //System.out.println(System.getProperty("line.separator")+System.getProperty("line.separator")+"Please enter the path for the excel file that has water data:");
+        //Scanner keyboard = new Scanner(System.in);
+        //String filename = keyboard.nextLine();
+        String filename = "";
+        for(DriverOption option: options)
+        {
+            if (option.getOptionName().toLowerCase().equals(FILENAME_OPTION))
+                filename = option.getOptionValue();
+        }
+        
         System.out.println("opening file " + filename + System.getProperty("line.separator")+System.getProperty("line.separator"));
         try {
             wb = WorkbookFactory.create(new File(filename));

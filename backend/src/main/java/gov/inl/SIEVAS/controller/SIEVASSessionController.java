@@ -321,9 +321,20 @@ public class SIEVASSessionController
     @RequestMapping(value = "/api/sessions/{id}", method = RequestMethod.PUT, produces = "application/json"
             )
     public ResponseEntity<String> saveSIEVASSession(@PathVariable(value = "id") long id,
-                @RequestBody SIEVASSession session)
+                //@RequestBody SIEVASSession session)
+                @RequestBody String data)
             throws JsonProcessingException, IOException
     {
+        SIEVASSession session = null;
+        try
+        {
+             session = objMapper.readValue(data, SIEVASSession.class);
+        }
+        catch(Exception e)
+        {
+            System.out.println("ERROR:" + e.getMessage());
+            e.printStackTrace();
+        }
         if (session == null)
             return new ResponseEntity<>(objMapper.writeValueAsString(""), HttpStatus.BAD_REQUEST);
         
@@ -346,6 +357,8 @@ public class SIEVASSessionController
         }
         if (count>0)
             return new ResponseEntity<>(objMapper.writeValueAsString(new JsonError("Duplicate session name")), HttpStatus.CONFLICT);
+        
+        amqService.updateSession(session);
         
         
         sessionsMap.put(id, session);
@@ -389,7 +402,7 @@ public class SIEVASSessionController
         sessionsMap.put(session.getId(), session);
         cleanSession(session);
         session.setActivemqUrl(this.amqService.getActiveMQClientUrl());
-        AMQSessionInfo sessionInfo = amqService.addSession(session.getId());
+        AMQSessionInfo sessionInfo = amqService.addSession(session);
         session.setControlStreamName(sessionInfo.getControlTopicName());
   //     System.out.println("CONTROL STREAM NAME:" + session.getControlStreamName());
         session.setDataStreamName(sessionInfo.getDataTopicName());
@@ -442,6 +455,8 @@ public class SIEVASSessionController
 //        StringWriter sw = new StringWriter();
 //        PrintWriter pw = new PrintWriter(sw);
 //        exception.printStackTrace(pw);
+        System.out.println(exception.getMessage());
+        exception.printStackTrace();
         return new ResponseEntity<>(objMapper.writeValueAsString(new JsonError(exception.getMessage())), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

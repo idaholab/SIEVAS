@@ -5,6 +5,7 @@
  */
 package gov.inl.SIEVAS.common;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.context.ApplicationContext;
 
@@ -15,7 +16,7 @@ import org.springframework.context.ApplicationContext;
 public interface IDriver
 {
 
-    public void init(ApplicationContext context);
+    public void init(ApplicationContext context, List<DriverOption> options);
     
     /**
      *
@@ -28,6 +29,7 @@ public interface IDriver
     public List getData(double startTime, double timestep, double resolution, long maxResults);
     default public double getStartTime(){return 0.0;};
     default public double getEndTime(){return 0.0;};
+    default public List<DriverOption> getOptionList() { return new ArrayList<DriverOption>(); }
     
     public void shutdown();
 }

@@ -6,8 +6,10 @@ package gov.inl.SIEVAS.adminconsole;
  * and open the template in the editor.
  */
 
+import gov.inl.SIEVAS.adminconsole.datasource.DatasourcesController;
 import gov.inl.SIEVAS.adminconsole.permission.PermissionsController;
 import gov.inl.SIEVAS.adminconsole.permissiongroup.PermissionGroupController;
+import gov.inl.SIEVAS.adminconsole.session.SessionsController;
 import gov.inl.SIEVAS.adminconsole.user.UserController;
 import java.io.IOException;
 import java.util.List;
@@ -42,6 +44,8 @@ public class AdminConsoleController //implements Initializable
     private static final String PERMISSION_FXML = "/fxml/Permissions.fxml";
     private static final String PERMISSIONGROUP_FXML = "/fxml/PermissionGroup.fxml";
     private static final String USER_FXML = "/fxml/User.fxml";
+    private static final String DATASOURCE_FXML = "/fxml/Datasources.fxml";
+    private static final String SESSION_FXML = "/fxml/Sessions.fxml";
     protected static final String CONTENT_FAILURE_MSG = "Failure loading content";
     private static final String COLON = ":";
     
@@ -107,7 +111,7 @@ public class AdminConsoleController //implements Initializable
         }
         catch(IOException e)
         {
-            Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE,CONTENT_FAILURE_MSG + COLON + PERMISSION_FXML , e);
+            Logger.getLogger(AdminConsoleController.class.getName()).log(Level.SEVERE,CONTENT_FAILURE_MSG + COLON + PERMISSION_FXML , e);
             return;
         }
         setContent((Pane)root);
@@ -134,7 +138,7 @@ public class AdminConsoleController //implements Initializable
         }
         catch(IOException e)
         {
-            Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE,CONTENT_FAILURE_MSG + COLON + PERMISSION_FXML , e);
+            Logger.getLogger(AdminConsoleController.class.getName()).log(Level.SEVERE,CONTENT_FAILURE_MSG + COLON + PERMISSION_FXML , e);
             return;
         }
         setContent((Pane)root);
@@ -161,12 +165,64 @@ public class AdminConsoleController //implements Initializable
         }
         catch(IOException e)
         {
-            Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE,CONTENT_FAILURE_MSG + COLON + PERMISSION_FXML , e);
+            Logger.getLogger(AdminConsoleController.class.getName()).log(Level.SEVERE,CONTENT_FAILURE_MSG + COLON + PERMISSION_FXML , e);
             return;
         }
         setContent((Pane)root);
         
         UserController controller = loader.getController();
+        controller.setBaseURL(baseURL);
+        controller.LoadData();
+        
+    }
+    
+     /***
+     * Handles the datasources selection by showing the pane for the grid.
+     * @param event The event to process
+     */
+    @FXML
+    private void handleDatasources(ActionEvent event)
+    {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(DATASOURCE_FXML));
+        Parent root;
+        try
+        {
+            root = loader.load();
+        }
+        catch(IOException e)
+        {
+            Logger.getLogger(AdminConsoleController.class.getName()).log(Level.SEVERE,CONTENT_FAILURE_MSG + COLON + DATASOURCE_FXML , e);
+            return;
+        }
+        setContent((Pane)root);
+        
+        DatasourcesController controller = loader.getController();
+        controller.setBaseURL(baseURL);
+        controller.LoadData();
+        
+    }
+    
+    /***
+     * Handles the sessions selection by showing the pane for the grid.
+     * @param event The event to process
+     */
+    @FXML
+    private void handleSessions(ActionEvent event)
+    {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(SESSION_FXML));
+        Parent root;
+        try
+        {
+            root = loader.load();
+        }
+        catch(IOException e)
+        {
+            Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE,CONTENT_FAILURE_MSG + COLON + SESSION_FXML , e);
+            return;
+        }
+        setContent((Pane)root);
+        
+        SessionsController controller = loader.getController();
         controller.setBaseURL(baseURL);
         controller.LoadData();
         

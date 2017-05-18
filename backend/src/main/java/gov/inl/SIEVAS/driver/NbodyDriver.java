@@ -8,6 +8,7 @@ package gov.inl.SIEVAS.driver;
 import gov.inl.SIEVAS.DAO.CriteriaBuilderCriteriaQueryRootTriple;
 import gov.inl.SIEVAS.DAO.NbodyDAO;
 import gov.inl.SIEVAS.DAO.NbodyInfoDAO;
+import gov.inl.SIEVAS.common.DriverOption;
 import gov.inl.SIEVAS.common.IData;
 import gov.inl.SIEVAS.common.IDriver;
 import gov.inl.SIEVAS.connector.NBody;
@@ -40,7 +41,7 @@ public class NbodyDriver implements IDriver
     private NBodyGenerator generator = new NBodyGenerator();
     
     @Override
-    public void init(ApplicationContext context)
+    public void init(ApplicationContext context, List<DriverOption> options)
     {
         this.nbodyInfoDAO = context.getBean(NbodyInfoDAO.class);
         this.nbodyDAO = context.getBean(NbodyDAO.class);
