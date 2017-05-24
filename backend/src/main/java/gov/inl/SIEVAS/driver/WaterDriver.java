@@ -5,7 +5,9 @@
  */
 package gov.inl.SIEVAS.driver;
 
+import gov.inl.SIEVAS.common.DriverOption;
 import gov.inl.SIEVAS.common.IDriver;
+import gov.inl.SIEVAS.controller.DriverController;
 import java.util.List;
 import java.util.ArrayList;
 import org.apache.poi.ss.usermodel.*;
@@ -19,7 +21,7 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import java.util.Scanner;
 
 /**
- *
+ * Class to get water security testbed data.
  * @author SZEWTG
  */
 public class WaterDriver  implements IDriver {
@@ -43,64 +45,86 @@ public class WaterDriver  implements IDriver {
     private static final int COLUMN_OFFSET = 6;
     private static final int TEMP_COLUMN = 3;
     private static final int TIME_COLUMN = 1;
+    private static final String FILENAME_OPTION = "filename";
     int count = 0;
     
     @Override
-    public void init(ApplicationContext context)
+    public List<DriverOption> getOptionList()
+    {
+        DriverOption option = new DriverOption(FILENAME_OPTION,"");
+        List<DriverOption> list = new ArrayList<>();
+        list.add(option);
+        return list;
+    }
+    
+    @Override
+    public void init(ApplicationContext context, List<DriverOption> options)
     {
         // open the file
         // TODO: this should probably be a pop up and more advance checking of file could be implemented
 
-        System.out.println(System.getProperty("line.separator")+System.getProperty("line.separator")+"Please enter the path for the excel file that has water data:");
-        Scanner keyboard = new Scanner(System.in);
-        String filename = keyboard.nextLine();
-        System.out.println("opening file " + filename + System.getProperty("line.separator")+System.getProperty("line.separator"));
-        try {
+        //System.out.println(System.getProperty("line.separator")+System.getProperty("line.separator")+"Please enter the path for the excel file that has water data:");
+        //Scanner keyboard = new Scanner(System.in);
+        //String filename = keyboard.nextLine();
+        String filename = "";
+        for(DriverOption option: options)
+        {
+            if (option.getOptionName().toLowerCase().equals(FILENAME_OPTION))
+                filename = option.getOptionValue();
+        }
+        
+        Logger.getLogger(WaterDriver.class.getName()).log(Level.SEVERE, "opening file " + filename + System.getProperty("line.separator")+System.getProperty("line.separator"));
+        try
+        {
             wb = WorkbookFactory.create(new File(filename));
 
-        } catch (IOException ex) {
-            Logger.getLogger(WaterDriver.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InvalidFormatException ex) {
+        }
+        catch (IOException ex)
+        {
             Logger.getLogger(WaterDriver.class.getName()).log(Level.SEVERE, null, ex);
         }
-            numberOfSheets = wb.getNumberOfSheets();
-            sheetStream = new Sheet[numberOfSheets];
-            sheetPipe = new Sheet[numberOfSheets];
+        catch (InvalidFormatException ex)
+        {
+            Logger.getLogger(WaterDriver.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        numberOfSheets = wb.getNumberOfSheets();
+        sheetStream = new Sheet[numberOfSheets];
+        sheetPipe = new Sheet[numberOfSheets];
 
-            for (int i = 0; i < numberOfSheets; i++)
+        for (int i = 0; i < numberOfSheets; i++)
+        {
+            Cell cellContentStream = null;
+            Cell cellContentPipe = null;
+
+            if (wb.getSheetAt(i).getRow(1) != null)
             {
-                Cell cellContentStream = null;
-                Cell cellContentPipe = null;
-                
-                if (wb.getSheetAt(i).getRow(1) != null)
-                {
-                    cellContentStream = wb.getSheetAt(i).getRow(1).getCell(1);
-                }
-                
-                if (wb.getSheetAt(i).getRow(0) != null)
-                {
-                    cellContentPipe = wb.getSheetAt(i).getRow(0).getCell(1);
-                }
-
-
-                // if the pseudo header cell has an something in it with an s then we found a stream sheet
-                if (cellContentStream != null && (cellContentStream.getStringCellValue().contains("s") || cellContentStream.getStringCellValue().contains("S"))){
-                    sheetStream[i-pipeCount] = wb.getSheetAt(i);
-                    streamCount++;
-                }
-                
-                // if the pseudo header cell has an something in it with pipe or Pipe then we found a pipe sheet
-                if (cellContentPipe != null && (cellContentPipe.getStringCellValue().contains("pipe") || cellContentPipe.getStringCellValue().contains("Pipe"))){
-                    sheetPipe[i-streamCount] = wb.getSheetAt(i);
-                    pipeCount++;
-                }
-                
+                cellContentStream = wb.getSheetAt(i).getRow(1).getCell(1);
             }
-            
-            if(streamCount > 0)
+
+            if (wb.getSheetAt(i).getRow(0) != null)
             {
-                endTime = sheetStream[0].getRow(sheetStream[0].getLastRowNum()).getCell(TIME_COLUMN).getNumericCellValue();
+                cellContentPipe = wb.getSheetAt(i).getRow(0).getCell(1);
             }
+
+
+            // if the pseudo header cell has an something in it with an s then we found a stream sheet
+            if (cellContentStream != null && (cellContentStream.getStringCellValue().contains("s") || cellContentStream.getStringCellValue().contains("S"))){
+                sheetStream[i-pipeCount] = wb.getSheetAt(i);
+                streamCount++;
+            }
+
+            // if the pseudo header cell has an something in it with pipe or Pipe then we found a pipe sheet
+            if (cellContentPipe != null && (cellContentPipe.getStringCellValue().contains("pipe") || cellContentPipe.getStringCellValue().contains("Pipe"))){
+                sheetPipe[i-streamCount] = wb.getSheetAt(i);
+                pipeCount++;
+            }
+
+        }
+
+        if(streamCount > 0)
+        {
+            endTime = sheetStream[0].getRow(sheetStream[0].getLastRowNum()).getCell(TIME_COLUMN).getNumericCellValue();
+        }
     }
 
     // startTime - the time the data should start at
@@ -110,7 +134,7 @@ public class WaterDriver  implements IDriver {
     @Override
     public List getData(double startTime, double timestep, double resolution, long maxResults)
     {
-        System.out.println("RUNNING PARSER");  
+        Logger.getLogger(WaterDriver.class.getName()).log(Level.SEVERE, "RUNNING PARSER");
         
         double currentSystemTime = System.currentTimeMillis();
         List<WaterData> list = new ArrayList<>();
@@ -125,16 +149,16 @@ public class WaterDriver  implements IDriver {
 
                 // set to run this data set immediately
                 setScheduledTime(0.0);
-                System.out.println("Setting Start Time " + startTime); 
+                Logger.getLogger(WaterDriver.class.getName()).log(Level.SEVERE, "Setting Start Time " + startTime);
             }
 
             double delta = currentSystemTime - getScheduledTime();
-            System.out.println("System Time - Scheduled time " +  delta);
+            Logger.getLogger(WaterDriver.class.getName()).log(Level.SEVERE, "System Time - Scheduled time " +  delta);
 
             // if we have reached the time for the next data to go out
             if (currentSystemTime >= getScheduledTime() )
             {
-                        System.out.println("Current Index " + getDataIndex()); 
+                Logger.getLogger(WaterDriver.class.getName()).log(Level.SEVERE, "Current Index " + getDataIndex());
 
                 // process pipe data
                 list = setPipeData(getDataIndex(), list);
@@ -145,7 +169,7 @@ public class WaterDriver  implements IDriver {
                 //update the index for next run through 
                 setDataIndex(getNextDataIndex(timestep));
 
-                        System.out.println("Next Index " + getDataIndex()); 
+                Logger.getLogger(WaterDriver.class.getName()).log(Level.SEVERE, "Next Index " + getDataIndex());
 
             }
         }      
@@ -206,7 +230,7 @@ public class WaterDriver  implements IDriver {
             double timeScale = 1;//3600000; hours to milliseconds
             dataDelta = ((currentRowTime - previousRowTime)/speed) * timeScale;
 
-            System.out.println("dataDelta " + dataDelta);
+            Logger.getLogger(WaterDriver.class.getName()).log(Level.SEVERE, "dataDelta " + dataDelta);
 
             double skip;
             int nextIndex;
@@ -290,7 +314,7 @@ public class WaterDriver  implements IDriver {
                         }
 
                         waterData.setType("Pipe" + id);
-                        System.out.println(" pipeindex " + pipeIndex);
+                        Logger.getLogger(WaterDriver.class.getName()).log(Level.SEVERE, " pipeindex " + pipeIndex);
                         // set the temperatures along the pipe
                         for(int kk = 0; kk < 11; kk++)
                         {
@@ -300,8 +324,8 @@ public class WaterDriver  implements IDriver {
                         waterData.setTime(getTimeAtIndex(index));
 
                         list.add(waterData);
-                                        int row = pipeIndex;
-                        System.out.println("Pipe Data @ Row " + row + "     " + waterData); 
+                        int row = pipeIndex;
+                        Logger.getLogger(WaterDriver.class.getName()).log(Level.SEVERE, "Pipe Data @ Row " + row + "     " + waterData);
                     }
                 }
                 else
@@ -316,7 +340,7 @@ public class WaterDriver  implements IDriver {
     // set the stream data at the given index in the provided list
     List<WaterData> setStreamData(int index, List<WaterData> list)
     {        
-                        System.out.println("Setting Stream Data");
+        Logger.getLogger(WaterDriver.class.getName()).log(Level.SEVERE, "Setting Stream Data");
         // process stream data
         while ((stopColumn < sheetStream[0].getRow(START_ROW_HEADER).getPhysicalNumberOfCells()))
         {
@@ -335,7 +359,7 @@ public class WaterDriver  implements IDriver {
                 waterData.setTime(sheetStream[0].getRow(START_ROW_DATA + index).getCell(TIME_COLUMN + COLUMN_OFFSET * stopColumn).getNumericCellValue());
                 list.add(waterData);
                 int row = START_ROW_DATA + index;
-                System.out.println("Stream Data @ Row " + row + "     " + waterData); 
+                Logger.getLogger(WaterDriver.class.getName()).log(Level.SEVERE, "Stream Data @ Row " + row + "     " + waterData);
 
             }
             stopColumn++;

@@ -302,7 +302,6 @@ public class SIEVASSessionController
                 return new ResponseEntity<>(objMapper.writeValueAsString(""), HttpStatus.BAD_REQUEST);
             cleanSession(session);
             session.setActivemqUrl(this.amqService.getActiveMQClientUrl());
-                  System.out.println("CONTROL STREAM NAME:" + session.getControlStreamName());
 
             return new ResponseEntity<>(objMapper.writeValueAsString(session), HttpStatus.OK);
         }
@@ -321,9 +320,19 @@ public class SIEVASSessionController
     @RequestMapping(value = "/api/sessions/{id}", method = RequestMethod.PUT, produces = "application/json"
             )
     public ResponseEntity<String> saveSIEVASSession(@PathVariable(value = "id") long id,
-                @RequestBody SIEVASSession session)
+                //@RequestBody SIEVASSession session)
+                @RequestBody String data)
             throws JsonProcessingException, IOException
     {
+        SIEVASSession session = null;
+        try
+        {
+             session = objMapper.readValue(data, SIEVASSession.class);
+        }
+        catch(Exception e)
+        {
+            Logger.getLogger(DriverController.class.getName()).log(Level.SEVERE, null, e);
+        }
         if (session == null)
             return new ResponseEntity<>(objMapper.writeValueAsString(""), HttpStatus.BAD_REQUEST);
         
@@ -346,6 +355,8 @@ public class SIEVASSessionController
         }
         if (count>0)
             return new ResponseEntity<>(objMapper.writeValueAsString(new JsonError("Duplicate session name")), HttpStatus.CONFLICT);
+        
+        amqService.updateSession(session);
         
         
         sessionsMap.put(id, session);
@@ -389,9 +400,8 @@ public class SIEVASSessionController
         sessionsMap.put(session.getId(), session);
         cleanSession(session);
         session.setActivemqUrl(this.amqService.getActiveMQClientUrl());
-        AMQSessionInfo sessionInfo = amqService.addSession(session.getId());
+        AMQSessionInfo sessionInfo = amqService.addSession(session);
         session.setControlStreamName(sessionInfo.getControlTopicName());
-  //     System.out.println("CONTROL STREAM NAME:" + session.getControlStreamName());
         session.setDataStreamName(sessionInfo.getDataTopicName());
         
         return new ResponseEntity<>(objMapper.writeValueAsString(session), HttpStatus.OK);

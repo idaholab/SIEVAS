@@ -7,21 +7,27 @@ package gov.inl.SIEVAS.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gov.inl.SIEVAS.common.DriverOption;
 import gov.inl.SIEVAS.common.IData;
 import gov.inl.SIEVAS.common.IDriver;
-import gov.inl.SIEVAS.driver.NbodyDriver;
-import gov.inl.SIEVAS.driver.WaterDriver;
-import gov.inl.SIEVAS.driver.UavDriver;
 import gov.inl.SIEVAS.entity.DVRCommandMessage;
 import gov.inl.SIEVAS.entity.DVRCommandMessageReply;
 import gov.inl.SIEVAS.entity.DVRPlayMode;
+import gov.inl.SIEVAS.entity.DataSourceOption;
+import gov.inl.SIEVAS.entity.Datasource;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Scanner;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
@@ -43,8 +49,9 @@ public class DVRService implements Runnable, MessageListener
 {
     
     private int THREAD_POOL_SIZE = 10;
+    private static final String OPTION_LIST_FUNCTION = "getOptionList";
     
-    private IDriver driver;
+    private HashMap<Datasource, IDriver> datasourceMap = new HashMap<>();
     private ObjectMapper objMapper;
     private Session amqSession;
     private MessageConsumer controlMessageConsumer;
@@ -58,68 +65,100 @@ public class DVRService implements Runnable, MessageListener
     private boolean playing = false;
     private double currentTime = 0.0;
     private double startTime = -1.0;
+    private ApplicationContext context;
     
     /***
      * Constructor for DVR service. Currently only loads the NBody driver. 
      * TODO: Implement dynamic loading based on session settings and 
      * configuration.
      * @param context The ApplicationContext from spring for loading other beans
+     * @param datasourceList The new list of datasources to use
      * @param amqSession The ActiveMQ Session
      * @param controlMessageConsumer The Control stream consumer
      * @param controlMessageProducer The control stream producer
      * @param dataMessageProducer  The data stream producer
      */
-    public DVRService(ApplicationContext context, Session amqSession, MessageConsumer controlMessageConsumer, MessageProducer controlMessageProducer, MessageProducer dataMessageProducer)
+    public DVRService(ApplicationContext context, List<Datasource> datasourceList, Session amqSession, MessageConsumer controlMessageConsumer, MessageProducer controlMessageProducer, MessageProducer dataMessageProducer)
     {
         
         // get which driver should be ran from the user
         int option = 0;
         String input ="0";
-        
-        do {
-
-            synchronized (this) {
-                System.out.println(System.getProperty("line.separator")+System.getProperty("line.separator")+"Pick which driver you would like (1-n):");
-                System.out.println(System.getProperty("line.separator")+"1: Nbody");
-                System.out.println("2: Water Security Test Bed");
-                System.out.println("3: UAV IRC");
-                Scanner keyboard = new Scanner(System.in);
-                input = keyboard.nextLine();
-                System.out.println("Selected: " + input + System.getProperty("line.separator")+System.getProperty("line.separator"));
-            
-
-                switch (input) {
-
-                    case "1": this.driver = new NbodyDriver();
-                    option = 1;
-                    break;
-
-
-                    case "2": this.driver = new WaterDriver();
-                    option = 2;
-                    break;
-
-                    case "3": this.driver = new UavDriver();
-                    option = 3;
-                    break;
-
-                    default:
-                    System.out.println("Invalid Selection, try again");
-                    break;
-                }    
-            }
-            
-        } while (option == 0);
                 
         this.objMapper = context.getBean(ObjectMapper.class);
-        //this.driver = new NbodyDriver();
-        //this.driver = new WaterDriver();
-        //this.driver = new UavDriver();
         this.amqSession = amqSession;
         this.controlMessageConsumer = controlMessageConsumer;
         this.controlMessageProducer = controlMessageProducer;
         this.dataMessageProducer = dataMessageProducer;
-        driver.init(context);
+        this.context = context;
+        
+        //for each data source
+        for(Datasource ds : datasourceList)
+        {
+            
+            IDriver driver;
+            List<DriverOption> options = null;
+            try
+            {
+                Class<? extends IDriver> clazz = (Class<? extends IDriver>) Class.forName(ds.getDriverName());
+                driver = clazz.newInstance();
+                options = (List<DriverOption>) clazz.getMethod(OPTION_LIST_FUNCTION).invoke(driver);
+            }
+            catch (ClassNotFoundException ex)
+            {
+                Logger.getLogger(DVRService.class.getName()).log(Level.SEVERE, null, ex);
+                continue;
+            }
+            catch (InstantiationException ex)
+            {
+                Logger.getLogger(DVRService.class.getName()).log(Level.SEVERE, null, ex);
+                continue;
+            }
+            catch (IllegalAccessException ex)
+            {
+                Logger.getLogger(DVRService.class.getName()).log(Level.SEVERE, null, ex);
+                continue;
+            }
+            catch (NoSuchMethodException ex)
+            {
+                Logger.getLogger(DVRService.class.getName()).log(Level.SEVERE, null, ex);
+                continue;
+            }
+            catch (SecurityException ex)
+            {
+                Logger.getLogger(DVRService.class.getName()).log(Level.SEVERE, null, ex);
+                continue;
+            }
+            catch (IllegalArgumentException ex)
+            {
+                Logger.getLogger(DVRService.class.getName()).log(Level.SEVERE, null, ex);
+                continue;
+            }
+            catch (InvocationTargetException ex)
+            {
+                Logger.getLogger(DVRService.class.getName()).log(Level.SEVERE, null, ex);
+                continue;
+            }
+            
+            if (options==null)
+                options = new ArrayList<DriverOption>();
+            
+            //set option values
+            for(DataSourceOption opt : ds.getOptions())
+            {
+                for(DriverOption opt2: options)
+                {
+                    if (opt2.getOptionName().toLowerCase().equals(opt.getOptionName().toLowerCase()))
+                    {
+                        opt2.setOptionValue(opt.getOptionValue());
+                    }
+                }
+            }
+            
+            //run the driver and store
+            driver.init(context,options);
+            datasourceMap.put(ds,driver);
+        }
         
     }
     
@@ -139,6 +178,182 @@ public class DVRService implements Runnable, MessageListener
         }
     }
     
+    
+    /***
+     * Update the list of data sources for the DVR
+     * @param datasources The new list of data sources
+     * @return 
+     */
+    public boolean updateDatasources(List<Datasource> datasources)
+    {
+        //update matches for options
+        lock.readLock().lock();
+        for(Datasource ds: datasources)
+        {
+            for(Datasource ds2: datasourceMap.keySet())
+            {
+                if (ds.getId().equals(ds2.getId()))
+                {
+                    IDriver driver = datasourceMap.get(ds2);
+                    lock.readLock().unlock();
+                    lock.writeLock().lock();
+                    //shutdown existing driver
+                    driver.shutdown();
+                    //set option values
+                    List<DriverOption> options = null;
+                    try
+                    {
+                        Class<? extends IDriver> clazz = (Class<? extends IDriver>) Class.forName(ds.getDriverName());
+                        driver = clazz.newInstance();
+                        options = (List<DriverOption>) clazz.getMethod(OPTION_LIST_FUNCTION).invoke(driver);
+                    }
+                    catch (ClassNotFoundException ex)
+                    {
+                        Logger.getLogger(DVRService.class.getName()).log(Level.SEVERE, null, ex);
+                        continue;
+                    }
+                    catch (InstantiationException ex)
+                    {
+                        Logger.getLogger(DVRService.class.getName()).log(Level.SEVERE, null, ex);
+                        continue;
+                    }
+                    catch (IllegalAccessException ex)
+                    {
+                        Logger.getLogger(DVRService.class.getName()).log(Level.SEVERE, null, ex);
+                        continue;
+                    }
+                    catch (NoSuchMethodException ex)
+                    {
+                        Logger.getLogger(DVRService.class.getName()).log(Level.SEVERE, null, ex);
+                        continue;
+                    }
+                    catch (SecurityException ex)
+                    {
+                        Logger.getLogger(DVRService.class.getName()).log(Level.SEVERE, null, ex);
+                        continue;
+                    }
+                    catch (IllegalArgumentException ex)
+                    {
+                        Logger.getLogger(DVRService.class.getName()).log(Level.SEVERE, null, ex);
+                        continue;
+                    }
+                    catch (InvocationTargetException ex)
+                    {
+                        Logger.getLogger(DVRService.class.getName()).log(Level.SEVERE, null, ex);
+                        continue;
+                    }
+                    for(DataSourceOption opt : ds.getOptions())
+                    {
+                        for(DriverOption opt2: options)
+                        {
+                            if (opt2.getOptionName().toLowerCase().equals(opt.getOptionName().toLowerCase()))
+                            {
+                                opt2.setOptionValue(opt.getOptionValue());
+                            }
+                        }
+                    }
+                    if (options == null)
+                        options = new ArrayList<DriverOption>();
+                    
+                    //startup again
+                    driver.init(context, options);
+                    lock.writeLock().unlock();
+                    lock.readLock().lock();
+                }
+            }
+        }
+        
+        //add new datasources
+        for(Datasource ds: datasources)
+        {
+            if (!datasourceMap.containsKey(ds))
+            {
+                
+                IDriver driver;
+                List<DriverOption> options;
+                try
+                {
+                    Class<? extends IDriver> clazz = (Class<? extends IDriver>) Class.forName(ds.getDriverName());
+                    driver = clazz.newInstance();
+                    options = (List<DriverOption>) clazz.getMethod(OPTION_LIST_FUNCTION).invoke(driver);
+                }
+                catch (ClassNotFoundException ex)
+                {
+                    Logger.getLogger(DVRService.class.getName()).log(Level.SEVERE, null, ex);
+                    continue;
+                }
+                catch (InstantiationException ex)
+                {
+                    Logger.getLogger(DVRService.class.getName()).log(Level.SEVERE, null, ex);
+                    continue;
+                }
+                catch (IllegalAccessException ex)
+                {
+                    Logger.getLogger(DVRService.class.getName()).log(Level.SEVERE, null, ex);
+                    continue;
+                }
+                catch (NoSuchMethodException ex)
+                {
+                    Logger.getLogger(DVRService.class.getName()).log(Level.SEVERE, null, ex);
+                    continue;
+                }
+                catch (SecurityException ex)
+                {
+                    Logger.getLogger(DVRService.class.getName()).log(Level.SEVERE, null, ex);
+                    continue;
+                }
+                catch (IllegalArgumentException ex)
+                {
+                    Logger.getLogger(DVRService.class.getName()).log(Level.SEVERE, null, ex);
+                    continue;
+                }
+                catch (InvocationTargetException ex)
+                {
+                    Logger.getLogger(DVRService.class.getName()).log(Level.SEVERE, null, ex);
+                    continue;
+                }
+
+                //set option values
+                for(DataSourceOption opt : ds.getOptions())
+                {
+                    for(DriverOption opt2: options)
+                    {
+                        if (opt2.getOptionName().toLowerCase().equals(opt.getOptionName().toLowerCase()))
+                        {
+                            opt2.setOptionValue(opt.getOptionValue());
+                        }
+                    }
+                }
+                driver.init(context, options);
+                lock.readLock().unlock();
+                lock.writeLock().lock();
+                datasourceMap.put(ds,driver);
+                lock.writeLock().unlock();
+                lock.readLock().lock();
+            }
+        }
+        //remove old
+        if (datasourceMap.size()>0)
+            for(Datasource ds: datasourceMap.keySet().toArray(new Datasource[0]))
+            {
+                if (!datasources.contains(ds))
+                {
+                    IDriver driver = datasourceMap.get(ds);
+                    if (driver!=null)
+                    {
+                        driver.shutdown();
+                        lock.readLock().unlock();
+                        lock.writeLock().lock();
+                        datasourceMap.remove(ds);
+                        lock.writeLock().unlock();
+                        lock.readLock().lock();
+                    }
+                }
+            }
+        
+        lock.readLock().unlock();
+        return true;
+    }
     /***
      * Gets the play speed of the DVR
      * @return 
@@ -231,22 +446,37 @@ public class DVRService implements Runnable, MessageListener
     public void run()
     {
         lock.readLock().lock();
-    //    if (true)
         if (playing && (playSpeed!=0.0))
         {
-            List<IData> dataList = null;
-            try
+            List<IData> dataList = new ArrayList<>();
+            for(IDriver driver: datasourceMap.values())
             {
-                //getNextBlock of Data
-                dataList = driver.getData(startTime, playSpeed, 60.0, 1000);
                 
-                // reset start time so it doesn't get stuck at one specific time
-                startTime = -1.0;
+                try
+                {
+                    //getNextBlock of Data
+                    List<IData> driverDataList = driver.getData(startTime, playSpeed, 60.0, 1000);
+                    // reset start time so it doesn't get stuck at one specific time
+                    startTime = -1.0;
+                    
+                    dataList.addAll(driverDataList);
+                    //merge into exist list of data - use merge sort (TODO?)
+                    Collections.sort(dataList, new Comparator<IData>() {
+                        @Override
+                        public int compare(IData o1, IData o2)
+                        {
+                            return Double.compare(o1.getTime(), o2.getTime());
+                        }
+                    });
+                    
+                }
+                catch(Exception e)
+                {
+                    Logger.getLogger(DVRService.class.getName()).log(Level.SEVERE, null, e);
+                }
             }
-            catch(Exception e)
-            {
-                Logger.getLogger(DVRService.class.getName()).log(Level.SEVERE, null, e);
-            }
+            
+            //stream the ordered data
             if (dataList!=null)
             {
                 //Send Data
@@ -283,6 +513,11 @@ public class DVRService implements Runnable, MessageListener
     public void stop()
     {
         scheduleFuture.cancel(true);
+        for(IDriver driver: datasourceMap.values())
+        {
+            driver.shutdown();
+        }
+        datasourceMap.clear();
     }
 
     
@@ -351,11 +586,22 @@ public class DVRService implements Runnable, MessageListener
                         replyMsg.setPlaySpeed(playSpeed);
                         replyMsg.setSuccess(true);
                         
-                        // if start and end time aren't equal, then it is saved data or atleast data that can be generated from a specific start time
-                        if (this.driver.getStartTime() != this.driver.getEndTime())
+                        
+                        //get the global max/min times based on each driver
+                        double startTime = Double.MAX_VALUE;
+                        double endTime = Double.MIN_VALUE;
+                        
+                        for(IDriver driver: datasourceMap.values())
                         {
-                            replyMsg.setStartTime(this.driver.getStartTime());
-                            replyMsg.setEndTime(this.driver.getEndTime());
+                            startTime = Math.min(startTime, driver.getStartTime());
+                            endTime = Math.max(endTime, driver.getEndTime());
+                        }
+                        
+                        // if start and end time aren't equal, then it is saved data or atleast data that can be generated from a specific start time
+                        if (startTime != endTime)
+                        {
+                            replyMsg.setStartTime(startTime);
+                            replyMsg.setEndTime(endTime);
                             
                         }
                         else

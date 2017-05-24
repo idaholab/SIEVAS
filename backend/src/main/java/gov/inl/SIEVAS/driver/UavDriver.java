@@ -29,10 +29,11 @@ import com.adobe.xmp.properties.XMPPropertyInfo;
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.lang.GeoLocation;
 import com.drew.metadata.exif.GpsDirectory;
+import gov.inl.SIEVAS.common.DriverOption;
 import java.util.Scanner;
 
 /**
- *
+ * Class to get UAV data
  * @author SZEWTG
  */
 public class UavDriver  implements IDriver {
@@ -49,6 +50,8 @@ public class UavDriver  implements IDriver {
     Boolean runOnce;
     double speed;
     String path;
+    
+    private static final String PATH_OPTION = "path";
                 
 
     FileInputStream fstream;
@@ -56,15 +59,34 @@ public class UavDriver  implements IDriver {
     BufferedReader br; 
     
     @Override
-    public void init(ApplicationContext context)
+    public List<DriverOption> getOptionList()
+    {
+        DriverOption option = new DriverOption(PATH_OPTION,"");
+        List<DriverOption> list = new ArrayList<>();
+        list.add(option);
+        return list;
+    }
+    
+    @Override
+    public void init(ApplicationContext context, List<DriverOption> options)
     {
         firstRun = true;
         runOnce = true;
         
                 
-        System.out.println(System.getProperty("line.separator")+System.getProperty("line.separator")+"Please enter the path for UAV text file and images:");
-        Scanner keyboard = new Scanner(System.in);
-        path = keyboard.nextLine();
+        //System.out.println(System.getProperty("line.separator")+System.getProperty("line.separator")+"Please enter the path for UAV text file and images:");
+        //Scanner keyboard = new Scanner(System.in);
+        //path = keyboard.nextLine();
+        path = "";
+        for(DriverOption option: options)
+        {
+            if (option.getOptionName().toLowerCase().equals(PATH_OPTION))
+            {
+                path = option.getOptionValue();
+                if (!path.endsWith("/"))
+                    path += "/";
+            }
+        }
         System.out.println("Path " + path + System.getProperty("line.separator")+System.getProperty("line.separator"));
         
         try{
@@ -75,11 +97,12 @@ public class UavDriver  implements IDriver {
             // skip the header in the file
             br.readLine();
 
-          }catch (Exception e){
+        }
+        catch (Exception e)
+        {
             System.err.println("Error: " + e.getMessage());
-
-            init(context);
-          }
+            init(context,options);
+        }
     }
 
     // startTime - the time the data should start at

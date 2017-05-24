@@ -5,6 +5,8 @@
  */
 package gov.inl.SIEVAS.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import gov.inl.SIEVAS.common.IIdentifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -13,7 +15,7 @@ import java.util.Objects;
  * SIEVAS Session object for connecting.
  * @author monejh
  */
-public class SIEVASSession
+public class SIEVASSession implements IIdentifier<Long>
 {
     private Long id;
     private String name;
@@ -23,6 +25,7 @@ public class SIEVASSession
     private String dataStreamName;
     private String controlStreamName;
     private String activemqUrl;
+    private List<Datasource> datasources = new ArrayList<>();
 
     /***
      * Default contructor, does nothing.
@@ -66,7 +69,14 @@ public class SIEVASSession
         this.owner = owner;
     }
     
-    
+    @JsonIgnore
+    public String getOwnerName()
+    {
+        if (owner!=null)
+            return owner.getUsername();
+        else
+            return "";
+    }
 
     @Override
     public int hashCode()
@@ -193,6 +203,18 @@ public class SIEVASSession
     {
         this.activemqUrl = activemqUrl;
     }
+
+    public List<Datasource> getDatasources()
+    {
+        return datasources;
+    }
+
+    public void setDatasources(List<Datasource> datasources)
+    {
+        this.datasources = datasources;
+    }
+    
+    
     
     
     
@@ -206,7 +228,8 @@ public class SIEVASSession
                     + ",Groups:" + groups
                     + ", Control Stream Name:" + controlStreamName
                     + ", Data Stream Name:" + dataStreamName
-                    + ", ActiveMQ URL:" + activemqUrl;
+                    + ", ActiveMQ URL:" + activemqUrl
+                    + ", Datasources:[" + datasources + "]";
     }
     
 }
