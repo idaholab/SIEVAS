@@ -20,6 +20,8 @@
               <MenuItem mnemonicParsing="false" onAction="#handlePermissions" text="Permissions" />
               <MenuItem mnemonicParsing="false" onAction="#handlePermissionGroups" text="Groups" />
               <MenuItem mnemonicParsing="false" onAction="#handleUsers" text="Users" />
+              <MenuItem mnemonicParsing="false" onAction="#handleDatasources" text="Datasources" />
+              <MenuItem mnemonicParsing="false" onAction="#handleSessions" text="Sessions" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Help">

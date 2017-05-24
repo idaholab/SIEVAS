@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<AnchorPane id="AnchorPane" prefHeight="318.0" prefWidth="615.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gov.inl.SIEVAS.adminconsole.session.SessionEditController">
+   <children>
+      <GridPane layoutX="5.0" layoutY="6.0" prefHeight="600.0" prefWidth="595.0">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="290.0" minWidth="10.0" prefWidth="120.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="507.0" minWidth="10.0" prefWidth="473.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints maxHeight="77.0" minHeight="0.0" prefHeight="32.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="77.0" minHeight="0.0" prefHeight="32.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="77.0" minHeight="0.0" prefHeight="32.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="77.0" minHeight="0.0" prefHeight="32.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="112.0" minHeight="10.0" prefHeight="165.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="112.0" minHeight="10.0" prefHeight="108.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="112.0" minHeight="10.0" prefHeight="108.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="112.0" minHeight="10.0" prefHeight="108.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="110.0" minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Label contentDisplay="RIGHT" text="ID:" textAlignment="RIGHT" GridPane.halignment="RIGHT" />
+            <TextField fx:id="txtID" editable="false" prefHeight="58.0" prefWidth="474.0" promptText="ID" GridPane.columnIndex="1" />
+            
+            <Label text="Name:" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
+            <TextField fx:id="txtName" prefHeight="0.0" prefWidth="474.0" promptText="Name" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            
+            <Label text="Control Stream:" GridPane.halignment="RIGHT" GridPane.rowIndex="2" />
+            <TextField fx:id="txtControlStreamName" prefHeight="0.0" prefWidth="474.0" disable="true"  GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            
+            <Label text="Data Stream:" GridPane.halignment="RIGHT" GridPane.rowIndex="3" />
+            <TextField fx:id="txtDataStreamName" prefHeight="0.0" prefWidth="474.0" disable="true" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            
+            <Label text="Owner:" GridPane.halignment="RIGHT" GridPane.rowIndex="4" />
+            <ListView fx:id="lvOwner" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            
+            <Label text="Groups" GridPane.halignment="RIGHT" GridPane.rowIndex="5" GridPane.valignment="TOP" />
+            <ListView fx:id="lvGroups" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+            
+            <Label text="Users" GridPane.halignment="RIGHT" GridPane.rowIndex="6" GridPane.valignment="TOP" />
+            <ListView fx:id="lvUsers" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+            
+            <Label text="Data Sources" GridPane.halignment="RIGHT" GridPane.rowIndex="7" GridPane.valignment="TOP" />
+            <ListView fx:id="lvDatasources" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+            
+            <Button fx:id="btnSave" mnemonicParsing="false" onAction="#onSave" text="Save" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="8" />
+            <Button fx:id="btnCancel" mnemonicParsing="false" onAction="#onCancel" prefHeight="27.0" prefWidth="69.0" text="Cancel" GridPane.rowIndex="8" />
+            
+         </children>
+      </GridPane>
+   </children>
+</AnchorPane>

@@ -5,6 +5,7 @@
  */
 package gov.inl.SIEVAS.service;
 
+import gov.inl.SIEVAS.entity.SIEVASSession;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.HashMap;
@@ -108,9 +109,10 @@ public class ActiveMQService implements MessageListener
      * @return The new session info with topics, producers, and consumers. 
      *              Background tasks are started.
      */
-    public AMQSessionInfo addSession(long sessionId)
+    public AMQSessionInfo addSession(SIEVASSession newSession)
     {
         
+        long sessionId = newSession.getId();
         AMQSessionInfo sessionInfo = new AMQSessionInfo(sessionId);
         
         try
@@ -131,7 +133,7 @@ public class ActiveMQService implements MessageListener
             sessionInfo.getDataConsumer().setMessageListener(sessionInfo.getDataConsumerThread());
             scheduler.schedule(sessionInfo.getDataConsumerThread(), 0, TimeUnit.MILLISECONDS);
             
-            dvrService = new DVRService(context, session, sessionInfo.getControlConsumer(), sessionInfo.getControlProducer(), sessionInfo.getDataProducer());
+            dvrService = new DVRService(context, newSession.getDatasources(), session, sessionInfo.getControlConsumer(), sessionInfo.getControlProducer(), sessionInfo.getDataProducer());
             dvrService.start();
         }
         catch(JMSException e)
@@ -142,6 +144,17 @@ public class ActiveMQService implements MessageListener
         sessionsInfoMap.put(sessionId, sessionInfo);
         
         return sessionInfo;
+        
+    }
+    
+    /***
+     * Updates a session for data source changes
+     * @param saveSession The session to apply changes from
+     * @return True if success, false otherwise
+     */
+    public boolean updateSession(SIEVASSession saveSession)
+    {
+        return dvrService.updateDatasources(saveSession.getDatasources());
         
     }
     

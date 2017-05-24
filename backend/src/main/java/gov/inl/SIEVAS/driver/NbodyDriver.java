@@ -8,9 +8,8 @@ package gov.inl.SIEVAS.driver;
 import gov.inl.SIEVAS.DAO.CriteriaBuilderCriteriaQueryRootTriple;
 import gov.inl.SIEVAS.DAO.NbodyDAO;
 import gov.inl.SIEVAS.DAO.NbodyInfoDAO;
-import gov.inl.SIEVAS.common.IData;
+import gov.inl.SIEVAS.common.DriverOption;
 import gov.inl.SIEVAS.common.IDriver;
-import gov.inl.SIEVAS.connector.NBody;
 import gov.inl.SIEVAS.entity.Nbody;
 import gov.inl.SIEVAS.entity.NbodyInfo;
 import java.util.ArrayList;
@@ -23,7 +22,7 @@ import javax.persistence.criteria.Root;
 import org.springframework.context.ApplicationContext;
 
 /**
- *
+ * Class to load Nbody data
  * @author monejh
  */
 public class NbodyDriver implements IDriver
@@ -39,8 +38,13 @@ public class NbodyDriver implements IDriver
     private Order[] orderBy = new Order[2];
     private NBodyGenerator generator = new NBodyGenerator();
     
+    /***
+     * Init the driver
+     * @param context Context to use
+     * @param options The list of options
+     */
     @Override
-    public void init(ApplicationContext context)
+    public void init(ApplicationContext context, List<DriverOption> options)
     {
         this.nbodyInfoDAO = context.getBean(NbodyInfoDAO.class);
         this.nbodyDAO = context.getBean(NbodyDAO.class);
@@ -54,7 +58,15 @@ public class NbodyDriver implements IDriver
         orderBy[1] = cb.asc(root.get("planetNumber"));
         
     }
-
+    
+    /***
+     * Gets the data for a timestep
+     * @param startTime The start time
+     * @param timestep The timestep
+     * @param resolution The resolution of objects returned.
+     * @param maxResults The maximum results returned.
+     * @return The list of nbody objects
+     */
     @Override
     public List getData(double startTime, double timestep, double resolution, long maxResults)
     {
@@ -75,8 +87,6 @@ public class NbodyDriver implements IDriver
         Long maxStep = nbodyDAO.getEntityManager().createQuery(query2).getSingleResult();
         Predicate pred2 = cb.equal(root.get("step"), maxStep);
         List<Nbody> listPrior = nbodyDAO.findByCriteria(triple, orderBy, 0, -1, pred2);
-        System.out.println("MAX:" + maxStep);
-        listPrior.stream().forEachOrdered(nbody -> System.out.println(nbody));
         
         double startGenTime = maxStep*nbodyInfo.getTimestep();
         //double h = Math.pow(0.5, 14); //can change to 14 or 16 to change time step
@@ -84,19 +94,14 @@ public class NbodyDriver implements IDriver
         
         //remove front steps not needed
         int stepsToSkip = (int)Math.floor((startTime - startGenTime)/nbodyInfo.getTimestep());
-        System.out.println("SKIPPING:" + stepsToSkip);
         
         //results = results.subList(stepsToSkip*10, results.size());
         //now remove step smaller than resolution
         //TODO
-        System.out.println("Computing final array");
         
         int itemsToSkip = (results.size()/10)/10;
         List<Nbody> list = new ArrayList<>((int)(results.size()/itemsToSkip)*10);
-                System.out.println("LIST SIZE:" + (int)(results.size()/itemsToSkip)*10);
-        System.out.println("RESULT SIZE:" + results.size());
-        System.out.println("STARTING AT:" + (stepsToSkip*10));
-        System.out.println("SKIPPING THESE:" + itemsToSkip);
+        
         for(int jj=Math.max(0,stepsToSkip*10-1); jj<results.size(); jj+= itemsToSkip*10)
         {
             for(int ii=0;ii<10;ii++)
