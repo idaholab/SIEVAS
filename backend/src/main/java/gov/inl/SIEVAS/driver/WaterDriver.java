@@ -82,10 +82,12 @@ public class WaterDriver  implements IDriver {
         catch (IOException ex)
         {
             Logger.getLogger(WaterDriver.class.getName()).log(Level.SEVERE, null, ex);
+            return;
         }
         catch (InvalidFormatException ex)
         {
             Logger.getLogger(WaterDriver.class.getName()).log(Level.SEVERE, null, ex);
+            return;
         }
         numberOfSheets = wb.getNumberOfSheets();
         sheetStream = new Sheet[numberOfSheets];
