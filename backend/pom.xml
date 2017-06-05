@@ -100,12 +100,14 @@
           <plugin>
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-maven-plugin</artifactId>
-                <version>4.0.3</version>
+                <version>4.2.0</version>
                 <configuration>
                     <driver>org.postgresql.Driver</driver>
                     <url>jdbc:postgresql://localhost:5432/sievas</url>
                     <user>sievas</user>
                     <password>sievas</password>
+                    <outOfOrder>true</outOfOrder>
+                    <validateOnMigrate>false</validateOnMigrate>
                 </configuration>
          </plugin>
 <!--         <plugin>

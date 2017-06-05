@@ -84,8 +84,8 @@ public class UavDriver  implements IDriver {
             if (option.getOptionName().toLowerCase().equals(PATH_OPTION))
             {
                 path = option.getOptionValue();
-                if (!path.endsWith("/"))
-                    path += "/";
+                if (!path.endsWith(File.separator))
+                    path += File.separator;
             }
         }
         
