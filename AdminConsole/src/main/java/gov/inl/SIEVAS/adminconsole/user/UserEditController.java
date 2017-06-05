@@ -30,6 +30,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Control;
 import javafx.scene.control.ListView;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.CheckBoxListCell;
 import javafx.stage.Stage;
@@ -74,10 +75,21 @@ public class UserEditController extends BaseEditController<UserInfo>
     @FXML
     private ListView lvGroups;
     
+    @FXML
+    private PasswordField pfPassword;
+    
+    @FXML
+    private PasswordField pfPassword2;
+    
     private static final String PERMISSIONGROUP_URL = "api/permissiongroups/";
     private static final String USERCHECK_URL = "api/users/username/";
     private final RestController restController = RestController.getInstance();
     
+    /***
+     * Validates the EDIPI field
+     * @param txt The EDIPI
+     * @return  True if successful validation, false otherwise.
+     */
     private Boolean validateEDIPI(TextField txt)
     {
         if (txtEDIPI.getText().isEmpty())
@@ -91,6 +103,11 @@ public class UserEditController extends BaseEditController<UserInfo>
         }
     }
     
+    /***
+     * Validates the first name field
+     * @param txt The first name
+     * @return  True if successful validation, false otherwise.
+     */
     private Boolean validateFirstName(TextField txt)
     {
         if (txtFirstName.getText().isEmpty())
@@ -102,6 +119,12 @@ public class UserEditController extends BaseEditController<UserInfo>
             return true;
     }
     
+    
+    /***
+     * Validates the last name field
+     * @param txt The last name
+     * @return  True if successful validation, false otherwise.
+     */
     private Boolean validateLastName(TextField txt)
     {
         if (txtLastName.getText().isEmpty())
@@ -113,6 +136,11 @@ public class UserEditController extends BaseEditController<UserInfo>
             return true;
     }
     
+    /***
+     * Validates the username field
+     * @param txt The username
+     * @return  True if successful validation, false otherwise.
+     */
     private Boolean validateUsername(TextField txt)
     {
         if (txtUsername.getText().isEmpty())
@@ -135,7 +163,6 @@ public class UserEditController extends BaseEditController<UserInfo>
                 Logger.getLogger(UserEditController.class.getName()).log(Level.SEVERE, null, ex);
                 return false;
             }
-            System.out.println("URL TO GET:" + request.getURI());
             HttpResponse response;
             try
             {
@@ -154,7 +181,6 @@ public class UserEditController extends BaseEditController<UserInfo>
             {
                 Logger.getLogger(UserEditController.class.getName()).log(Level.SEVERE, null, ex);
             }
-            System.out.println("RESULT:" + response.getStatusLine().getStatusCode());
             if (response.getStatusLine().getStatusCode()==200)
             {
                 Notifier.INSTANCE.notifyError("Validation Error", "Username is already used.");
@@ -163,6 +189,33 @@ public class UserEditController extends BaseEditController<UserInfo>
             else
                 return true;
         }
+    }
+    
+    /***
+     * Validates the password field
+     * @param txt The password
+     * @return  True if successful validation, false otherwise.
+     */
+    private Boolean validatePassword(PasswordField password)
+    {
+        if (pfPassword.getText().isEmpty() && this.getCreateMode())
+        {
+            Notifier.INSTANCE.notifyInfo("Validation Error", "Password is required.");
+            return false;
+        }
+        else if ((!pfPassword.getText().isEmpty()) && (!pfPassword.getText().equals(pfPassword2.getText())))
+        {
+            if (!pfPassword2.getText().isEmpty())
+                Notifier.INSTANCE.notifyError("Validation Error", "Passwords do not match.");
+            return false;
+        }
+        else if ((!pfPassword.getText().isEmpty()) && (pfPassword.getText().length()<6))
+        {
+            Notifier.INSTANCE.notifyError("Validation Error", "Passwords must be at least six characters.");
+            return false;
+        }
+        else
+            return true;
     }
     
     @Override
@@ -176,12 +229,20 @@ public class UserEditController extends BaseEditController<UserInfo>
         AddControlToValidate(txtFirstName,(Callback<Control, Boolean>) (Control param) -> validateFirstName((TextField)param));
         AddControlToValidate(txtLastName,(Callback<Control, Boolean>) (Control param) -> validateLastName((TextField)param));
         AddControlToValidate(txtEDIPI,(Callback<Control, Boolean>) (Control param) -> validateEDIPI((TextField)param));
+        AddControlToValidate(pfPassword, (Callback<Control,Boolean>) (Control param) -> validatePassword((PasswordField)param));
     }
     
     @Override
     public void LoadData()
     {
-        Notifier.setNotificationOwner((Stage) txtUsername.getScene().getWindow());
+        try
+        {
+            Notifier.setNotificationOwner((Stage) txtUsername.getScene().getWindow());
+        }
+        catch(Exception e)
+        {
+            //ignore error
+        }
         
         if (object.getId()!=null)
             txtID.setText(object.getId().toString());
@@ -192,6 +253,8 @@ public class UserEditController extends BaseEditController<UserInfo>
             txtEDIPI.setText(object.getEdipi().toString());
         else
             txtEDIPI.setText("");
+        pfPassword.setText("");
+        pfPassword2.setText("");
         
         cbEnabled.setSelected(object.getEnabled());
         cbLocked.setSelected(object.getLocked());
@@ -296,6 +359,16 @@ public class UserEditController extends BaseEditController<UserInfo>
         object.setEnabled(cbEnabled.isSelected());
         object.setLocked(cbLocked.isSelected());
         object.setExpired(cbExpired.isSelected());
+        if ((pfPassword.getText()!=null) && (!pfPassword.getText().isEmpty()))
+        {
+            object.setPassword(pfPassword.getText());
+            object.setPassword2(pfPassword2.getText());
+        }
+        else
+        {
+            object.setPassword("");
+            object.setPassword2("");
+        }
     }
     
     @Override

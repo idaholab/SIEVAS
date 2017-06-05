@@ -112,6 +112,17 @@ public abstract class BaseEditController<T extends IIdentifier> implements Initi
         this.object = obj;
     }
     
+    
+    /***
+     * Returns if the form is in create mode.
+     * @return True if this is a new record, false otherwise.
+     */
+    public boolean getCreateMode()
+    {
+        
+        return this.createMode;
+    }
+    
     /***
      * Sets whether to run in create mode.
      * @param create True if in create mode, false if in edit.
@@ -168,6 +179,7 @@ public abstract class BaseEditController<T extends IIdentifier> implements Initi
         ObjectMapper objMapper = new ObjectMapper();
         try
         {
+            Logger.getLogger(this.getClass().getName()).info("WRITING:" + objMapper.writeValueAsString(object));
             request.setEntity(new StringEntity(objMapper.writeValueAsString(object), DEFAULT_ENCODING));
         }
         catch (JsonProcessingException ex)
