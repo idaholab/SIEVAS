@@ -46,8 +46,7 @@ public class ActiveMQService implements MessageListener
     private final ApplicationContext context;
     
     private static final String MAIN_CONTROL_TOPIC = "control";
-    private static final String CONTROL_PREFIX = "control";
-    private static final String DATA_PREFIX = "data";
+    
     private static final int THREAD_POOL_SIZE = 10;
     private static final String CONNECTOR_URL = "tcp://localhost:61616";
     private static final String CLIENT_URL = "tcp://localhost:61616";
@@ -117,7 +116,7 @@ public class ActiveMQService implements MessageListener
         
         try
         {
-            sessionInfo.setControlTopicName(CONTROL_PREFIX + sessionId);
+            sessionInfo.setControlTopicName(newSession.getControlStreamName());
             sessionInfo.setControlDestination(session.createTopic(sessionInfo.getControlTopicName()));
             sessionInfo.setControlProducer(session.createProducer(sessionInfo.getControlDestination()));
             sessionInfo.setControlConsumer(session.createConsumer(sessionInfo.getControlDestination()));
@@ -125,7 +124,7 @@ public class ActiveMQService implements MessageListener
             sessionInfo.getControlConsumer().setMessageListener(sessionInfo.getControlConsumerThread());
             scheduler.schedule(sessionInfo.getControlConsumerThread(), 0, TimeUnit.MILLISECONDS);
 
-            sessionInfo.setDataTopicName(DATA_PREFIX + sessionId);
+            sessionInfo.setDataTopicName(newSession.getDataStreamName());
             sessionInfo.setDataDestination(session.createTopic(sessionInfo.getDataTopicName()));
             sessionInfo.setDataProducer(session.createProducer(sessionInfo.getDataDestination()));
             sessionInfo.setDataConsumer(session.createConsumer(sessionInfo.getDataDestination()));

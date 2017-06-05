@@ -6,26 +6,110 @@
 package gov.inl.SIEVAS.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import gov.inl.SIEVAS.common.IIdentifier;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  * SIEVAS Session object for connecting.
  * @author monejh
  */
+@Entity
+@Table(name = "session")
+@NamedQueries(
+{
+    @NamedQuery(name = "SIEVASSession.findAll", query = "SELECT p FROM SIEVASSession p"),
+    @NamedQuery(name = "SIEVASSession.findById", query = "SELECT p FROM SIEVASSession p WHERE p.id = :id"),
+    @NamedQuery(name = "SIEVASSession.findByName", query = "SELECT p FROM SIEVASSession p WHERE p.name = :name"),
+})
 public class SIEVASSession implements IIdentifier<Long>
 {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "id")
     private Long id;
+    
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 128)
+    @Column(name = "name")
     private String name;
+    
+    @ManyToOne(optional = false, targetEntity = UserInfo.class)
     private UserInfo owner;
+    
+    @JoinTable(name = "session_users", joinColumns =
+    {
+        @JoinColumn(name = "session_id", referencedColumnName = "id")
+    }, inverseJoinColumns =
+    {
+        @JoinColumn(name = "user_id", referencedColumnName = "id")
+    })
+    @ManyToMany
     private List<UserInfo> users = new ArrayList<>();
-    private List<PermissionGroup> groups = new ArrayList<>();
+    
+    
+    @JoinTable(name = "session_permission_groups", joinColumns =
+    {
+        @JoinColumn(name = "session_id", referencedColumnName = "id")
+    }, inverseJoinColumns =
+    {
+        @JoinColumn(name = "permission_group_id", referencedColumnName = "id")
+    })
+    @ManyToMany
+    private Collection<PermissionGroup> groups = new ArrayList<>();
+    
+    
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 128)
+    @Column(name = "data_stream_name")
     private String dataStreamName;
+    
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 128)
+    @Column(name = "control_stream_name")
     private String controlStreamName;
+    
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 128)
+    @Column(name = "activemq_url")
     private String activemqUrl;
-    private List<Datasource> datasources = new ArrayList<>();
+    
+    @JoinTable(name = "session_datasource", joinColumns =
+    {
+        @JoinColumn(name = "session_id", referencedColumnName = "id")
+    }, inverseJoinColumns =
+    {
+        @JoinColumn(name = "datasource_id", referencedColumnName = "id")
+    })
+    @ManyToMany
+    private Collection<Datasource> datasources = new ArrayList<>();
 
     /***
      * Default contructor, does nothing.
@@ -77,6 +161,8 @@ public class SIEVASSession implements IIdentifier<Long>
         else
             return "";
     }
+    
+    
 
     @Override
     public int hashCode()
@@ -148,12 +234,12 @@ public class SIEVASSession implements IIdentifier<Long>
         this.users = users;
     }
 
-    public List<PermissionGroup> getGroups()
+    public Collection<PermissionGroup> getGroups()
     {
         return groups;
     }
 
-    public void setGroups(List<PermissionGroup> groups)
+    public void setGroups(Collection<PermissionGroup> groups)
     {
         this.groups = groups;
     }
@@ -204,12 +290,12 @@ public class SIEVASSession implements IIdentifier<Long>
         this.activemqUrl = activemqUrl;
     }
 
-    public List<Datasource> getDatasources()
+    public Collection<Datasource> getDatasources()
     {
         return datasources;
     }
 
-    public void setDatasources(List<Datasource> datasources)
+    public void setDatasources(Collection<Datasource> datasources)
     {
         this.datasources = datasources;
     }

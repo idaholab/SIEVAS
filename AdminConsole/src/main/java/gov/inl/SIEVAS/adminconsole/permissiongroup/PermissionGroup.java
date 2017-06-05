@@ -5,10 +5,11 @@
  */
 package gov.inl.SIEVAS.adminconsole.permissiongroup;
 
-import gov.inl.SIEVAS.adminconsole.permission.Permission;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import gov.inl.SIEVAS.adminconsole.IIdentifier;
+import gov.inl.SIEVAS.adminconsole.permission.Permission;
+import gov.inl.SIEVAS.adminconsole.SIEVASSession;
 import gov.inl.SIEVAS.adminconsole.user.UserInfo;
 import java.io.Serializable;
 import java.util.Collection;
@@ -40,7 +41,6 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "PermissionGroup.findByGroupName", query = "SELECT p FROM PermissionGroup p WHERE p.groupName = :groupName"),
     @NamedQuery(name = "PermissionGroup.findByDescription", query = "SELECT p FROM PermissionGroup p WHERE p.description = :description")
 })
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class PermissionGroup implements Serializable,  IIdentifier<Long>
 {
 
@@ -75,6 +75,10 @@ public class PermissionGroup implements Serializable,  IIdentifier<Long>
     @JsonIgnore
     @ManyToMany(mappedBy = "permissionGroupCollection")
     private Collection<UserInfo> userInfoCollection;
+    
+    @JsonIgnore
+    @ManyToMany(mappedBy = "groups")
+    private Collection<SIEVASSession> sessionCollection;
 
     public PermissionGroup()
     {
