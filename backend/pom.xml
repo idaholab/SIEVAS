@@ -125,8 +125,8 @@ limitations under the License.
                     <url>jdbc:postgresql://localhost:5432/sievas</url>
                     <user>sievas</user>
                     <password>sievas</password>
-                    <outOfOrder>true</outOfOrder>
-                    <validateOnMigrate>false</validateOnMigrate>
+<!--                    <outOfOrder>true</outOfOrder>
+                    <validateOnMigrate>false</validateOnMigrate>-->
                 </configuration>
          </plugin>
 <!--         <plugin>
