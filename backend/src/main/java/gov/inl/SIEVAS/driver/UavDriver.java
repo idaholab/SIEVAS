@@ -58,6 +58,16 @@ public class UavDriver  implements IDriver {
     DataInputStream in;
     BufferedReader br; 
     
+    double initX = 0;
+    double initY = 0;
+    double initZ = 0;
+    double initGRoll = 0;
+    double initGPitch = 0;
+    double initGYaw = 0;
+    double initRoll = 0;
+    double initPitch = 0;
+    double initYaw = 0;
+
     @Override
     public List<DriverOption> getOptionList()
     {
@@ -83,11 +93,17 @@ public class UavDriver  implements IDriver {
             if (option.getOptionName().toLowerCase().equals(PATH_OPTION))
             {
                 path = option.getOptionValue();
+                
+                System.out.println("Path " + path + System.getProperty("line.separator")+System.getProperty("line.separator"));
+                
                 if (!path.endsWith(File.separator))
+                {   
                     path += File.separator;
+                }
             }
         }
-        System.out.println("Path " + path + System.getProperty("line.separator")+System.getProperty("line.separator"));
+        
+
         
         try{
             fstream = new FileInputStream(path+"new_IRC_flight_calibrated_external_camera_parameters.txt");
@@ -118,6 +134,8 @@ public class UavDriver  implements IDriver {
         List<UavData> list = new ArrayList<>();
         System.out.println(new Date((long)getScheduledTime()).getTime()/1000);
         System.out.println(new Date((long)currentSystemTime).getTime()/1000);
+        
+        // if we haven't reached the scheduled time, return an empty list
         if ((getScheduledTime() > currentSystemTime))
         {
             // return empty list
@@ -143,7 +161,6 @@ public class UavDriver  implements IDriver {
     public UavData getQueuedData()
     {
         return nextData;
-        
     }
     
     public UavData getSentData()
@@ -174,24 +191,37 @@ public class UavDriver  implements IDriver {
             }
             
             String[] tokens = str.split(" ");
-            System.out.println(tokens.length+" "+tokens[0]+" "+tokens[1]+" "+tokens[2]+" "+tokens[3]);  
-            nextData.setX(Double.parseDouble(tokens[1]));
-            nextData.setY(Double.parseDouble(tokens[2]));
-            nextData.setZ(Double.parseDouble(tokens[3]));
-            nextData.setGRoll(Double.parseDouble(tokens[4]));
-            nextData.setGPitch(Double.parseDouble(tokens[5]));
-            nextData.setGYaw(Double.parseDouble(tokens[6]));
+
             nextData.setStep(Long.parseLong(tokens[0].replaceAll("[^0-9]", "")));
 
+            double posX = Double.parseDouble(tokens[1]);
+            double posY = Double.parseDouble(tokens[2]);
+            double posZ = Double.parseDouble(tokens[3]);
+            double gRoll = Double.parseDouble(tokens[4]);
+            double gPitch = Double.parseDouble(tokens[5]);
+            double gYaw = Double.parseDouble(tokens[6]);
+            
 	    if (nextData.getStep() == 666)
 	    {
 	        nextData.setType("init");
+                initX = posX;
+                initY = posY;
+                initZ = posZ;
+                initGRoll = gRoll;
+                initGPitch = gPitch;
+                initGYaw = gYaw;
 	    }
 	    else
 	    {
 		nextData.setType("data");
 	    }
 
+            nextData.setX(posX-initX);
+            nextData.setY(posY-initY);
+            nextData.setGRoll(gRoll-initGRoll);
+            nextData.setGPitch(gPitch-initGPitch);
+            nextData.setGYaw(gYaw - initGYaw);
+            
             System.out.println(path + tokens[0]); 
             File file = new File(path + tokens[0]);
  
@@ -266,18 +296,19 @@ public class UavDriver  implements IDriver {
                     
                 }
             }
-            
-            
-                        
+          
             ExifSubIFDDirectory directory = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
             Date date = directory.getDateOriginal();
 
             // See whether it has GPS data
             Collection<GpsDirectory> gpsDirectories = metadata.getDirectoriesOfType(GpsDirectory.class);
             for (GpsDirectory gpsDirectory : gpsDirectories) {
+                
                 // Try to read out the location, making sure it's non-zero
                 GeoLocation geoLocation = gpsDirectory.getGeoLocation();
+               
                 if (geoLocation != null && !geoLocation.isZero()) {
+                    
                     // Add to our collection for use below
                     Deg2UTM deg = new Deg2UTM(geoLocation.getLatitude(), geoLocation.getLongitude());
                     nextData.setX(deg.Easting);
@@ -287,12 +318,20 @@ public class UavDriver  implements IDriver {
                 }
             }
 
-            
-            
             if (runOnce || "init".equals(nextData.getType()))
             {
                 startDate = date;
                 nextData.setTtp(0.0);
+                
+                initX = nextData.getX();
+                initY = nextData.getY();
+                initZ = nextData.getZ();
+                initGRoll = nextData.getGRoll();
+                initGPitch = nextData.getGPitch();
+                initGYaw = nextData.getGYaw();
+                initRoll = nextData.getRoll();
+                initPitch = nextData.getPitch();
+                initYaw = nextData.getYaw();
             }
             else
             {
@@ -304,15 +343,25 @@ public class UavDriver  implements IDriver {
 		nextData.setTtp(5.0/speed);
  	    }
 
+            
+            nextData.setX(nextData.getX() - initX);
+            nextData.setY(nextData.getY() - initY);         
+            nextData.setZ(nextData.getZ() - initZ);
+            nextData.setGRoll(nextData.getGRoll() - initGRoll);
+            nextData.setGPitch(nextData.getGPitch() - initGPitch);
+            nextData.setGYaw(nextData.getGYaw() - initGYaw);
+            nextData.setRoll(nextData.getRoll() - initRoll);
+            nextData.setPitch(nextData.getPitch() - initPitch);
+            nextData.setYaw(nextData.getYaw() - initYaw);
+            
             nextData.setTime((getDateDiff(startDate, date))/(1000));
             runOnce = false;
+            System.out.println("initXYZ " + initX + " " + initY + " " + initZ);
+            System.out.println("XYZ " + nextData.getX() + " " + nextData.getY() + " " + nextData.getZ());  
             
         } catch(Exception a){
             System.err.println("Error: " + a.getMessage());
-        }        
-        
-        
-        
+        }          
     }
     
     
