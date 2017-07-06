@@ -7,6 +7,7 @@ package gov.inl.SIEVAS.adminconsole.session;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import eu.hansolo.enzo.notification.Notification;
 import gov.inl.SIEVAS.adminconsole.BaseEditController;
 import gov.inl.SIEVAS.adminconsole.JsonListResult;
 import gov.inl.SIEVAS.adminconsole.RadioListCell;
@@ -16,7 +17,9 @@ import gov.inl.SIEVAS.adminconsole.datasource.Datasource;
 import gov.inl.SIEVAS.adminconsole.permissiongroup.PermissionGroup;
 import gov.inl.SIEVAS.adminconsole.user.UserInfo;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Objects;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -24,6 +27,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.scene.control.Control;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
@@ -32,6 +36,7 @@ import javafx.util.Callback;
 import javafx.util.StringConverter;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import java.lang.Boolean;
 
 /**
  * Class for session edit.
@@ -73,6 +78,29 @@ public class SessionEditController extends BaseEditController<SIEVASSession>
     
     private RestController restController = RestController.getInstance();
     
+    
+    /***
+     * Validates the name field.
+     * @param txt The name field
+     * @return True if the name is validated, otherwise false.
+     */
+    private Boolean validateName(TextField txt)
+    {
+        if (txt.getText().isEmpty())
+        {
+            Notification.Notifier.INSTANCE.notifyError("Validation Error", "Name is required.");
+            return false;
+        }
+        else
+            return true;
+    }
+    
+    
+    @Override
+    public void initialize(URL url, ResourceBundle rb)
+    {
+        AddControlToValidate(txtName, (Callback<Control,Boolean>)(Control param) -> validateName((TextField)param));
+    }
     
     /***
      * Handle the load of users, groups, and datasources

@@ -70,6 +70,10 @@ public class Datasource implements Serializable, IIdentifier<Long>
     @JsonManagedReference
     private Collection<DataSourceOption> options;
     
+    @JsonIgnore
+    @ManyToMany(mappedBy = "datasources")
+    private Collection<SIEVASSession> sessionCollection;
+    
 
     public Datasource()
     {
