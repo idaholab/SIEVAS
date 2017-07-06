@@ -5,6 +5,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -21,6 +22,8 @@
         <rowConstraints>
           <RowConstraints maxHeight="161.0" minHeight="3.0" prefHeight="39.0" vgrow="SOMETIMES" />
           <RowConstraints maxHeight="212.0" minHeight="10.0" prefHeight="46.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="212.0" minHeight="10.0" prefHeight="46.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="212.0" minHeight="10.0" prefHeight="46.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="322.0" minHeight="10.0" prefHeight="37.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="314.0" minHeight="10.0" prefHeight="28.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="85.0" minHeight="31.0" prefHeight="35.0" />
@@ -35,17 +38,23 @@
             <Label text="Username:" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
             <TextField fx:id="txtUsername" prefHeight="0.0" prefWidth="474.0" promptText="Username" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             
-            <Label text="First Name:" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
-            <TextField fx:id="txtFirstName" prefHeight="0.0" prefWidth="474.0" promptText="First Name" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Label text="Password:" GridPane.halignment="RIGHT" GridPane.rowIndex="2" />
+            <PasswordField fx:id="pfPassword" prefHeight="0.0" prefWidth="474.0" promptText="Password"  GridPane.columnIndex="1" GridPane.rowIndex="2" />
             
-            <Label text="Last Name:" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
-            <TextField fx:id="txtLastName" prefHeight="0.0" prefWidth="474.0" promptText="Last Name" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <Label text="Re-type Password:" GridPane.halignment="RIGHT" GridPane.rowIndex="3" />
+            <PasswordField fx:id="pfPassword2" prefHeight="0.0" prefWidth="474.0" promptText="Re-type Password"  GridPane.columnIndex="1" GridPane.rowIndex="3" />
             
-            <Label text="EDIPI:" GridPane.halignment="RIGHT" GridPane.rowIndex="4" GridPane.valignment="CENTER" />
-            <TextField fx:id="txtEDIPI" prefHeight="0.0" prefWidth="474.0" promptText="EDIPI" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <Label text="First Name:" GridPane.halignment="RIGHT" GridPane.rowIndex="4" GridPane.valignment="CENTER" />
+            <TextField fx:id="txtFirstName" prefHeight="0.0" prefWidth="474.0" promptText="First Name" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            
+            <Label text="Last Name:" GridPane.halignment="RIGHT" GridPane.rowIndex="5" GridPane.valignment="CENTER" />
+            <TextField fx:id="txtLastName" prefHeight="0.0" prefWidth="474.0" promptText="Last Name" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+            
+            <Label text="EDIPI:" GridPane.halignment="RIGHT" GridPane.rowIndex="6" GridPane.valignment="CENTER" />
+            <TextField fx:id="txtEDIPI" prefHeight="0.0" prefWidth="474.0" promptText="EDIPI" GridPane.columnIndex="1" GridPane.rowIndex="6" />
 
-            <Label text="Access:" GridPane.halignment="RIGHT" GridPane.rowIndex="5" GridPane.valignment="TOP" /> 
-            <VBox prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
+            <Label text="Access:" GridPane.halignment="RIGHT" GridPane.rowIndex="7" GridPane.valignment="TOP" /> 
+            <VBox prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="7">
                <children>
                   <CheckBox fx:id="cbEnabled" text="Enabled" />
                   <CheckBox fx:id="cbLocked" text="Locked" />
@@ -53,10 +62,11 @@
                </children>
             </VBox>
             
-            <Label text="Groups" GridPane.halignment="RIGHT" GridPane.rowIndex="6" GridPane.valignment="TOP" />
-            <ListView fx:id="lvGroups" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-            <Button fx:id="btnSave" mnemonicParsing="false" onAction="#onSave" text="Save" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="7" />
-            <Button fx:id="btnCancel" mnemonicParsing="false" onAction="#onCancel" prefHeight="27.0" prefWidth="69.0" text="Cancel" GridPane.rowIndex="7" />
+            <Label text="Groups" GridPane.halignment="RIGHT" GridPane.rowIndex="8" GridPane.valignment="TOP" />
+            <ListView fx:id="lvGroups" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+            
+            <Button fx:id="btnSave" mnemonicParsing="false" onAction="#onSave" text="Save" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="9" />
+            <Button fx:id="btnCancel" mnemonicParsing="false" onAction="#onCancel" prefHeight="27.0" prefWidth="69.0" text="Cancel" GridPane.rowIndex="9" />
             
             
          </children>

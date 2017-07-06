@@ -5,7 +5,9 @@
  */
 package gov.inl.SIEVAS.entity;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import gov.inl.SIEVAS.common.IIdentifier;
 import java.io.Serializable;
 import java.math.BigInteger;
@@ -14,14 +16,19 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
@@ -33,6 +40,7 @@ import javax.validation.constraints.Size;
  */
 @Entity
 @Table(name = "user_info")
+@JsonIdentityInfo(generator = ObjectIdGenerators.None.class, property = "id")
 public class UserInfo implements Serializable, IIdentifier<Long>
 {
     private static final long serialVersionUID = 1L;
@@ -98,7 +106,16 @@ public class UserInfo implements Serializable, IIdentifier<Long>
     })
     @ManyToMany
     private Collection<PermissionGroup> permissionGroupCollection;
-
+    
+    @JsonIgnore
+    @OneToMany(mappedBy =  "owner")
+    private Collection<SIEVASSession> sessionOwnerCollection;
+    
+    
+    @JsonIgnore
+    @ManyToMany(mappedBy = "users")
+    private Collection<SIEVASSession> sessionCollection;
+    
 
     public UserInfo()
     {
@@ -220,6 +237,12 @@ public class UserInfo implements Serializable, IIdentifier<Long>
     {
         this.password2 = password2;
     }
+
+
+
+
+    
+    
 
     
 

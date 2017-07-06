@@ -71,6 +71,10 @@ public class PermissionGroup implements Serializable,  IIdentifier<Long>
     @JsonIgnore
     @ManyToMany(mappedBy = "permissionGroupCollection")
     private Collection<UserInfo> userInfoCollection;
+    
+    @JsonIgnore
+    @ManyToMany(mappedBy = "groups")
+    private Collection<SIEVASSession> sessionCollection;
 
     public PermissionGroup()
     {

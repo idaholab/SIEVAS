@@ -7,7 +7,9 @@ package gov.inl.SIEVAS.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gov.inl.SIEVAS.DAO.CriteriaBuilderCriteriaQueryRootTriple;
 import gov.inl.SIEVAS.DAO.PermissionGroupDAO;
+import gov.inl.SIEVAS.DAO.SIEVASSessionDAO;
 import gov.inl.SIEVAS.DAO.UserInfoDAO;
 import gov.inl.SIEVAS.common.JsonError;
 import gov.inl.SIEVAS.common.JsonListResult;
@@ -18,19 +20,18 @@ import gov.inl.SIEVAS.entity.UserInfo;
 import gov.inl.SIEVAS.service.AMQSessionInfo;
 import gov.inl.SIEVAS.service.ActiveMQService;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Random;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceUnit;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.Order;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import javax.servlet.http.HttpServletRequest;
-import org.hibernate.Hibernate;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -55,6 +56,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class SIEVASSessionController
 {
+    private static final String CONTROL_PREFIX = "control";
+    private static final String DATA_PREFIX = "data";
+    
     @Autowired
     private ObjectMapper objMapper;
     
@@ -65,11 +69,11 @@ public class SIEVASSessionController
     private PermissionGroupDAO permGroupDAO;
     
     @Autowired
+    private SIEVASSessionDAO sessionDAO;
+    
+    @Autowired
     private ActiveMQService amqService;
     
-    private HashMap<Long, SIEVASSession> sessionsMap = new HashMap<>();
-    
-
     private String getHome(){ return Utility.getHomeURL(); }
     
     @RequestMapping(value = "/sessions", method = RequestMethod.GET)
@@ -87,6 +91,9 @@ public class SIEVASSessionController
     @PersistenceUnit
     private final EntityManagerFactory entityManagerFactory;
     
+    //needed to generate random control/data streams
+    private final Random random = new Random(System.currentTimeMillis());
+    
     /***
      * Constructor for autowired controller.
      * @param userInfoDAO The user info DAO
@@ -95,9 +102,11 @@ public class SIEVASSessionController
      * @param objMapper The Jackson ObjectMapper bean.
      */
     @Autowired
-    public SIEVASSessionController(UserInfoDAO userInfoDAO, EntityManagerFactory entityManagerFactory, ActiveMQService amqService, ObjectMapper objMapper)
+    public SIEVASSessionController(UserInfoDAO userInfoDAO, SIEVASSessionDAO sessionDAO, EntityManagerFactory entityManagerFactory, ActiveMQService amqService, ObjectMapper objMapper)
     {
+        
         this.userInfoDAO = userInfoDAO;
+        this.sessionDAO = sessionDAO;
         this.entityManagerFactory = entityManagerFactory;
         this.amqService = amqService;
         this.objMapper = objMapper;
@@ -111,6 +120,8 @@ public class SIEVASSessionController
     public void bindSession() {
         if (!TransactionSynchronizationManager.hasResource(entityManagerFactory)) {
             EntityManager entityManager = entityManagerFactory.createEntityManager();
+            EntityTransaction trans = entityManager.getTransaction();
+            trans.begin();
             TransactionSynchronizationManager.bindResource(entityManagerFactory, new EntityManagerHolder(entityManager));
         }
     }
@@ -119,8 +130,10 @@ public class SIEVASSessionController
      * Attempts to unbind a entity manager for hibernate session.
      */
     public void unbindSession() {
+        
         EntityManagerHolder emHolder = (EntityManagerHolder) TransactionSynchronizationManager
                 .unbindResource(entityManagerFactory);
+        emHolder.getEntityManager().getTransaction().commit();
         EntityManagerFactoryUtils.closeEntityManager(emHolder.getEntityManager());
     }
     
@@ -138,28 +151,14 @@ public class SIEVASSessionController
          */
         
         bindSession();
-        
-        UserInfo user = Utility.getUserByUsername("user", userInfoDAO);
-        Utility.cleanUserInfo(user);
-        Hibernate.initialize(user.getPermissionGroupCollection());
-        for(PermissionGroup group: user.getPermissionGroupCollection())
+        CriteriaBuilderCriteriaQueryRootTriple<SIEVASSession, SIEVASSession> triple = sessionDAO.getCriteriaTriple();
+        List<SIEVASSession> list = sessionDAO.getAll(triple, null, 0, -1);
+        for(SIEVASSession session: list)
         {
-            Hibernate.initialize(group.getPermissionCollection());
+            
+            session.setActivemqUrl(this.amqService.getActiveMQClientUrl());
+            AMQSessionInfo sessionInfo = amqService.addSession(session);
         }
-        SIEVASSession session = new SIEVASSession(1L, "test", user);
-        session.setActivemqUrl(this.amqService.getActiveMQClientUrl());
-        try
-        {
-            createSIEVASSession(session);
-        }
-        catch(JsonProcessingException e)
-        {
-            StringWriter sw = new StringWriter();
-                PrintWriter pw = new PrintWriter(sw);
-                e.printStackTrace(pw);
-                Logger.getLogger(SIEVASSessionController.class.getName()).log(Level.SEVERE, sw.toString());
-        }
-        
         unbindSession();
      
     }
@@ -179,25 +178,9 @@ public class SIEVASSessionController
         }
         if (session.getOwner()!=null)
             Utility.cleanUserInfo(session.getOwner());
+        
     }
     
-    /***
-     * Gets a new session id.
-     * @return The new id of the session.
-     */
-    synchronized private long generateNewSessionId()
-    {
-        long id = 1L;
-        
-        for(;id>0;id++)
-        {
-            if (id== Long.MAX_VALUE)
-                return -1;
-            if (!sessionsMap.containsKey(id))
-                break;
-        }
-        return id;
-    }
     
     /***
      * Checks to see if the user has access to edit or join the session. The 
@@ -261,17 +244,21 @@ public class SIEVASSessionController
             )
             throws JsonProcessingException
     {
-        Collection<SIEVASSession> list = sessionsMap.values();
+        CriteriaBuilderCriteriaQueryRootTriple<SIEVASSession, SIEVASSession> triple = sessionDAO.getCriteriaTriple();
+        List<Order> orders = Utility.ProcessOrders(sortField, sortOrder, triple.getCriteriaBuilder(), triple.getRoot(), "name", objMapper);
+        List<Predicate> preds = Utility.ProcessFilters(filters, triple.getCriteriaBuilder(), triple.getRoot(), SIEVASSession.class, objMapper);
         
-        List<SIEVASSession> filteredList = Utility.ProcessFilters(list, filters, SIEVASSession.class, objMapper);
+        
+        List<SIEVASSession> filteredList = sessionDAO.findByCriteria(triple, orders.toArray(new Order[0]), start, count, preds.toArray(new Predicate[0]));
+        
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         UserInfo currentUser = Utility.getUserByUsername(username, userInfoDAO);
         for(int ii=filteredList.size()-1;ii>-1;ii--)
             if (!allowEdit(filteredList.get(ii), currentUser))
                 filteredList.remove(ii);
         
+        
         int total = filteredList.size();
-        Utility.ProcessOrders(filteredList.toArray(new SIEVASSession [0]),SIEVASSession.class, sortField, sortOrder, "name", objMapper);
         filteredList.stream().forEach((session) ->
         {
             cleanSession(session);
@@ -291,7 +278,7 @@ public class SIEVASSessionController
     public ResponseEntity<String> getSIEVASSessionById(@PathVariable(value = "id") long id)
             throws JsonProcessingException
     {
-        SIEVASSession session = sessionsMap.get(id);
+        SIEVASSession session = sessionDAO.findById(id);  //sessionsMap.get(id);
         if (session == null)
             return new ResponseEntity<>(objMapper.writeValueAsString(""), HttpStatus.NOT_FOUND);
         else
@@ -320,46 +307,31 @@ public class SIEVASSessionController
     @RequestMapping(value = "/api/sessions/{id}", method = RequestMethod.PUT, produces = "application/json"
             )
     public ResponseEntity<String> saveSIEVASSession(@PathVariable(value = "id") long id,
-                //@RequestBody SIEVASSession session)
-                @RequestBody String data)
+                @RequestBody SIEVASSession session)
             throws JsonProcessingException, IOException
     {
-        SIEVASSession session = null;
-        try
-        {
-             session = objMapper.readValue(data, SIEVASSession.class);
-        }
-        catch(Exception e)
-        {
-            Logger.getLogger(DriverController.class.getName()).log(Level.SEVERE, null, e);
-        }
+        
         if (session == null)
             return new ResponseEntity<>(objMapper.writeValueAsString(""), HttpStatus.BAD_REQUEST);
-        
-        for(PermissionGroup group: session.getGroups())
-        {
-            PermissionGroup group2 = permGroupDAO.findById(group.getId());
-            Hibernate.initialize(group2.getUserInfoCollection());
-            group.setUserInfoCollection(group2.getUserInfoCollection());
-        }
         
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         if (!allowEdit(session, Utility.getUserByUsername(username, userInfoDAO)))
            return new ResponseEntity<>(objMapper.writeValueAsString(new JsonError("Permission Denied")), HttpStatus.BAD_REQUEST);
         
-        int count = 0;
-        for(SIEVASSession chk: sessionsMap.values())
-        {
-            if (Objects.equals(chk.getName(), session.getName()) && (!Objects.equals(chk.getId(), session.getId())))
-                count++;
-        }
+        
+        CriteriaBuilderCriteriaQueryRootTriple<SIEVASSession, Long> triple = sessionDAO.getCriteriaTripleForCount();
+        CriteriaBuilder cb = triple.getCriteriaBuilder();
+        Root<SIEVASSession> root = triple.getRoot();
+        Predicate pred = cb.and(cb.equal(root.get("name"), session.getName()),
+                                        cb.notEqual(root.get("id"), id));
+        long count = sessionDAO.findByCriteriaCount(triple, pred);
         if (count>0)
             return new ResponseEntity<>(objMapper.writeValueAsString(new JsonError("Duplicate session name")), HttpStatus.CONFLICT);
         
         amqService.updateSession(session);
+        sessionDAO.saveOrUpdate(session);
         
-        
-        sessionsMap.put(id, session);
+        //sessionsMap.put(id, session);
         cleanSession(session);
         session.setActivemqUrl(this.amqService.getActiveMQClientUrl());
         
@@ -381,28 +353,24 @@ public class SIEVASSessionController
         if (session == null)
             return new ResponseEntity<>(objMapper.writeValueAsString(""), HttpStatus.BAD_REQUEST);
         
-        int count = 0;
-        session.setId(generateNewSessionId());
-        for(SIEVASSession chk: sessionsMap.values())
-        {
-            if (Objects.equals(chk.getName(), session.getName()) && (!Objects.equals(chk.getId(), session.getId())))
-                count++;
-        }
+        CriteriaBuilderCriteriaQueryRootTriple<SIEVASSession, Long> triple = sessionDAO.getCriteriaTripleForCount();
+        CriteriaBuilder cb = triple.getCriteriaBuilder();
+        Root<SIEVASSession> root = triple.getRoot();
+        Predicate pred = cb.equal(root.get("name"), session.getName());
+        long count = sessionDAO.findByCriteriaCount(triple, pred);
+        
         if (count>0)
             return new ResponseEntity<>(objMapper.writeValueAsString(new JsonError("Duplicate session name")), HttpStatus.CONFLICT);
         
-        for(PermissionGroup group: session.getGroups())
-        {
-            PermissionGroup group2 = permGroupDAO.findById(group.getId());
-            Hibernate.initialize(group2.getUserInfoCollection());
-            group.setUserInfoCollection(group2.getUserInfoCollection());
-        }
-        sessionsMap.put(session.getId(), session);
-        cleanSession(session);
+        long rnd = random.nextLong();
+        session.setControlStreamName(CONTROL_PREFIX + rnd);
+        session.setDataStreamName(DATA_PREFIX + rnd);
         session.setActivemqUrl(this.amqService.getActiveMQClientUrl());
+        
+        sessionDAO.add(session);
+        
         AMQSessionInfo sessionInfo = amqService.addSession(session);
-        session.setControlStreamName(sessionInfo.getControlTopicName());
-        session.setDataStreamName(sessionInfo.getDataTopicName());
+        cleanSession(session);
         
         return new ResponseEntity<>(objMapper.writeValueAsString(session), HttpStatus.OK);
         
@@ -423,7 +391,7 @@ public class SIEVASSessionController
     {
         
         
-        SIEVASSession session = sessionsMap.get(id);
+        SIEVASSession session = sessionDAO.findById(id); //sessionsMap.get(id);
         if (session == null)
             return new ResponseEntity<>(objMapper.writeValueAsString(""), HttpStatus.NOT_FOUND);
         
@@ -432,7 +400,7 @@ public class SIEVASSessionController
            return new ResponseEntity<>(objMapper.writeValueAsString(new JsonError("Permission Denied")), HttpStatus.BAD_REQUEST);
         
         amqService.removeSession(id);
-        sessionsMap.remove(id);
+        sessionDAO.remove(session);
         return new ResponseEntity<>(objMapper.writeValueAsString(""), HttpStatus.OK);
         
     }

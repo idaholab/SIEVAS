@@ -18,6 +18,7 @@ import gov.inl.SIEVAS.entity.Datasource;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -78,7 +79,7 @@ public class DVRService implements Runnable, MessageListener
      * @param controlMessageProducer The control stream producer
      * @param dataMessageProducer  The data stream producer
      */
-    public DVRService(ApplicationContext context, List<Datasource> datasourceList, Session amqSession, MessageConsumer controlMessageConsumer, MessageProducer controlMessageProducer, MessageProducer dataMessageProducer)
+    public DVRService(ApplicationContext context, Collection<Datasource> datasourceList, Session amqSession, MessageConsumer controlMessageConsumer, MessageProducer controlMessageProducer, MessageProducer dataMessageProducer)
     {
         
         // get which driver should be ran from the user
@@ -184,7 +185,7 @@ public class DVRService implements Runnable, MessageListener
      * @param datasources The new list of data sources
      * @return 
      */
-    public boolean updateDatasources(List<Datasource> datasources)
+    public boolean updateDatasources(Collection<Datasource> datasources)
     {
         //update matches for options
         lock.readLock().lock();

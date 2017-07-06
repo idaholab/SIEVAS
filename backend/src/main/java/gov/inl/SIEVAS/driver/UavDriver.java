@@ -31,6 +31,7 @@ import com.drew.lang.GeoLocation;
 import com.drew.metadata.exif.GpsDirectory;
 import gov.inl.SIEVAS.common.DriverOption;
 import java.util.Scanner;
+import org.apache.log4j.Logger;
 
 /**
  * Class to get UAV data
@@ -103,7 +104,7 @@ public class UavDriver  implements IDriver {
             }
         }
         
-
+        Logger.getLogger(this.getClass().getName()).info("Path " + path + System.getProperty("line.separator")+System.getProperty("line.separator"));
         
         try{
             fstream = new FileInputStream(path+"new_IRC_flight_calibrated_external_camera_parameters.txt");
@@ -116,8 +117,8 @@ public class UavDriver  implements IDriver {
         }
         catch (Exception e)
         {
-            System.err.println("Error: " + e.getMessage());
-            init(context,options);
+            Logger.getLogger(this.getClass().getName()).error("Error: " + e.getMessage());
+            //init(context,options);
         }
     }
 
