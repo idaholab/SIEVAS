@@ -1,4 +1,4 @@
-This is the Live Integrated Visualization Environment (LIVE), which is a software suite that simplifies real time data ingestion for desktop and immersive environments.
+This is the Scientific & Intelligence Exascale Visualization Analysis System (SIEVAS), which is a software suite that simplifies real time data ingestion for desktop and immersive environments.
 
 
 Software needed:
@@ -11,4 +11,7 @@ Software needed:
 -DotNetZipLib-DevKit 1.9 or later (for Unity/ActiveMQ NMS support, needs Ionic.Zlib)
 -Eclipse Mars.2 or later for IDE support in git repository
 
-
+ 
+Licensing
+-----
+This software is licensed under the terms you may find in the file named "LICENSE" in this directory.
