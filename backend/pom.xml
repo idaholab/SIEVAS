@@ -17,49 +17,66 @@ limitations under the License.
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>gov.inl.SIEVAS</groupId>
+    <parent>
+        <groupId>gov.inl.SIEVAS</groupId>
+        <artifactId>SIEVAS</artifactId>
+        <version>1.0-SNAPSHOT</version>
+        <relativePath/>
+    </parent>
     <artifactId>backend</artifactId>
-    <version>1.1-SNAPSHOT</version>
-    <packaging>jar</packaging>
+    <packaging>war</packaging>
     <organization>
         <name>Idaho National Laboratory</name>
     </organization>
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>1.8</java.version>
-        <activemq-version>5.13.3</activemq-version>
-        <spring-boot-version>1.3.2.RELEASE</spring-boot-version>
-        <postgres-version>9.4.1208</postgres-version>
-        <hibernate.version>5.2.1.Final</hibernate.version>
-        <spring.version>4.3.2.RELEASE</spring.version>
         <start-class>gov.inl.SIEVAS.Application</start-class>
     </properties>
-    <parent>
+<!--    <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>1.3.5.RELEASE</version>
-    </parent>
+        <relativePath/>
+    </parent>-->
     <build>
-        <defaultGoal>package spring-boot:run</defaultGoal>
+        <defaultGoal>package install</defaultGoal>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
                 <excludes>
                     <exclude>**/*.sql</exclude>
+                    <exclude>**/*.jks</exclude>
                 </excludes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+                <includes>
+                    <include>**/*.jks</include>
+                </includes>
+                
+            </resource>
+            <resource>
+                <directory>src/main/webapp</directory>
+                <filtering>false</filtering>
             </resource>
         </resources>
         <plugins>
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                </configuration>
+            </plugin>
           <plugin>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-maven-plugin</artifactId>
-            <version>${spring-boot-version}</version>
+            <version>${spring-boot.version}</version>
             <dependencies>
                 <dependency>
                     <groupId>org.springframework</groupId>
                     <artifactId>springloaded</artifactId>
-                    <version>1.2.5.RELEASE</version>
+                    <version>${spring-loaded.version}</version>
                 </dependency>
             </dependencies>
             <executions>
@@ -71,6 +88,7 @@ limitations under the License.
             </executions>
             <configuration>
                 <fork>true</fork>
+                
             </configuration>
           </plugin>
 <!--          <plugin>
@@ -92,12 +110,13 @@ limitations under the License.
                       <filtering>true</filtering>
                       <excludes>
                           <exclude>**/*.sql</exclude>
+                          <exclude>**/*.jks</exclude>
                       </excludes>
                     </resource>
                   </resources>
                 </configuration>          
-              </execution>-->
-<!--              <execution>
+              </execution>
+              <execution>
                 <id>copy-resources-2</id>
                  here the phase you need 
                 <phase>validate</phase>
@@ -113,22 +132,9 @@ limitations under the License.
                     </resource>
                   </resources>
                 </configuration>            
-              </execution>-->
-<!--            </executions>
+              </execution>
+            </executions>
           </plugin>-->
-          <plugin>
-                <groupId>org.flywaydb</groupId>
-                <artifactId>flyway-maven-plugin</artifactId>
-                <version>4.2.0</version>
-                <configuration>
-                    <driver>org.postgresql.Driver</driver>
-                    <url>jdbc:postgresql://localhost:5432/sievas</url>
-                    <user>sievas</user>
-                    <password>sievas</password>
-<!--                    <outOfOrder>true</outOfOrder>
-                    <validateOnMigrate>false</validateOnMigrate>-->
-                </configuration>
-         </plugin>
 <!--         <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>exec-maven-plugin</artifactId>
@@ -196,7 +202,7 @@ limitations under the License.
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-compiler-plugin</artifactId>
-            <version>3.5.1</version>
+            <version>${maven-compiler-plugin.version}</version>
             <configuration>
               <compilerArgs>
 <!--                <arg>-verbose</arg>
@@ -242,12 +248,12 @@ limitations under the License.
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
-            <version>${spring-boot-version}</version>
+            <version>${spring-boot.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
-            <version>${spring-boot-version}</version>
+            <version>${spring-boot.version}</version>
         </dependency>
         <dependency>
           <groupId>org.postgresql</groupId>
@@ -257,35 +263,39 @@ limitations under the License.
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+            <version>${spring-boot.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
+            <version>${spring-boot.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-tomcat</artifactId>
+            <version>${spring-boot.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
-            <version>1.3.5.RELEASE</version>
+            <version>${spring-boot.version}</version>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
+            <version>${spring.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.tomcat.embed</groupId>
             <artifactId>tomcat-embed-jasper</artifactId>
-            <scope>provided</scope>
+<!--            <scope>provided</scope>-->
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>jstl</artifactId>
-            <scope>provided</scope>
+<!--            <scope>provided</scope>-->
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
@@ -295,34 +305,58 @@ limitations under the License.
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
+            <version>${spring-boot.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
-            <version>3.9</version>
+            <version>${apache-poi.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
-            <version>3.9</version>
+            <version>${apache-poi.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml-schemas</artifactId>
-            <version>3.9</version>
+            <version>${apache-poi.version}</version>
         </dependency>
         <dependency>
             <groupId>com.drewnoakes</groupId>
             <artifactId>metadata-extractor</artifactId>
-            <version>2.10.1</version>
+            <version>${metadata-extractor.version}</version>
         </dependency>
         <dependency>
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
-            <version>0.9.11</version>
+            <version>${reflections.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>gov.inl.SIEVAS</groupId>
+            <artifactId>common</artifactId>
+            <version>${SIEVAS-common.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>gov.inl.SIEVAS</groupId>
+            <artifactId>angular</artifactId>
+            <version>${SIEVAS-angular.version}</version>
         </dependency>
 
     </dependencies>
+    <dependencyManagement>
+        <dependencies>
+           <dependency>
+             <!-- Import dependency management from Spring Boot -->
+             <groupId>org.springframework.boot</groupId>
+             <artifactId>spring-boot-dependencies</artifactId>
+             <version>${spring-boot.version}</version>
+             <type>pom</type>
+             <scope>import</scope>
+           </dependency>
+        </dependencies>
+     </dependencyManagement>
+     
     <description>SIEVAS backend</description>
     <name>backend</name>
 </project>

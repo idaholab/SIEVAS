@@ -16,9 +16,9 @@
     <script src="<c:url value='/resources/angular2/login/node_modules/reflect-metadata/Reflect.js'></c:url>"></script>
     <script src="<c:url value='/resources/angular2/login/node_modules/systemjs/dist/system.src.js'></c:url>"></script>
     <!-- 2. Configure SystemJS -->
-    <script src="<c:url value='/resources/angular2/login/systemjs.config.js'></c:url>"></script>
+    <script src="<c:url value='/resources/angular2/login/systemjs.config_login.js'></c:url>"></script>
     <script>
-      System.import('app').catch(function(err){ console.error(err); });
+      System.import('login_app').catch(function(err){ console.error(err); });
     </script>
     <style>
         .ng-valid[required] {

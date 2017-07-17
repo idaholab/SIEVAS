@@ -17,8 +17,8 @@ package gov.inl.SIEVAS.adminconsole.session;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import gov.inl.SIEVAS.adminconsole.BaseController;
-import gov.inl.SIEVAS.adminconsole.JsonListResult;
-import gov.inl.SIEVAS.adminconsole.SIEVASSession;
+import gov.inl.SIEVAS.common.JsonListResult;
+import gov.inl.SIEVAS.entity.SIEVASSession;
 import java.util.List;
 import javafx.scene.control.MenuItem;
 

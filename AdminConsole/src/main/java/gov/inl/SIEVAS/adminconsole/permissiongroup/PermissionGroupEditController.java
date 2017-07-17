@@ -15,27 +15,24 @@
  */
 package gov.inl.SIEVAS.adminconsole.permissiongroup;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.inl.SIEVAS.adminconsole.BaseEditController;
-import gov.inl.SIEVAS.adminconsole.JsonListResult;
 import gov.inl.SIEVAS.adminconsole.RestController;
-import gov.inl.SIEVAS.adminconsole.permission.Permission;
+import gov.inl.SIEVAS.common.JsonListResult;
+import gov.inl.SIEVAS.entity.Permission;
+import gov.inl.SIEVAS.entity.PermissionGroup;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Objects;
-import java.util.Observable;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -43,12 +40,7 @@ import javafx.scene.control.cell.CheckBoxListCell;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.util.EntityUtils;
 
 /**
  * Class to handle permission edit.

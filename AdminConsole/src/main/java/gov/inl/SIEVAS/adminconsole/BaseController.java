@@ -17,11 +17,12 @@ package gov.inl.SIEVAS.adminconsole;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gov.inl.SIEVAS.common.IIdentifier;
+import gov.inl.SIEVAS.common.JsonListResult;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;

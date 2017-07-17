@@ -17,6 +17,8 @@ package gov.inl.SIEVAS.adminconsole;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gov.inl.SIEVAS.common.IIdentifier;
+import gov.inl.SIEVAS.common.JsonError;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;

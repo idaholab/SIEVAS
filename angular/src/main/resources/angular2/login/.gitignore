@@ -1,0 +1,6 @@
+node_modules
+typings
+login_app/**/*.js
+login_app/**/*.js.map
+menu_app/**/*.js
+menu_app/**/*.js.map
