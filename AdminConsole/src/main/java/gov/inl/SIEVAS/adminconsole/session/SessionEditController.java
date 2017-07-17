@@ -19,13 +19,13 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.hansolo.enzo.notification.Notification;
 import gov.inl.SIEVAS.adminconsole.BaseEditController;
-import gov.inl.SIEVAS.adminconsole.JsonListResult;
 import gov.inl.SIEVAS.adminconsole.RadioListCell;
 import gov.inl.SIEVAS.adminconsole.RestController;
-import gov.inl.SIEVAS.adminconsole.SIEVASSession;
-import gov.inl.SIEVAS.adminconsole.datasource.Datasource;
-import gov.inl.SIEVAS.adminconsole.permissiongroup.PermissionGroup;
-import gov.inl.SIEVAS.adminconsole.user.UserInfo;
+import gov.inl.SIEVAS.common.JsonListResult;
+import gov.inl.SIEVAS.entity.Datasource;
+import gov.inl.SIEVAS.entity.PermissionGroup;
+import gov.inl.SIEVAS.entity.SIEVASSession;
+import gov.inl.SIEVAS.entity.UserInfo;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Objects;
@@ -46,7 +46,6 @@ import javafx.util.Callback;
 import javafx.util.StringConverter;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import java.lang.Boolean;
 
 /**
  * Class for session edit.

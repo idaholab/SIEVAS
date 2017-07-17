@@ -16,6 +16,7 @@
 package gov.inl.SIEVAS.adminconsole.permission;
 
 import gov.inl.SIEVAS.adminconsole.BaseEditController;
+import gov.inl.SIEVAS.entity.Permission;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;

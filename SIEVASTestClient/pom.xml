@@ -1,32 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>gov.inl.SIEVAS</groupId>
+    <parent>
+        <groupId>gov.inl.SIEVAS</groupId>
+        <artifactId>SIEVAS</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
     <artifactId>SIEVASTestClient</artifactId>
-    <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
         <mainClass>gov.inl.SIEVAS.sievastestclient.App</mainClass>
-        <activemq-version>5.13.3</activemq-version>
     </properties>
     <build>
-        <defaultGoal>package exec:java</defaultGoal>
+        <defaultGoal>package install</defaultGoal>
         <plugins>
          <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>exec-maven-plugin</artifactId>
-          <version>1.5.0</version>
-          <executions>
+          <version>${exec-maven-plugin.version}</version>
+<!--          <executions>
            <execution>
            <phase>verify</phase>
             <goals>
              <goal>java</goal>
             </goals>
            </execution>
-           </executions>
+           </executions>-->
           <configuration>
              <includeProjectDependencies>true</includeProjectDependencies>
              <mainClass>${mainClass}</mainClass>
@@ -39,25 +38,31 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>4.0.2</version>
+            <version>${apache-httpclient.version}</version>
+            <type>jar</type>
+        </dependency> 
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>${jackson.version}</version>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-            <version>2.8.1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.6.6</version>
+            <version>${jackson.version}</version>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.apache.activemq</groupId>
             <artifactId>activemq-client</artifactId>
-            <version>5.13.3</version>
+            <version>${activemq-version}</version>
             <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>gov.inl.SIEVAS</groupId>
+            <artifactId>common</artifactId>
+            <version>${SIEVAS-common.version}</version>
         </dependency>
     </dependencies>
 </project>

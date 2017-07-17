@@ -17,13 +17,13 @@ package gov.inl.SIEVAS.adminconsole.user;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import eu.hansolo.enzo.notification.Notification;
 import eu.hansolo.enzo.notification.Notification.Notifier;
 import gov.inl.SIEVAS.adminconsole.BaseEditController;
-import gov.inl.SIEVAS.adminconsole.JsonListResult;
 import gov.inl.SIEVAS.adminconsole.RestController;
-import gov.inl.SIEVAS.adminconsole.permissiongroup.PermissionGroup;
 import gov.inl.SIEVAS.adminconsole.permissiongroup.PermissionGroupEditController;
+import gov.inl.SIEVAS.common.JsonListResult;
+import gov.inl.SIEVAS.entity.PermissionGroup;
+import gov.inl.SIEVAS.entity.UserInfo;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;

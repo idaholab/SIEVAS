@@ -17,6 +17,11 @@ package gov.inl.SIEVAS.dvrcontrol;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gov.inl.SIEVAS.entity.DVRCommandMessage;
+import gov.inl.SIEVAS.entity.DVRCommandMessageReply;
+import gov.inl.SIEVAS.entity.DVRCommandType;
+import gov.inl.SIEVAS.entity.DVRPlayMode;
+import gov.inl.SIEVAS.entity.SIEVASSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;

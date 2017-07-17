@@ -20,9 +20,9 @@
     <link rel="stylesheet" type="text/css" href="<c:url value='/resources/angular2/menu/node_modules/primeui/primeui-ng-all.min.css'></c:url>" />
     <link rel="stylesheet" type="text/css" href="<c:url value='/resources/fontawesome/css/font-awesome.min.css'></c:url>" />
     <!-- 2. Configure SystemJS -->
-    <script src="<c:url value='/resources/angular2/menu/systemjs.config.js'></c:url>"></script>
+    <script src="<c:url value='/resources/angular2/login/systemjs.config_menu.js'></c:url>"></script>
     <script>
-      System.import('app').catch(function(err){ console.error(err); });
+      System.import('menu_app').catch(function(err){ console.error(err); });
     </script>
     <style>
         .ng-valid[required] {
