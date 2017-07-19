@@ -1,4 +1,24 @@
-﻿using System;
+﻿/***
+ * 
+
+Copyright 2017 Idaho National Laboratory.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+***/
+
+
+using System;
 using Tacticsoft;
 using UnityEngine.UI;
 using UnityEngine;
@@ -26,8 +46,8 @@ public class SessionCell : TableViewCell
 
 	}
 
-	private LIVESession m_sessionInfo;
-	public LIVESession sessionInfo
+	private SIEVASSession m_sessionInfo;
+	public SIEVASSession sessionInfo
 	{
 		get
 		{
@@ -41,7 +61,7 @@ public class SessionCell : TableViewCell
 	}
 
 
-	private void setRowInfo(int row, LIVESession sessionInfo)
+	private void setRowInfo(int row, SIEVASSession sessionInfo)
 	{
 		if (sessionInfo != null)
 		{

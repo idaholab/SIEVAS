@@ -47,6 +47,7 @@ public class NbodyDriver implements IDriver
     private Root<Nbody> root;
     private Order[] orderBy = new Order[2];
     private NBodyGenerator generator = new NBodyGenerator();
+    private long maxSteps = 0;
     
     /***
      * Init the driver
@@ -67,6 +68,27 @@ public class NbodyDriver implements IDriver
         orderBy[0] = cb.asc(root.get("step"));
         orderBy[1] = cb.asc(root.get("planetNumber"));
         
+        
+        CriteriaBuilder cb2 = nbodyDAO.getEntityManager().getCriteriaBuilder();
+        CriteriaQuery<Long> query2 = cb2.createQuery(Long.class);
+        Root<Nbody> root2 = query2.from(Nbody.class);
+        query2.select(cb2.max(root2.get("step")));
+        Long maxStep = nbodyDAO.getEntityManager().createQuery(query2).getSingleResult();
+        if (maxStep!=null)
+            maxSteps = maxStep.longValue();
+    }
+    
+    
+    @Override
+    public double getStartTime()
+    {
+        return 0.0;
+    }
+    
+    @Override
+    public double getEndTime()
+    {
+        return maxSteps*nbodyInfo.getTimestep();
     }
     
     /***
@@ -100,7 +122,8 @@ public class NbodyDriver implements IDriver
         
         double startGenTime = maxStep*nbodyInfo.getTimestep();
         //double h = Math.pow(0.5, 14); //can change to 14 or 16 to change time step
-        List<Nbody> results = generator.run(startGenTime, startTime+timestep, listPrior, nbodyInfo.getTimestep(), maxStep);
+        //List<Nbody> results = generator.run(startGenTime, startTime+timestep, listPrior, nbodyInfo.getTimestep(), maxStep);
+        List<Nbody> results = listPrior;
         
         //remove front steps not needed
         int stepsToSkip = (int)Math.floor((startTime - startGenTime)/nbodyInfo.getTimestep());
@@ -109,10 +132,17 @@ public class NbodyDriver implements IDriver
         //now remove step smaller than resolution
         //TODO
         
-        int itemsToSkip = (results.size()/10)/10;
-        List<Nbody> list = new ArrayList<>((int)(results.size()/itemsToSkip)*10);
+        int itemsToSkip = 0; //(results.size()/10)/10;
+        List<Nbody> list = new ArrayList<>();//((int)(results.size()/itemsToSkip)*10);
         
-        for(int jj=Math.max(0,stepsToSkip*10-1); jj<results.size(); jj+= itemsToSkip*10)
+        
+        for(int ii=0;ii<results.size();ii++)
+        {
+            Nbody nbody = results.get(ii);
+            nbody.setTime(nbody.getStep()*nbodyInfo.getTimestep());
+            list.add(nbody);
+        }
+        /*for(int jj=Math.max(0,stepsToSkip*10-1); jj<results.size(); jj+= itemsToSkip*10)
         {
             for(int ii=0;ii<10;ii++)
             {
@@ -125,7 +155,7 @@ public class NbodyDriver implements IDriver
                 }
             }
             
-        }
+        }*/
         //now run solution between each point
         //TODO
         

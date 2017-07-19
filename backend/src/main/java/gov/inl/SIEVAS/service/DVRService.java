@@ -76,6 +76,7 @@ public class DVRService implements Runnable, MessageListener
     private boolean playing = false;
     private double currentTime = 0.0;
     private double startTime = -1.0;
+    private double endTime = Double.POSITIVE_INFINITY;
     private ApplicationContext context;
     
     /***
@@ -169,8 +170,36 @@ public class DVRService implements Runnable, MessageListener
             //run the driver and store
             driver.init(context,options);
             datasourceMap.put(ds,driver);
+            
         }
+        startTime = computeStartTime();
+        endTime = computeEndTime();
+        currentTime = startTime;
         
+        System.out.println("START TIME:" + startTime);
+        System.out.println("END TIME:" + endTime);
+        
+        
+    }
+    
+    private double computeStartTime()
+    {
+        double startTime1 = Double.POSITIVE_INFINITY;
+        for(IDriver driver: datasourceMap.values())
+        {
+            startTime1 = Math.min(startTime1, driver.getStartTime());
+        }
+        return startTime1;
+    }
+    
+    private double computeEndTime()
+    {
+        double endTime1 = Double.NEGATIVE_INFINITY;
+        for(IDriver driver: datasourceMap.values())
+        {
+            endTime1 = Math.max(endTime1, driver.getEndTime());
+        }
+        return endTime1;
     }
     
     /**
@@ -361,6 +390,14 @@ public class DVRService implements Runnable, MessageListener
                     }
                 }
             }
+        lock.readLock().unlock();
+        lock.writeLock().lock();
+        startTime = computeStartTime();
+        endTime = computeEndTime();
+        lock.writeLock().unlock();
+        lock.readLock().lock();
+        System.out.println("START TIME:" + startTime);
+        System.out.println("END TIME:" + endTime);
         
         lock.readLock().unlock();
         return true;
@@ -457,19 +494,36 @@ public class DVRService implements Runnable, MessageListener
     public void run()
     {
         lock.readLock().lock();
+        if (currentTime>endTime)
+        {
+            lock.readLock().unlock();
+            lock.writeLock().lock();
+            currentTime = startTime;
+            lock.writeLock().unlock();
+            lock.readLock().lock();
+        }
+        
         if (playing && (playSpeed!=0.0))
         {
             List<IData> dataList = new ArrayList<>();
             for(IDriver driver: datasourceMap.values())
             {
                 
+                
+                List<IData> driverDataList = null;
+                //getNextBlock of Data
                 try
                 {
-                    //getNextBlock of Data
-                    List<IData> driverDataList = driver.getData(startTime, playSpeed, 60.0, 1000);
-                    // reset start time so it doesn't get stuck at one specific time
-                    startTime = -1.0;
-                    
+                    driverDataList = driver.getData(currentTime, playSpeed, 60.0, 1000);
+                }
+                catch(Exception e)
+                {
+                    Logger.getLogger(DVRService.class.getName()).log(Level.SEVERE, null, e);
+                }
+                // reset start time so it doesn't get stuck at one specific time
+                //startTime = -1.0;
+                if (driverDataList!=null)
+                {
                     dataList.addAll(driverDataList);
                     //merge into exist list of data - use merge sort (TODO?)
                     Collections.sort(dataList, new Comparator<IData>() {
@@ -479,11 +533,6 @@ public class DVRService implements Runnable, MessageListener
                             return Double.compare(o1.getTime(), o2.getTime());
                         }
                     });
-                    
-                }
-                catch(Exception e)
-                {
-                    Logger.getLogger(DVRService.class.getName()).log(Level.SEVERE, null, e);
                 }
             }
             

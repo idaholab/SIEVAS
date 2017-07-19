@@ -51,7 +51,7 @@ public class UavDriver  implements IDriver {
     
 
     private double scheduledTime = 0.0;
-    private double startTime, endTime;
+    private double startTime = 0.0, endTime = 5*60.0;
     String outStrLine;
     Date startDate = new Date();
     UavData nextData = new UavData();
