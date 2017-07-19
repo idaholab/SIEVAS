@@ -182,6 +182,10 @@ public class DVRService implements Runnable, MessageListener
         
     }
     
+    /***
+     * Computes the start time for the datasources
+     * @return Returns the minimal start time of all sources in seconds
+     */
     private double computeStartTime()
     {
         double startTime1 = Double.POSITIVE_INFINITY;
@@ -192,6 +196,11 @@ public class DVRService implements Runnable, MessageListener
         return startTime1;
     }
     
+    
+    /***
+     * Computes the end time for the datasources
+     * @return Returns the maximum start time of all sources in seconds
+     */
     private double computeEndTime()
     {
         double endTime1 = Double.NEGATIVE_INFINITY;
