@@ -21,6 +21,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.stage.Stage;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -29,6 +31,9 @@ import javafx.scene.control.Button;
 public class FXMLDashboardController implements Initializable {
     
     private JMSProducer producer;
+    
+    @FXML
+    private Button btnQuit;
         
     /**
      * Runs the script associated with the button that was pushed.
@@ -36,17 +41,54 @@ public class FXMLDashboardController implements Initializable {
      */
     @FXML
     private void handleButtonAction(ActionEvent event) {
-        try {
-            String command = (String) ((Button)(event.getSource())).getProperties().get("script");
-            ProcessBuilder pb = new ProcessBuilder(command);
-            Process p = pb.start();
-        } catch (Exception e) {
-            if (e instanceof NullPointerException) {
-                System.out.println("NullPointerException. This button likely needs a \"script\" property.");
-            } else {
-                System.out.println(e.getMessage());
+        
+        String command = (String) ((Button)(event.getSource())).getProperties().get("script");
+        if ((command != null) && (!command.isEmpty()))
+        {
+            try
+            {
+                Logger.getLogger("Running Program:" + command);
+                ProcessBuilder pb = new ProcessBuilder(command);
+                Process p = pb.start();
+            }
+            catch(Exception e)
+            {
+                Logger.getLogger(this.getClass()).info(e);
             }
         }
+        else
+        {
+            String kill = (String) ((Button)(event.getSource())).getProperties().get("killprocess");
+            if ((kill != null) && (!kill.isEmpty()))
+            {
+                Runtime rt = Runtime.getRuntime();
+                try
+                {
+                    if (System.getProperty("os.name").toLowerCase().indexOf("windows") > -1)
+                    {
+                        Logger.getLogger(this.getClass()).info("Running " + "taskkill /F /IM " + kill + "");
+                        String cmds[] = {"taskkill","/F", "/IM",kill};
+                        Runtime.getRuntime().exec(cmds);
+                    }
+                     else
+                    {
+                        Logger.getLogger(this.getClass()).info("Running " + "killall -9 " + kill);
+                        String cmds[] = {"killall","-9",kill};
+                        Runtime.getRuntime().exec(cmds);
+                    }
+                }
+                catch(Exception e)
+                {
+                    Logger.getLogger(this.getClass()).info(e);
+                }
+            }
+            else
+            {
+                Logger.getLogger(this.getClass()).info("No process set or kill process given!");
+            }
+        }
+        
+        
     }
     
     /**
@@ -56,6 +98,20 @@ public class FXMLDashboardController implements Initializable {
     @FXML
     private void handleTerminateAction(ActionEvent event) throws InterruptedException {
         producer.sendMessage("TERMINATE.");
+    }
+    
+    
+    /**
+     * Quits the dashboard
+     * @param event 
+     */
+    @FXML
+    private void handleQuitAction(ActionEvent event)
+            throws InterruptedException
+    {
+        Stage stage = (Stage) btnQuit.getScene().getWindow();
+        // do what you have to do
+        stage.close();
     }
     
     /**

@@ -27,7 +27,20 @@ limitations under the License.
     <stylesheets>
         <URL value="@/styles/dashboardStyle.css"/>
     </stylesheets>
-    <TabPane > 
+    <TabPane >
+        <Tab fx:id="tabUtility1" closable="false" text="Utility"> 
+            <VBox spacing="0" alignment="TOP_CENTER" GridPane.columnIndex="1" GridPane.rowIndex="0" > 
+                <children>
+                    <Button fx:id="btnStartMail" text="Start Mail" onAction="#handleButtonAction" maxWidth="Infinity">
+                        <properties script="/Applications/Mail.app/Contents/MacOS/Mail"/>
+                    </Button>
+                    <Button fx:id="btnKillMail" text="Kill Mail" onAction="#handleButtonAction" maxWidth="Infinity">
+                        <properties killprocess="Mail"/>
+                    </Button>
+                    
+                </children>
+            </VBox>
+        </Tab>
         <Tab fx:id="tabVolume" closable="false" text="Volume"> 
             <VBox spacing="0" alignment="TOP_CENTER" GridPane.columnIndex="1" GridPane.rowIndex="0" > 
                 <children>
@@ -493,7 +506,9 @@ limitations under the License.
             </VBox>
         </Tab>
     </TabPane>
-    <Button fx:id="btnTerminate" text="Terminate" onAction="#handleTerminateAction" maxWidth="Infinity" GridPane.rowIndex="1" >
+    <Button fx:id="btnTerminate" text="AMQ Terminate Signal" onAction="#handleTerminateAction" maxWidth="Infinity" GridPane.rowIndex="1" >
         <properties script=""/>
+    </Button>
+    <Button fx:id="btnQuit" text="Quit Dashboard" onAction="#handleQuitAction" maxWidth="Infinity" GridPane.rowIndex="2" >
     </Button>
 </GridPane>
