@@ -48,8 +48,20 @@ public class FXMLDashboardController implements Initializable {
             try
             {
                 Logger.getLogger("Running Program:" + command);
-                ProcessBuilder pb = new ProcessBuilder(command);
-                Process p = pb.start();
+		
+		if (command.toLowerCase().endsWith(".cmd"))
+		{
+			String cmds[] = {"C:\\Windows\\System32\\cmd.exe","/c", "start", command};
+			ProcessBuilder pb = new ProcessBuilder(cmds);
+	                Process p = pb.start();
+		}
+		else
+		{
+			String cmds[] = {command};
+			ProcessBuilder pb = new ProcessBuilder(cmds);
+	                Process p = pb.start();
+		}
+                
             }
             catch(Exception e)
             {
@@ -97,7 +109,7 @@ public class FXMLDashboardController implements Initializable {
      */
     @FXML
     private void handleTerminateAction(ActionEvent event) throws InterruptedException {
-        producer.sendMessage("TERMINATE.");
+        
     }
     
     
@@ -121,7 +133,7 @@ public class FXMLDashboardController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        producer = new JMSProducer();
+        
         System.out.println("FXMLDashboardController initialization complete.");
     }    
     
@@ -131,15 +143,13 @@ public class FXMLDashboardController implements Initializable {
      * @param daemon 
      */
     public static void thread(Runnable runnable, boolean daemon) {
-        Thread brokerThread = new Thread(runnable);
-        brokerThread.setDaemon(daemon);
-        brokerThread.start();
+        
     }
     
     /**
      * Handles cleanup for the FXMLDashboardController class.
      */
     public void destroy() {
-        producer.close();
+        
     }
 }
