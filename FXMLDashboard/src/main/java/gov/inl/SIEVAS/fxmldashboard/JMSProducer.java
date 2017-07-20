@@ -74,9 +74,12 @@ public class JMSProducer {
      */
     public void close() {
         try { 
-            session.close();
-            connection.close();
-            producer.close();
+            if (session!=null)
+		session.close();
+            if (connection!=null)
+		connection.close();
+            if (producer!=null)
+		producer.close();
         }
         catch (Exception e) {
             System.out.println("Caught: " + e);
