@@ -12,6 +12,62 @@ Software needed:
 -Eclipse Mars.2 or later for IDE support in git repository
 
  
-Licensing
+Licensing:
 -----
 This software is licensed under the terms you may find in the file named "LICENSE" in this directory.
+
+
+Installation:
+-----
+Get and install java SE (standard edition) sdk (Version 1.8 recommended)
+	-Recommended:http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
+	-http://www.oracle.com/technetwork/java/javase/downloads/index.htm
+
+Get and install maven (3.3.9 or better)
+	-https://maven.apache.org/install.html
+
+Get and install postgres (latest version should be ok)
+	-https://www.postgresql.org/
+        -install with default options (port 5432, user 'postgres', etc.)
+	-set user postgres password to whatever you want.  This will be an administrator super user account.  In a
+	 production environment, choose a strong password.
+
+Install nodeJs with npm
+	-https://www.npmjs.com/get-npm
+
+Get the SIEVAS Repo:
+	-git clone https://hpcgitlab.hpc.inl.gov/AVL/SIEVAS.git
+	-checkout 'master' branch
+	
+Build modules:
+	-in the parent directory of SIEVAS
+		mvn clean install
+	-If pom.xml not found error is thrown, try removing <relativePath/> from pom.xml in SIEVAS/backend
+
+Create database user:
+	-in SQLShell (psql)
+		CREATE USER sievas WITH PASSWORD 'sievas' CREATEDB;	
+
+Create the sievas database:
+	-in SQLShell (psql)
+		CREATE DATABASE sievas WITH OWNER sievas;
+
+Grant all premissions to sievas:
+	-in SQLShell (psql)
+		grant all on database sievas to sievas;
+
+Create schemas and tables for sievas:
+	- in SIEVAS/common
+		mvn flyway:migrate
+
+Run backend:
+	-in SIEVAS/backend
+		mvn spring-boot:run
+
+Confirm everything is working:
+	-in SIEVAS/AdminConsole
+		mvn
+	-login with username 'user' and password 'password.  The address should be http://localhost:8334 (auto-populated).
+
+To add nbody data:
+		psql -f fileNameOfDataFile sievas sievas
