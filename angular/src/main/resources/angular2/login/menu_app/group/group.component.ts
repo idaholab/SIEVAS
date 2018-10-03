@@ -17,8 +17,8 @@ import { GroupService } from './group.service';
 
 @Component({
     selector: 'group',
-    templateUrl: 'resources/angular2/menu/app/group/group.html',
-    styleUrls:  ['resources/angular2/menu/app/group/group.css'],
+    templateUrl: 'resources/angular2/login/menu_app/group/group.html',
+    styleUrls:  ['resources/angular2/login/menu_app/group/group.css'],
     directives: [ DataTable, Column, Growl ],
     providers: [ GroupService ]
 })

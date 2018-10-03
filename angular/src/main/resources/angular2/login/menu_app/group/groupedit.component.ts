@@ -16,8 +16,8 @@ import { JsonError } from '../jsonerror';
 
 @Component({
   selector: 'group-detail',
-  templateUrl: 'resources/angular2/menu/app/group/groupedit.html',
-  styleUrls:  ['resources/angular2/menu/app/group/group.css'],
+  templateUrl: 'resources/angular2/login/menu_app/group/groupedit.html',
+  styleUrls:  ['resources/angular2/login/menu_app/group/group.css'],
   providers: [ GroupService, PermissionService ],
   directives: [Growl]
 })

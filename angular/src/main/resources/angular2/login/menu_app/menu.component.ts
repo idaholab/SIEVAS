@@ -14,7 +14,7 @@ import { Menubar, Menu, MenuItem } from 'primeng/primeng';
 
 @Component({
     selector: 'my-menu',
-    templateUrl: 'resources/angular2/menu/app/mainmenu.html',
+    templateUrl: 'resources/angular2/login/menu_app/mainmenu.html',
     providers: [ HTTP_PROVIDERS ],
     directives: [Menubar, Menu]
 })

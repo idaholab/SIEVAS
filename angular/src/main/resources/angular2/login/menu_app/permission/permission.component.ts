@@ -17,8 +17,8 @@ import { PermissionService } from './permission.service';
 
 @Component({
     selector: 'permission',
-    templateUrl: 'resources/angular2/menu/app/permission/permission.html',
-    styleUrls:  ['resources/angular2/menu/app/permission/permission.css'],
+    templateUrl: 'resources/angular2/login/menu_app/permission/permission.html',
+    styleUrls:  ['resources/angular2/login/menu_app/permission/permission.css'],
     directives: [ DataTable, Column, Growl ],
     providers: [ PermissionService ]
 })

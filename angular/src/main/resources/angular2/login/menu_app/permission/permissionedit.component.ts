@@ -13,7 +13,7 @@ import { JsonError } from '../jsonerror';
 
 @Component({
   selector: 'permission-detail',
-  templateUrl: 'resources/angular2/menu/app/permission/permissionedit.html',
+  templateUrl: 'resources/angular2/login/menu_app/permission/permissionedit.html',
   providers: [ PermissionService ],
   directives: [Growl]
 })

@@ -18,8 +18,8 @@ import { JsonError } from '../jsonerror';
 
 @Component({
   selector: 'group-detail',
-  templateUrl: 'resources/angular2/menu/app/session/sessionedit.html',
-  styleUrls:  ['resources/angular2/menu/app/session/session.css'],
+  templateUrl: 'resources/angular2/login/menu_app/session/sessionedit.html',
+  styleUrls:  ['resources/angular2/login/menu_app/session/session.css'],
   providers: [ SessionService, GroupService, UserService ],
   directives: [Growl]
 })

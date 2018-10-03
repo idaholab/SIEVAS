@@ -17,8 +17,8 @@ import { SessionService } from './session.service';
 
 @Component({
     selector: 'group',
-    templateUrl: 'resources/angular2/menu/app/session/session.html',
-    styleUrls:  ['resources/angular2/menu/app/session/session.css'],
+    templateUrl: 'resources/angular2/login/menu_app/session/session.html',
+    styleUrls:  ['resources/angular2/login/menu_app/session/session.css'],
     directives: [ DataTable, Column, Growl ],
     providers: [ SessionService ]
 })
