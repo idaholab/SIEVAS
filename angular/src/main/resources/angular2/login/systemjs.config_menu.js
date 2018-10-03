@@ -9,7 +9,7 @@
     '@angular':                   '/resources/angular2/login/node_modules/@angular',
     'angular2-in-memory-web-api': '/resources/angular2/login/node_modules/angular2-in-memory-web-api',
     'rxjs':                       '/resources/angular2/login/node_modules/rxjs',
-    'primeng':                    '/resources/angular2/menu/node_modules/primeng'
+    'primeng':                    '/resources/angular2/login/node_modules/primeng'
   };
   // packages tells the System loader how to load when no filename and/or no extension
   var packages = {

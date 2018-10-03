@@ -18,8 +18,8 @@ import { LongValidator, NumberValidator, FloatValidator } from '../number.valida
 
 @Component({
   selector: 'group-detail',
-  templateUrl: 'resources/angular2/menu/app/user/useredit.html',
-  styleUrls:  ['resources/angular2/menu/app/user/user.css'],
+  templateUrl: 'resources/angular2/login/menu_app/user/useredit.html',
+  styleUrls:  ['resources/angular2/login/menu_app/user/user.css'],
   providers: [ UserService, GroupService ],
   directives: [ Growl, LongValidator, NumberValidator, FloatValidator, REACTIVE_FORM_DIRECTIVES ]
 })

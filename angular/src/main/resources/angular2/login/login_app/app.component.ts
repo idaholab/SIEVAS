@@ -10,7 +10,7 @@ import { LoginInfo } from './logininfo';
 
 @Component({
     selector: 'my-app',
-    templateUrl: 'resources/angular2/login/app/login-form.html',
+    templateUrl: 'resources/angular2/login/login_app/login-form.html',
     providers: [ HTTP_PROVIDERS ]
 })
 export class AppComponent implements OnInit, AfterViewInit

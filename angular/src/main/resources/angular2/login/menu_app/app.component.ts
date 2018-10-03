@@ -21,7 +21,7 @@ import { SessionEditComponent } from './session/sessionedit.component';
 
 @Component({
     selector: 'my-app',
-    templateUrl: 'resources/angular2/menu/app/mainmenu.html',
+    templateUrl: 'resources/angular2/login/menu_app/mainmenu.html',
     providers: [ HTTP_PROVIDERS ],
     directives: [ ROUTER_DIRECTIVES, Menubar, Menu],
     precompile: [ EmptyComponent, PermissionComponent, PermissionEditComponent, GroupComponent, GroupEditComponent, UserComponent, UserEditComponent, SessionComponent, SessionEditComponent ]

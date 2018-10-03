@@ -30,6 +30,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 
@@ -44,7 +45,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 @EnableTransactionManagement
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 //@EnableWebMvc
-public class Application extends WebMvcConfigurerAdapter//WebMvcAutoConfiguration
+public class Application //extends WebMvcConfigurerAdapter//WebMvcAutoConfiguration
 {
     
     private static int HTTP_PORT = 8080;
@@ -59,7 +60,9 @@ public class Application extends WebMvcConfigurerAdapter//WebMvcAutoConfiguratio
      */
     public static void main(String[] args)
     {
-        SpringApplication.run(Application.class, args);
+        //SpringApplication.run(Application.class, args);
+        SpringApplication app = new SpringApplication(Application.class);
+        app.run(args);
     }
     
     /***
@@ -98,10 +101,22 @@ public class Application extends WebMvcConfigurerAdapter//WebMvcAutoConfiguratio
         return handler;
     }
     
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/resources/angular2/**").addResourceLocations("classpath:/angular2/");
+    @Bean
+    WebMvcConfigurer configurer () {
+        return new WebMvcConfigurerAdapter() {
+            @Override
+            public void addResourceHandlers (ResourceHandlerRegistry registry) {
+                System.out.println("HELLO HANDLER");
+                registry.addResourceHandler("/resources/angular2/**").addResourceLocations("classpath:/angular2/");
+            }
+        };
     }
+    
+    /*@Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        System.out.println("HELLO HANDLER");
+        registry.addResourceHandler("/resources/angular2/**").addResourceLocations("classpath:/angular2/");
+    }*/
     
     
 }

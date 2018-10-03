@@ -17,8 +17,8 @@ import { UserService } from './user.service';
 
 @Component({
     selector: 'user',
-    templateUrl: 'resources/angular2/menu/app/user/user.html',
-    styleUrls:  ['resources/angular2/menu/app/user/user.css'],
+    templateUrl: 'resources/angular2/login/menu_app/user/user.html',
+    styleUrls:  ['resources/angular2/login/menu_app/user/user.css'],
     directives: [ DataTable, Column, Growl ],
     providers: [ UserService ]
 })
