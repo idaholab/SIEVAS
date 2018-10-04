@@ -70,4 +70,4 @@ Confirm everything is working:
 	-login with username 'user' and password 'password.  The address should be http://localhost:8334 (auto-populated).
 
 To add nbody data:
-		psql -f fileNameOfDataFile sievas sievas
+	psql -f fileNameOfDataFile sievas sievas
