@@ -681,8 +681,9 @@ public class DVRService implements Runnable, MessageListener
                         
                         break;
                     case SetStart:
-                        startTime = cmdMsg.getStartTime();
-                        replyMsg.setStartTime(startTime);
+                        //startTime = cmdMsg.getStartTime();
+                        replyMsg.setStartTime(cmdMsg.getStartTime());
+                        setCurrentTime(cmdMsg.getStartTime());
                         replyMsg.setPlayMode((playing) ? DVRPlayMode.Started: DVRPlayMode.Stopped);
                         replyMsg.setPlaySpeed(playSpeed);
                         replyMsg.setSuccess(true);

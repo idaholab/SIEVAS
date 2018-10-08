@@ -109,7 +109,7 @@ public class btnLoginScript : MonoBehaviour {
 
 		// check for errors
 		//this will return error on redirect limit right now
-		if (!request.isNetworkError)
+		if (!request.isError)
 		{
 			string results = request.downloadHandler.text;
 			if (request.url.EndsWith (ERROR_PARAM))
@@ -178,7 +178,7 @@ public class btnLoginScript : MonoBehaviour {
 		yield return request.Send();
 
 		// check for errors
-		if (!request.isNetworkError)
+		if (!request.isError)
 		{
 			string results = request.downloadHandler.text;
 			onCompleteListing(request);
